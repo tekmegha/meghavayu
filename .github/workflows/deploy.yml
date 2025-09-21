@@ -23,7 +23,7 @@ jobs:
         working-directory: ./tekmegha-fe
 
       - name: Build Angular application
-        run: npm run build --configuration=production --production --base-href "/" --project tekmegha-fe
+        run: npm run build -- --configuration=production --base-href "/" --project tekmegha-fe
         working-directory: ./tekmegha-fe
 
       - name: Archive production artifacts
@@ -50,7 +50,7 @@ jobs:
           server: 5.183.10.37
           username: tekmeghahostingervayu
           password: Mydefaultdeploy*800
-          local-dir: dist/tekmegha-web/browser/
+          local-dir: dist/
           remote-dir: / # IMPORTANT: Adjust this to your exact Hostinger public HTML directory
           delete-excluded: true
           exclude: | # Files/directories to exclude from upload
