@@ -1,0 +1,8 @@
+<nav class="bottom-navbar">
+  @for (item of navbarItems; track item.label) {
+    <a class="nav-item" [routerLink]="item.route" [class.active]="item.active">
+      <span class="material-icons">{{ item.icon }}</span>
+      <span class="label">{{ item.label }}</span>
+    </a>
+  }
+</nav>

@@ -1,0 +1,19 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the host takes full viewport height */
+}
+
+.main-content-wrapper {
+  flex-grow: 1; /* Allows main content to take available space */
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Enable scrolling within the content wrapper */
+  /* Padding to ensure content isn't hidden by sticky navbar */
+  padding-bottom: 60px; /* Adjust based on your bottom navbar's height */
+}
+
+.main-content {
+  flex-grow: 1; /* Allows main content to take available space */
+  overflow-y: auto; /* Allow scrolling within the main content area */
+}

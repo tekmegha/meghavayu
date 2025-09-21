@@ -1,0 +1,37 @@
+<nav class="top-navbar">
+  <div class="left-items">
+    @for (item of navbarItems | filterByPosition:'left'; track item.label || item.icon) {
+      @if (item.icon) {
+        <a class="nav-item" (click)="onItemClick(item)" [routerLink]="item.route || []">
+          <span class="material-icons">{{ item.icon }}</span>
+          @if (item.label) {
+            <span class="label">{{ item.label }}</span>
+          }
+        </a>
+      }
+    }
+  </div>
+
+  <div class="center-item">
+    @for (item of navbarItems | filterByPosition:'center'; track item.label || item.icon) {
+      @if (item.label) {
+        <a class="nav-item title-link" [routerLink]="item.route || []">
+          <span class="label">{{ item.label }}</span>
+        </a>
+      }
+    }
+  </div>
+
+  <div class="right-items">
+    @for (item of navbarItems | filterByPosition:'right'; track item.label || item.icon) {
+      @if (item.icon) {
+        <a class="nav-item" (click)="onItemClick(item)" [routerLink]="item.route || []">
+          <span class="material-icons">{{ item.icon }}</span>
+          @if (item.label) {
+            <span class="label">{{ item.label }}</span>
+          }
+        </a>
+      }
+    }
+  </div>
+</nav>

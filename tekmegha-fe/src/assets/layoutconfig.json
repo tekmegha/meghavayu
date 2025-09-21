@@ -1,0 +1,14 @@
+{
+    "layout": [
+        {
+            "component": "top-navbar",
+            "selector": "app-top-navbar",
+            "position": "top"
+        },
+        {
+            "component": "bottom-sticky-navbar",
+            "selector": "app-bottom-sticky-navbar",
+            "position": "bottom"
+        }
+    ]
+}

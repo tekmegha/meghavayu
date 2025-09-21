@@ -1,0 +1,62 @@
+.stores-container {
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.store-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px;
+
+  .store-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+
+    .store-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-bottom: 1px solid #eee;
+    }
+
+    .store-details {
+      padding: 15px;
+
+      h2 {
+        font-size: 1.3rem;
+        color: #333;
+        margin-bottom: 8px;
+      }
+
+      p {
+        font-size: 0.95rem;
+        color: #666;
+        margin-bottom: 5px;
+      }
+
+      button {
+        background-color: #ff6600; /* Coffee theme color */
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 15px;
+
+        &:hover {
+          background-color: #e65c00;
+        }
+      }
+    }
+  }
+}

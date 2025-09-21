@@ -1,0 +1,16 @@
+<div class="main-content-wrapper">
+  <app-top-navbar
+    [navbarItems]="topNavbarConfig"
+    (menuToggle)="onMenuToggle()"
+    (searchOpen)="onSearchOpen()"
+  ></app-top-navbar>
+
+  <div class="main-content">
+    <!-- Your main application content goes here, and will be scrollable -->
+    <router-outlet></router-outlet>
+  </div>
+
+  <app-bottom-sticky-navbar
+    [navbarItems]="bottomNavbarConfig"
+  ></app-bottom-sticky-navbar>
+</div>

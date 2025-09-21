@@ -1,0 +1,46 @@
+{
+  "topNavbar": [
+    {
+      "icon": "menu_book",
+      "position": "left",
+      "action": "toggleMenu"
+    },
+    {
+      "label": "BrewBuddy",
+      "position": "center"
+    },
+    {
+      "icon": "search",
+      "position": "right",
+      "action": "openSearch"
+    }
+  ],
+  "bottomNavbar": [
+    {
+      "icon": "home",
+      "label": "Home",
+      "route": "/home",
+      "active": true
+    },
+    {
+      "icon": "restaurant_menu",
+      "label": "Menu",
+      "route": "/menu"
+    },
+    {
+      "icon": "shopping_cart",
+      "label": "Cart",
+      "route": "/cart"
+    },
+    {
+      "icon": "location_on",
+      "label": "Stores",
+      "route": "/stores"
+    },
+    {
+      "icon": "person",
+      "label": "Profile",
+      "route": "/profile"
+    }
+  ]
+}

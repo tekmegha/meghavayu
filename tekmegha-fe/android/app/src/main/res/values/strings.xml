@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">TekMegha</string>
+    <string name="title_activity_main">TekMegha</string>
+    <string name="package_name">com.tekmegha.app</string>
+    <string name="custom_url_scheme">com.tekmegha.app</string>
+</resources>
