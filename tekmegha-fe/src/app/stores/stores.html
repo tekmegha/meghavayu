@@ -1,33 +1,37 @@
-<div class="stores-container">
-  <h1>Our Store Locations</h1>
+@if (isLoading) {
+  <app-skeleton-loader></app-skeleton-loader>
+} @else {
+  <div class="stores-container">
+    <h1>Our Store Locations</h1>
 
-  <div class="store-list">
-    <div class="store-card">
-      <img src="https://via.placeholder.com/300x200?text=Store+Downtown" alt="Downtown Store" class="store-image">
-      <div class="store-details">
-        <h2>Downtown BrewBuddy</h2>
-        <p>123 Coffee Lane, City Center</p>
-        <p>Open: Mon-Fri 7 AM - 7 PM, Sat-Sun 8 AM - 6 PM</p>
-        <button>View Map</button>
+    <div class="store-list">
+      <div class="store-card">
+        <img src="https://via.placeholder.com/300x200?text=Store+Downtown" alt="Downtown Store" class="store-image">
+        <div class="store-details">
+          <h2>Downtown BrewBuddy</h2>
+          <p>123 Coffee Lane, City Center</p>
+          <p>Open: Mon-Fri 7 AM - 7 PM, Sat-Sun 8 AM - 6 PM</p>
+          <button>View Map</button>
+        </div>
       </div>
-    </div>
-    <div class="store-card">
-      <img src="https://via.placeholder.com/300x200?text=Store+Uptown" alt="Uptown Store" class="store-image">
-      <div class="store-details">
-        <h2>Uptown Roast & Brew</h2>
-        <p>456 Brew Street, Northside</p>
-        <p>Open: Mon-Sun 6 AM - 8 PM</p>
-        <button>View Map</button>
+      <div class="store-card">
+        <img src="https://via.placeholder.com/300x200?text=Store+Uptown" alt="Uptown Store" class="store-image">
+        <div class="store-details">
+          <h2>Uptown Roast & Brew</h2>
+          <p>456 Brew Street, Northside</p>
+          <p>Open: Mon-Sun 6 AM - 8 PM</p>
+          <button>View Map</button>
+        </div>
       </div>
-    </div>
-    <div class="store-card">
-      <img src="https://via.placeholder.com/300x200?text=Store+Riverside" alt="Riverside Store" class="store-image">
-      <div class="store-details">
-        <h2>Riverside Cafe</h2>
-        <p>789 River Road, East District</p>
-        <p>Open: Mon-Fri 8 AM - 5 PM</p>
-        <button>View Map</button>
+      <div class="store-card">
+        <img src="https://via.placeholder.com/300x200?text=Store+Riverside" alt="Riverside Store" class="store-image">
+        <div class="store-details">
+          <h2>Riverside Cafe</h2>
+          <p>789 River Road, East District</p>
+          <p>Open: Mon-Fri 8 AM - 5 PM</p>
+          <button>View Map</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+}

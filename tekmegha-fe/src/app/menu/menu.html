@@ -1,95 +1,99 @@
-<div class="menu-container">
-  <h1>Our Coffee Menu</h1>
+@if (isLoading) {
+  <app-skeleton-loader></app-skeleton-loader>
+} @else {
+  <div class="menu-container">
+    <h1>Our Coffee Menu</h1>
 
-  <section class="coffee-categories">
-    <div class="category">
-      <h2>Espresso Drinks</h2>
-      <div class="menu-items-grid">
-        <div class="menu-item">
-          <img src="https://via.placeholder.com/100x100?text=Espresso" alt="Espresso" class="item-image">
-          <div class="item-details">
-            <h3>Espresso</h3>
-            <p>A strong shot of our finest coffee.</p>
-            <span class="price">$3.50</span>
+    <section class="coffee-categories">
+      <div class="category">
+        <h2>Espresso Drinks</h2>
+        <div class="menu-items-grid">
+          <div class="menu-item">
+            <img src="https://via.placeholder.com/100x100?text=Espresso" alt="Espresso" class="item-image">
+            <div class="item-details">
+              <h3>Espresso</h3>
+              <p>A strong shot of our finest coffee.</p>
+              <span class="price">$3.50</span>
+            </div>
+            <button>Add</button>
           </div>
-          <button>Add</button>
-        </div>
-        <div class="menu-item">
-          <img src="https://via.placeholder.com/100x100?text=Americano" alt="Americano" class="item-image">
-          <div class="item-details">
-            <h3>Americano</h3>
-            <p>Espresso with hot water.</p>
-            <span class="price">$3.75</span>
+          <div class="menu-item">
+            <img src="https://via.placeholder.com/100x100?text=Americano" alt="Americano" class="item-image">
+            <div class="item-details">
+              <h3>Americano</h3>
+              <p>Espresso with hot water.</p>
+              <span class="price">$3.75</span>
+            </div>
+            <button>Add</button>
           </div>
-          <button>Add</button>
-        </div>
-        <div class="menu-item">
-          <img src="https://via.placeholder.com/100x100?text=Latte" alt="Latte" class="item-image">
-          <div class="item-details">
-            <h3>Latte</h3>
-            <p>Espresso with steamed milk and a thin layer of foam.</p>
-            <span class="price">$4.50</span>
+          <div class="menu-item">
+            <img src="https://via.placeholder.com/100x100?text=Latte" alt="Latte" class="item-image">
+            <div class="item-details">
+              <h3>Latte</h3>
+              <p>Espresso with steamed milk and a thin layer of foam.</p>
+              <span class="price">$4.50</span>
+            </div>
+            <button>Add</button>
           </div>
-          <button>Add</button>
-        </div>
-        <div class="menu-item">
-          <img src="https://via.placeholder.com/100x100?text=Cappuccino" alt="Cappuccino" class="item-image">
-          <div class="item-details">
-            <h3>Cappuccino</h3>
-            <p>Espresso with steamed milk and a thick layer of foam.</p>
-            <span class="price">$4.25</span>
+          <div class="menu-item">
+            <img src="https://via.placeholder.com/100x100?text=Cappuccino" alt="Cappuccino" class="item-image">
+            <div class="item-details">
+              <h3>Cappuccino</h3>
+              <p>Espresso with steamed milk and a thick layer of foam.</p>
+              <span class="price">$4.25</span>
+            </div>
+            <button>Add</button>
           </div>
-          <button>Add</button>
         </div>
       </div>
-    </div>
 
-    <div class="category">
-      <h2>Brewed Coffee</h2>
-      <div class="menu-items-grid">
-        <div class="menu-item">
-          <img src="https://via.placeholder.com/100x100?text=Drip+Coffee" alt="Drip Coffee" class="item-image">
-          <div class="item-details">
-            <h3>Drip Coffee</h3>
-            <p>Our classic daily brew.</p>
-            <span class="price">$3.00</span>
+      <div class="category">
+        <h2>Brewed Coffee</h2>
+        <div class="menu-items-grid">
+          <div class="menu-item">
+            <img src="https://via.placeholder.com/100x100?text=Drip+Coffee" alt="Drip Coffee" class="item-image">
+            <div class="item-details">
+              <h3>Drip Coffee</h3>
+              <p>Our classic daily brew.</p>
+              <span class="price">$3.00</span>
+            </div>
+            <button>Add</button>
           </div>
-          <button>Add</button>
-        </div>
-        <div class="menu-item">
-          <img src="https://via.placeholder.com/100x100?text=Cold+Brew" alt="Cold Brew" class="item-image">
-          <div class="item-details">
-            <h3>Cold Brew</h3>
-            <p>Slow-steeped for a smooth, rich taste.</p>
-            <span class="price">$4.75</span>
+          <div class="menu-item">
+            <img src="https://via.placeholder.com/100x100?text=Cold+Brew" alt="Cold Brew" class="item-image">
+            <div class="item-details">
+              <h3>Cold Brew</h3>
+              <p>Slow-steeped for a smooth, rich taste.</p>
+              <span class="price">$4.75</span>
+            </div>
+            <button>Add</button>
           </div>
-          <button>Add</button>
         </div>
       </div>
-    </div>
 
-    <div class="category">
-      <h2>Pastries & Snacks</h2>
-      <div class="menu-items-grid">
-        <div class="menu-item">
-          <img src="https://via.placeholder.com/100x100?text=Croissant" alt="Croissant" class="item-image">
-          <div class="item-details">
-            <h3>Croissant</h3>
-            <p>Flaky, buttery perfection.</p>
-            <span class="price">$3.00</span>
+      <div class="category">
+        <h2>Pastries & Snacks</h2>
+        <div class="menu-items-grid">
+          <div class="menu-item">
+            <img src="https://via.placeholder.com/100x100?text=Croissant" alt="Croissant" class="item-image">
+            <div class="item-details">
+              <h3>Croissant</h3>
+              <p>Flaky, buttery perfection.</p>
+              <span class="price">$3.00</span>
+            </div>
+            <button>Add</button>
           </div>
-          <button>Add</button>
-        </div>
-        <div class="menu-item">
-          <img src="https://via.placeholder.com/100x100?text=Muffin" alt="Muffin" class="item-image">
-          <div class="item-details">
-            <h3>Blueberry Muffin</h3>
-            <p>Freshly baked with juicy blueberries.</p>
-            <span class="price">$3.50</span>
+          <div class="menu-item">
+            <img src="https://via.placeholder.com/100x100?text=Muffin" alt="Muffin" class="item-image">
+            <div class="item-details">
+              <h3>Blueberry Muffin</h3>
+              <p>Freshly baked with juicy blueberries.</p>
+              <span class="price">$3.50</span>
+            </div>
+            <button>Add</button>
           </div>
-          <button>Add</button>
         </div>
       </div>
-    </div>
-  </section>
-</div>
+    </section>
+  </div>
+}

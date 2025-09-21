@@ -23,7 +23,7 @@ jobs:
         working-directory: ./tekmegha-fe
 
       - name: Build Angular application
-        run: ng build --configuration=production --base-href "/"
+        run: npm run build --configuration=production --base-href "/"
         working-directory: ./tekmegha-fe
 
       - name: Archive production artifacts

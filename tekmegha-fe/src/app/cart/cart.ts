@@ -1,11 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader';
 
 @Component({
   selector: 'app-cart',
-  imports: [],
+  imports: [CommonModule, SkeletonLoaderComponent],
   templateUrl: './cart.html',
   styleUrl: './cart.scss'
 })
-export class Cart {
+export class Cart implements OnInit {
+  isLoading = true;
 
+  ngOnInit() {
+    // Simulate data loading
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 2000); // Show skeleton for 2 seconds
+  }
 }

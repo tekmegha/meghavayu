@@ -1,42 +1,46 @@
-<div class="profile-container">
-  <h1>My Profile</h1>
+@if (isLoading) {
+  <app-skeleton-loader></app-skeleton-loader>
+} @else {
+  <div class="profile-container">
+    <h1>My Profile</h1>
 
-  <div class="profile-header">
-    <img src="https://via.placeholder.com/150x150?text=Profile+Picture" alt="Profile Picture" class="profile-picture">
-    <h2>John Doe</h2>
-    <p>johndoe@example.com</p>
+    <div class="profile-header">
+      <img src="https://via.placeholder.com/150x150?text=Profile+Picture" alt="Profile Picture" class="profile-picture">
+      <h2>John Doe</h2>
+      <p>johndoe@example.com</p>
+    </div>
+
+    <section class="profile-details">
+      <h3>Personal Information</h3>
+      <div class="detail-item">
+        <span>Name:</span>
+        <span>John Doe</span>
+      </div>
+      <div class="detail-item">
+        <span>Phone:</span>
+        <span>(123) 456-7890</span>
+      </div>
+      <div class="detail-item">
+        <span>Address:</span>
+        <span>123 Brew Lane, Coffee City</span>
+      </div>
+    </section>
+
+    <section class="order-history">
+      <h3>Order History</h3>
+      <p>No recent orders.</p>
+      <button>View All Orders</button>
+    </section>
+
+    <section class="settings">
+      <h3>Settings</h3>
+      <ul>
+        <li><a href="#">Change Password</a></li>
+        <li><a href="#">Notification Preferences</a></li>
+        <li><a href="#">Privacy Settings</a></li>
+      </ul>
+    </section>
+
+    <button class="logout-button">Logout</button>
   </div>
-
-  <section class="profile-details">
-    <h3>Personal Information</h3>
-    <div class="detail-item">
-      <span>Name:</span>
-      <span>John Doe</span>
-    </div>
-    <div class="detail-item">
-      <span>Phone:</span>
-      <span>(123) 456-7890</span>
-    </div>
-    <div class="detail-item">
-      <span>Address:</span>
-      <span>123 Brew Lane, Coffee City</span>
-    </div>
-  </section>
-
-  <section class="order-history">
-    <h3>Order History</h3>
-    <p>No recent orders.</p>
-    <button>View All Orders</button>
-  </section>
-
-  <section class="settings">
-    <h3>Settings</h3>
-    <ul>
-      <li><a href="#">Change Password</a></li>
-      <li><a href="#">Notification Preferences</a></li>
-      <li><a href="#">Privacy Settings</a></li>
-    </ul>
-  </section>
-
-  <button class="logout-button">Logout</button>
-</div>
+}
