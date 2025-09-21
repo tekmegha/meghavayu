@@ -1,0 +1,61 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Specify the Node.js version you used locally, e.g., 20
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./tekmegha-fe # Ensure this is correct if your project is in a subdirectory
+
+      - name: Build Angular application
+        run: ng build --configuration=production --base-href "/"
+        working-directory: ./tekmegha-fe # Ensure this is correct if your project is in a subdirectory
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files
+          path: ./tekmegha-fe/dist/tekmegha-fe # Adjust path if your build output is different
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment: production
+
+    steps:
+      - name: Download production artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-files
+          path: ./dist
+
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.0
+        with:
+          server: 5.183.10.37
+          username: tekmeghahostingervayu
+          password: Mydefaultdeploy*800
+          local-dir: ./dist/
+          remote-dir: / # IMPORTANT: Adjust this to your exact Hostinger public HTML directory
+          delete-excluded: true
+          exclude: | # Files/directories to exclude from upload
+            .git/
+            .github/
+            .vscode/
+            node_modules/
+            public/
