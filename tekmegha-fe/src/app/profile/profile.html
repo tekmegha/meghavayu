@@ -5,7 +5,7 @@
     <h1>My Profile</h1>
 
     <div class="profile-header">
-      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODU1NDR8MHwxfHNlYXJjaHwxfHxQcm9maWxlfGVufDB8fHx8MTcyNzAxNDgyOHww&ixlib=rb-4.0.3&q=80&w=300" alt="Profile Picture" class="profile-picture">
+      <img src="assets/images/brew-buddy/profile-picture.jpg" alt="Profile Picture" class="profile-picture" (error)="onImageError($event)">
       <h2>John Doe</h2>
       <p>johndoe@example.com</p>
     </div>

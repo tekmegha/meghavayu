@@ -38,4 +38,8 @@ export class ProductTileComponent implements OnInit {
       this.updateQuantity.emit({ product: this.product, quantity: this.quantity });
     }
   }
+
+  onImageError(event: Event) {
+    (event.target as HTMLImageElement).src = 'assets/images/brew-buddy/default.png';
+  }
 }

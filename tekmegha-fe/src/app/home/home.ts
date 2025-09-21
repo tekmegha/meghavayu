@@ -17,4 +17,8 @@ export class Home implements OnInit {
       this.isLoading = false;
     }, 2000); // Show skeleton for 2 seconds
   }
+
+  onImageError(event: Event) {
+    (event.target as HTMLImageElement).src = 'assets/images/brew-buddy/default.png';
+  }
 }

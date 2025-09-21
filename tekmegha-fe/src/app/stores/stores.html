@@ -2,36 +2,20 @@
   <app-skeleton-loader></app-skeleton-loader>
 } @else {
   <div class="stores-container">
-    <h1>Our Store Locations</h1>
-
+    <h2>Our Locations</h2>
     <div class="store-list">
-      <div class="store-card">
-        <img src="https://images.unsplash.com/photo-1541167710328-98444a806981?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODU1NDR8MHwxfHNlYXJjaHwxfHxDb2ZmZWUlMjBTdG9yZXxlbnwwfHx8fDE3MjcwMTQ3NDJ8MA&ixlib=rb-4.0.3&q=80&w=600" alt="Downtown Store" class="store-image">
-        <div class="store-details">
-          <h2>Downtown BrewBuddy</h2>
-          <p>123 Coffee Lane, City Center</p>
-          <p>Open: Mon-Fri 7 AM - 7 PM, Sat-Sun 8 AM - 6 PM</p>
-          <button>View Map</button>
+      @for (store of stores; track store.id) {
+        <div class="store-card">
+          <img src="assets/images/brew-buddy/stores/{{ store.id }}.jpg" alt="{{ store.name }}" class="store-image" (error)="onImageError($event)">
+          <div class="store-details">
+            <h3>{{ store.name }}</h3>
+            <p>{{ store.address }}</p>
+            <p>Phone: {{ store.phone }}</p>
+            <p>Hours: {{ store.hours }}</p>
+            <button>View Details</button>
+          </div>
         </div>
-      </div>
-      <div class="store-card">
-        <img src="https://images.unsplash.com/photo-1511920170033-fd48b6f-7c18?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODU1NDR8MHwxfHNlYXJjaHwxfHxDb2ZmZWUlMjBTaG9wfGVufDB8fHx8MTcyNzAxNDc1M3ww&ixlib=rb-4.0.3&q=80&w=600" alt="Uptown Store" class="store-image">
-        <div class="store-details">
-          <h2>Uptown Roast & Brew</h2>
-          <p>456 Brew Street, Northside</p>
-          <p>Open: Mon-Sun 6 AM - 8 PM</p>
-          <button>View Map</button>
-        </div>
-      </div>
-      <div class="store-card">
-        <img src="https://images.unsplash.com/photo-1509785307050-dc8759325124?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODU1NDR8MHwxfHNlYXJjaHwxfHxDYWZlfGVufDB8fHx8MTcyNzAxNDc2MHww&ixlib=rb-4.0.3&q=80&w=600" alt="Riverside Store" class="store-image">
-        <div class="store-details">
-          <h2>Riverside Cafe</h2>
-          <p>789 River Road, East District</p>
-          <p>Open: Mon-Fri 8 AM - 5 PM</p>
-          <button>View Map</button>
-        </div>
-      </div>
+      }
     </div>
   </div>
 }

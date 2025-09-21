@@ -10,7 +10,7 @@
     <p class="product-serves">Serves {{ product.serves }} | {{ product.description }} <span class="more-link">more</span></p>
   </div>
   <div class="product-image-container">
-    <img [src]="product.imageUrl" [alt]="product.name" class="product-image">
+    <img [src]="product.imageUrl" [alt]="product.name" class="product-image" (error)="onImageError($event)">
     <div class="quantity-selector">
       @if (quantity === 0) {
         <button class="add-button" (click)="onAdd()">ADD</button>

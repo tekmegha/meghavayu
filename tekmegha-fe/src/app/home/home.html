@@ -3,7 +3,7 @@
 } @else {
   <div class="home-container">
     <section class="hero-section">
-      <img src="https://images.unsplash.com/photo-1511920170033-fd48b6f-7c18?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODU1NDR8MHwxfHNlYXJjaHwxfHxDb2ZmZWUlMjBIZXJvfGVufDB8fHx8MTcyNzAxNDkwMnww&ixlib=rb-4.0.3&q=80&w=768" alt="BrewBuddy Coffee" class="hero-image">
+      <img src="assets/images/brew-buddy/hero-brewbuddy.jpg" alt="BrewBuddy Coffee" class="hero-image" (error)="onImageError($event)">
       <div class="hero-content">
         <h1>Welcome to BrewBuddy</h1>
         <p>Your daily dose of happiness, delivered to your door.</p>
@@ -15,19 +15,19 @@
       <h2>Our Featured Brews</h2>
       <div class="product-grid">
         <div class="product-card">
-          <img src="https://images.unsplash.com/photo-1507133748805-728b2484a0d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODU1NDR8MHwxfHNlYXJjaHwxfHxFc3ByZXNzb3xlbnwwfHx8fDE3MjcwMTQ5Nzh8MA&ixlib=rb-4.0.3&q=80&w=200" alt="Espresso" class="product-image">
+          <img src="assets/images/brew-buddy/espresso.jpg" alt="Espresso" class="product-image" (error)="onImageError($event)">
           <h3>Classic Espresso</h3>
           <p>$3.50</p>
           <button>Add to Cart</button>
         </div>
         <div class="product-card">
-          <img src="https://images.unsplash.com/photo-1447933601403-0c6688da5638?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODU1NDR8MHwxfHNlYXJjaHwxfHxMYXR0ZXxlbnwwfHx8fDE3MjcwMTQ5Nzh8MA&ixlib=rb-4.0.3&q=80&w=200" alt="Latte" class="product-image">
+          <img src="assets/images/brew-buddy/latte.jpg" alt="Latte" class="product-image" (error)="onImageError($event)">
           <h3>Creamy Latte</h3>
           <p>$4.50</p>
           <button>Add to Cart</button>
         </div>
         <div class="product-card">
-          <img src="https://images.unsplash.com/photo-1517959105421-8276f49679f2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODU1NDR8MHwxfHNlYXJjaHwxfHxDYXBwdWNjaW5vfGVufDB8fHx8MTcyNzAxNDk4MHww&ixlib=rb-4.0.3&q=80&w=200" alt="Cappuccino" class="product-image">
+          <img src="assets/images/brew-buddy/cappuccino.jpg" alt="Cappuccino" class="product-image" (error)="onImageError($event)">
           <h3>Rich Cappuccino</h3>
           <p>$4.00</p>
           <button>Add to Cart</button>
@@ -38,7 +38,7 @@
     <section class="about-us">
       <h2>Our Story</h2>
       <p>BrewBuddy started with a simple idea: to bring exceptional coffee experiences to everyone. We source the finest beans and craft them into your favorite beverages, all with a touch of warmth and passion.</p>
-      <img src="https://images.unsplash.com/photo-1541167710328-98444a806981?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODU1NDR8MHwxfHNlYXJjaHwxfHxDb2ZmZWUlMjBTaG9wfGVufDB8fHx8MTcyNzAxNTA2NXww&ixlib=rb-4.0.3&q=80&w=768" alt="About Us" class="about-image">
+      <img src="assets/images/brew-buddy/about-us.jpg" alt="About Us" class="about-image" (error)="onImageError($event)">
     </section>
   </div>
 }
