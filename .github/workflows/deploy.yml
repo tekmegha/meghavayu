@@ -48,7 +48,7 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.0
         with:
           server: 5.183.10.37
-          username: tekmeghahostingervayu
+          username: u250903974.tekmeghahostingervayu
           password: Mydefaultdeploy*800
           local-dir: dist/
           server-dir: /

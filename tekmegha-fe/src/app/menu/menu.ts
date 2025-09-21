@@ -33,7 +33,7 @@ export class Menu implements OnInit {
         reviewCount: 5,
         serves: 1,
         description: 'Fusilli pasta baked in spicy schezwan sauce',
-        imageUrl: 'https://via.placeholder.com/150x150?text=Schezwan+Pasta',
+        imageUrl: 'https://images.unsplash.com/photo-1517457375837-97218698305f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODU1NDR8MHwxfHNlYXJjaHwxfHxQYXN0YXxlbnwwfHx8fDE3MjcwMTM5NDh8MA&ixlib=rb-4.0.3&q=80&w=400',
         customisable: true,
         category: 'Espresso Drinks' // Assign category
       },
@@ -45,7 +45,7 @@ export class Menu implements OnInit {
         reviewCount: 46,
         serves: 1,
         description: 'Baked fries seasoned with peri peri',
-        imageUrl: 'https://via.placeholder.com/150x150?text=Sprinkled+Fries',
+        imageUrl: 'https://images.unsplash.com/photo-1582234032269-8041d8e13710?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODU1NDR8MHwxfHNlYXJjaHwxfHxGcmllc3xlbnwwfHx8fDE3MjcwMTQxMDN8MA&ixlib=rb-4.0.3&q=80&w=400',
         customisable: false,
         initialQuantity: 1, // Example of an item already in cart
         category: 'Pastries & Snacks' // Assign category
@@ -58,7 +58,7 @@ export class Menu implements OnInit {
         reviewCount: 120,
         serves: 1,
         description: 'A strong shot of our finest coffee',
-        imageUrl: 'https://via.placeholder.com/150x150?text=Espresso',
+        imageUrl: 'https://images.unsplash.com/photo-1507133748805-728b2484a0d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODU1NDR8MHwxfHNlYXJjaHwxfHxFc3ByZXNzb3xlbnwwfHx8fDE3MjcwMTQyNTF8MA&ixlib=rb-4.0.3&q=80&w=400',
         customisable: true,
         category: 'Espresso Drinks' // Assign category
       },
@@ -70,7 +70,7 @@ export class Menu implements OnInit {
         reviewCount: 150,
         serves: 1,
         description: 'Espresso with steamed milk and a thin layer of foam',
-        imageUrl: 'https://via.placeholder.com/150x150?text=Latte',
+        imageUrl: 'https://images.unsplash.com/photo-1447933601403-0c6688da5638?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODU1NDR8MHwxfHNlYXJjaHwxfHxMYXR0ZXxlbnwwfHx8fDE3MjcwMTQyNjB8MA&ixlib=rb-4.0.3&q=80&w=400',
         customisable: false,
         category: 'Espresso Drinks' // Assign category
       },
@@ -82,7 +82,7 @@ export class Menu implements OnInit {
         reviewCount: 80,
         serves: 1,
         description: 'Freshly baked with juicy blueberries',
-        imageUrl: 'https://via.placeholder.com/150x150?text=Muffin',
+        imageUrl: 'https://images.unsplash.com/photo-1585641774213-3cebfd265a7d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w1ODU1NDR8MHwxfHNlYXJjaHwxfHxNdWZmaW58ZW58MHx8fHwxNzI3MDE0MzQ2fDA&ixlib=rb-40.3&q=80&w=400',
         customisable: false,
         category: 'Pastries & Snacks' // Assign category
       }
