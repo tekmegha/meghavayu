@@ -51,7 +51,7 @@ jobs:
           username: tekmeghahostingervayu
           password: Mydefaultdeploy*800
           local-dir: dist/
-          remote-dir: / # IMPORTANT: Adjust this to your exact Hostinger public HTML directory
+          server-dir: /
           delete-excluded: true
           exclude: | # Files/directories to exclude from upload
             .git/
