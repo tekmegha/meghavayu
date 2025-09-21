@@ -1,0 +1,158 @@
+.product-tile {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  background-color: #fff;
+
+  .product-details-text {
+    flex-grow: 1;
+    padding-right: 16px;
+
+    .veg-indicator {
+      width: 12px;
+      height: 12px;
+      border: 1px solid #008000;
+      display: inline-block;
+      margin-right: 8px;
+      position: relative;
+      top: 2px;
+
+      &::after {
+        content: '';
+        width: 6px;
+        height: 6px;
+        background-color: #008000;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    .product-name {
+      font-size: 1.1em;
+      font-weight: 600;
+      margin: 8px 0 4px 0;
+      color: #333;
+    }
+
+    .product-price {
+      font-size: 1em;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+    }
+
+    .product-rating {
+      display: flex;
+      align-items: center;
+      font-size: 0.9em;
+      color: #666;
+      margin-bottom: 8px;
+
+      .star {
+        font-size: 1em;
+        color: #fbc02d; /* A yellow color for stars */
+        margin-right: 4px;
+      }
+    }
+
+    .product-serves {
+      font-size: 0.85em;
+      color: #777;
+      line-height: 1.4;
+
+      .more-link {
+        color: #f44336; /* A reddish color for 'more' */
+        font-weight: 500;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .product-image-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    .product-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .quantity-selector {
+      position: absolute;
+      bottom: 0; /* Align with the bottom of the image */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 35px;
+      background-color: #fff; /* White background for the selector */
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+      button {
+        background: none; /* No background for +/- buttons */
+        border: none;
+        color: #666; /* Darker color for +/- */
+        font-size: 1.2em;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 0 8px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+
+        &:active {
+          background-color: #f0f0f0;
+        }
+      }
+
+      span {
+        font-size: 1em;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .add-button {
+        width: 100%;
+        height: 100%;
+        background-color: #fff; /* White background for ADD button */
+        color: #008000; /* Green color for ADD text */
+        border: 1px solid #008000; /* Green border for ADD button */
+        border-radius: 4px;
+        font-size: 1em;
+        font-weight: bold;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+
+        &:hover {
+          background-color: #e6ffe6; /* Lighter green on hover */
+        }
+      }
+    }
+
+    .customisable-text {
+      position: absolute;
+      bottom: -25px; /* Position below the quantity selector, adjust as needed */
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75em;
+      color: #888;
+      white-space: nowrap;
+    }
+  }
+}

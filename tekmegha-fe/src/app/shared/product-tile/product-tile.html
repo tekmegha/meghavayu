@@ -1,0 +1,29 @@
+<div class="product-tile">
+  <div class="product-details-text">
+    <div class="veg-indicator"></div> <!-- Placeholder for veg/non-veg indicator -->
+    <h3 class="product-name">{{ product.name }}</h3>
+    <p class="product-price">₹{{ product.price | number:'1.2-2' }}</p>
+    <div class="product-rating">
+      <span class="material-icons star">star</span>
+      <span>{{ product.rating }} ({{ product.reviewCount }})</span>
+    </div>
+    <p class="product-serves">Serves {{ product.serves }} | {{ product.description }} <span class="more-link">more</span></p>
+  </div>
+  <div class="product-image-container">
+    <img [src]="product.imageUrl" [alt]="product.name" class="product-image">
+    <div class="quantity-selector">
+      @if (quantity === 0) {
+        <button class="add-button" (click)="onAdd()">ADD</button>
+      } @else {
+        <div class="quantity-controls">
+          <button (click)="onDecrement()">-</button>
+          <span>{{ quantity }}</span>
+          <button (click)="onIncrement()">+</button>
+        </div>
+      }
+    </div>
+    @if (product.customisable) {
+      <p class="customisable-text">Customisable</p>
+    }
+  </div>
+</div>
