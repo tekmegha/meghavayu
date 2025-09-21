@@ -5,6 +5,7 @@ import { NavbarItem } from '../shared/interfaces/navbar-item.interface';
 
 @Component({
   selector: 'app-bottom-sticky-navbar',
+  standalone: true, // Added standalone: true
   imports: [CommonModule, RouterLink],
   templateUrl: './bottom-sticky-navbar.html',
   styleUrl: './bottom-sticky-navbar.scss'

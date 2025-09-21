@@ -1,20 +1,27 @@
 {
-  "topNavbar": [
-    {
-      "icon": "menu_book",
-      "position": "left",
-      "action": "toggleMenu"
-    },
-    {
-      "label": "BrewBuddy",
-      "position": "center"
-    },
-    {
-      "icon": "search",
-      "position": "right",
-      "action": "openSearch"
-    }
-  ],
+      "topNavbar": [
+        {
+          "icon": "menu_book",
+          "position": "left",
+          "action": "toggleMenu"
+        },
+        {
+          "label": "BrewBuddy",
+          "position": "center"
+        },
+        {
+          "icon": "login",
+          "position": "right",
+          "action": "openLogin",
+          "route": "/login"
+        },
+        {
+          "icon": "shopping_cart",
+          "position": "right",
+          "action": "openCart",
+          "route": "/cart"
+        }
+      ],
   "bottomNavbar": [
     {
       "icon": "home",

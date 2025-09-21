@@ -35,7 +35,9 @@ export class Menu implements OnInit {
         description: 'Fusilli pasta baked in spicy schezwan sauce',
         imageUrl: 'assets/images/brew-buddy/pasta.jpg',
         customisable: true,
-        category: 'Espresso Drinks' // Assign category
+        category: 'Espresso Drinks', // Assign category
+        discountPercentage: 17, // Example discount
+        oldPrice: 5.99 // Example old price
       },
       {
         id: '2',
@@ -60,7 +62,9 @@ export class Menu implements OnInit {
         description: 'A strong shot of our finest coffee',
         imageUrl: 'assets/images/brew-buddy/espresso.jpg',
         customisable: true,
-        category: 'Espresso Drinks' // Assign category
+        category: 'Espresso Drinks', // Assign category
+        discountPercentage: 10, // Example discount
+        oldPrice: 4.00 // Example old price
       },
       {
         id: '4',

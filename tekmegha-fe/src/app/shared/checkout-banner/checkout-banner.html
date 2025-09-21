@@ -1,0 +1,15 @@
+@if (((totalQuantity$ | async) ?? 0 > 0) && !((isCartPage$ | async) ?? false)) {
+  <div class="checkout-banner">
+ 
+    <div class="cart-info">
+      <span class="item-count">{{ totalQuantity$ | async }} Items</span>
+      <span class="dot">•</span>
+      <span class="total-price">₹{{ totalAmount$ | async | number:'1.2-2' }}</span>
+    </div>
+    <a routerLink="/cart" class="proceed-button">
+      Proceed to Checkout <span class="material-icons">arrow_forward</span>
+    </a>
+  
+
+</div>
+}

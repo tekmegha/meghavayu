@@ -1,1 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
+
+html {
+  font-size: 16px; /* Base font size for better accessibility and scaling */
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif; /* A modern, readable font */
+  color: #333;
+  background-color: #f8f8f8;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+@media (max-width: 375px) {
+  html {
+    font-size: 15px; /* Slightly smaller base font for very small screens */
+  }
+}

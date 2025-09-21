@@ -6,6 +6,7 @@ import { NavbarItem } from '../shared/interfaces/navbar-item.interface';
 
 @Component({
   selector: 'app-top-navbar',
+  standalone: true, // Added standalone: true
   imports: [CommonModule, RouterLink, FilterByPositionPipe],
   templateUrl: './top-navbar.html',
   styleUrl: './top-navbar.scss'
@@ -14,12 +15,18 @@ export class TopNavbar {
   @Input() navbarItems: NavbarItem[] = [];
   @Output() menuToggle = new EventEmitter<void>();
   @Output() searchOpen = new EventEmitter<void>();
+  @Output() loginOpen = new EventEmitter<void>();
+  @Output() cartOpen = new EventEmitter<void>();
 
   onItemClick(item: NavbarItem) {
     if (item.action === 'toggleMenu') {
       this.menuToggle.emit();
     } else if (item.action === 'openSearch') {
       this.searchOpen.emit();
+    } else if (item.action === 'openLogin') {
+      this.loginOpen.emit();
+    } else if (item.action === 'openCart') {
+      this.cartOpen.emit();
     }
     // Handle route navigation if item.route exists and no action is specified
   }

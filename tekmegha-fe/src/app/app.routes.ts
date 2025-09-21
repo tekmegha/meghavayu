@@ -4,6 +4,7 @@ import { Menu } from './menu/menu';
 import { Cart } from './cart/cart';
 import { Stores } from './stores/stores';
 import { Profile } from './profile/profile';
+import { Login } from './login/login';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -12,4 +13,5 @@ export const routes: Routes = [
   { path: 'cart', component: Cart },
   { path: 'stores', component: Stores },
   { path: 'profile', component: Profile },
+  { path: 'login', component: Login },
 ];

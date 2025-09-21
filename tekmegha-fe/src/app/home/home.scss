@@ -15,20 +15,42 @@
   }
 
   .hero-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    text-align: center;
+    width: 90%; /* Adjust width as needed */
+
     h1 {
-      font-size: 2.5rem;
-      color: #333;
-      margin-bottom: 10px;
+      font-size: 2.2rem; /* Adjusted for mobile */
+      margin-bottom: 10px; /* Reduced margin */
+      padding: 0; /* Removed padding */
     }
 
     p {
-      font-size: 1.2rem;
-      color: #666;
+      font-size: 0.95rem; /* Slightly reduced for compactness */
+      line-height: 1.5; /* Improved readability */
       margin-bottom: 20px;
     }
 
+    .section-title {
+      font-size: 1.8rem; /* Similar to h1, but can be customized */
+      font-weight: bold;
+      color: #ff6600; /* Coffee theme color */
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #ff6600; /* Underline effect */
+      display: inline-block; /* To make border-bottom wrap content */
+      width: fit-content; /* Adjust width to content */
+      margin-left: auto; /* Center with auto margins */
+      margin-right: auto;
+    }
+
     .call-to-action {
-      background-color: #ff6600; /* Coffee theme color */
+      background-color: #003366; /* German blue theme color */
       color: #fff;
       border: none;
       padding: 12px 25px;
@@ -38,7 +60,66 @@
       transition: background-color 0.3s ease;
 
       &:hover {
-        background-color: #e65c00;
+        background-color: #002244;
+      }
+    }
+  }
+
+  .coffee-categories {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+    h3 {
+      font-size: 1.4rem;
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .category-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #333;
+      padding: 15px 10px;
+      border-radius: 8px;
+      background-color: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        background-color: #003366;
+        color: #fff;
+      }
+
+      .material-icons {
+        font-size: 2rem;
+        margin-bottom: 8px;
+        color: #003366;
+        transition: color 0.3s ease;
+      }
+
+      .category-name {
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-align: center;
+      }
+
+      &:hover .material-icons {
+        color: #fff;
       }
     }
   }
@@ -47,58 +128,102 @@
 .featured-products {
   margin-bottom: 40px;
 
-  h2 {
+  .section-title {
+    font-size: 1.3rem; /* More compact for mobile */
+    font-weight: bold;
+    color: #003366; /* German blue theme color */
     text-align: center;
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #003366; /* Underline effect */
+    display: inline-block; /* To make border-bottom wrap content */
+    width: fit-content; /* Adjust width to content */
+    margin-left: auto; /* Center with auto margins */
+    margin-right: auto;
   }
 
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 20px;
-    justify-content: center;
+  .product-scroller {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0 10px;
+    margin-bottom: 20px;
+    
+    /* Hide scrollbar for webkit browsers */
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 2px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #003366;
+      border-radius: 2px;
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+      background: #002244;
+    }
+  }
 
-    .product-card {
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      padding: 15px;
-      text-align: center;
+  .product-scroll-container {
+    display: flex;
+    gap: 15px;
+    padding: 10px 0;
+    width: max-content;
+  }
 
-      .product-image {
-        width: 100%;
-        height: 120px;
-        object-fit: cover;
-        border-radius: 4px;
-        margin-bottom: 10px;
+  .product-scroll-item {
+    flex-shrink: 0;
+    width: 200px; /* Fixed width for consistent scrolling */
+    
+    /* Override product tile styles for horizontal scroller */
+    .product-tile-card {
+      max-width: 100% !important;
+      margin: 0 !important;
+      width: 100%;
+      height: 280px !important; /* Fixed height for horizontal scroller tiles */
+      min-height: 280px !important;
+      
+      .image-wrapper {
+        height: 120px !important;
       }
-
-      h3 {
-        font-size: 1.1rem;
-        color: #333;
-        margin-bottom: 5px;
-      }
-
-      p {
-        font-size: 1rem;
-        color: #ff6600;
-        font-weight: bold;
-        margin-bottom: 10px;
-      }
-
-      button {
-        background-color: #4CAF50; /* Green for add to cart */
-        color: #fff;
-        border: none;
-        padding: 8px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-
-        &:hover {
-          background-color: #45a049;
+      
+      .product-info {
+        padding: 10px !important;
+        height: 160px !important; /* Fixed height for product info */
+        
+        .product-name {
+          font-size: 1rem !important;
+          margin-bottom: 4px !important;
+          height: 25px !important; /* Fixed height for name */
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+        }
+        
+        .product-description {
+          font-size: 0.85rem !important;
+          margin-bottom: 8px !important;
+          line-height: 1.3 !important;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+        }
+        
+        .price-and-add {
+          .current-price {
+            font-size: 1.1rem !important;
+          }
+          
+          .add-to-cart-button {
+            padding: 6px 10px !important;
+            font-size: 0.85rem !important;
+          }
         }
       }
     }
@@ -106,18 +231,18 @@
 }
 
 .about-us {
+  padding: 20px;
   text-align: center;
 
   h2 {
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 20px;
+    font-size: 1.8rem; /* Adjusted for consistency */
+    margin-bottom: 15px; /* Reduced margin */
   }
 
   p {
-    font-size: 1rem;
+    font-size: 0.95rem; /* Consistent with other paragraphs */
     color: #666;
-    line-height: 1.6;
+    line-height: 1.5; /* Improved readability */
     margin-bottom: 20px;
   }
 

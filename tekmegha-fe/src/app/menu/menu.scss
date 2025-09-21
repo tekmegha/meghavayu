@@ -1,30 +1,42 @@
 .menu-container {
   padding: 20px;
-}
 
-h1 {
-  text-align: center;
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 30px;
-}
-
-.category {
-  margin-bottom: 40px;
+  h1 {
+    font-size: 1.4rem; /* More compact for mobile */
+    margin-bottom: 10px; /* Further reduced margin */
+    text-align: center;
+    color: #333;
+    padding: 0;
+  }
 
   h2 {
-    font-size: 2rem;
-    color: #555;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    font-size: 1.2rem; /* More compact for mobile */
+    margin-top: 15px;
+    margin-bottom: 8px; /* Further reduced margin */
+    color: #333;
+    padding: 0;
+  }
+
+  .coffee-categories {
+    margin-bottom: 40px;
+
+    h2 {
+      font-size: 1.2rem; /* More compact for mobile */
+      color: #555;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 6px;
+    }
   }
 }
 
 .menu-items-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
+  grid-template-columns: repeat(2, 1fr); /* Two items per row */
+  gap: 15px; /* Spacing between products */
+  justify-content: center; /* Center the grid items */
+  align-items: flex-start; /* Align items to the start of their grid area */
+  padding: 0 10px;
 
   .menu-item {
     display: flex;
@@ -53,14 +65,14 @@ h1 {
       }
 
       p {
-        font-size: 0.9rem;
+        font-size: 0.95rem; /* Consistent with other paragraphs */
         color: #777;
         margin-bottom: 10px;
       }
 
       .price {
         font-size: 1rem;
-        color: #ff6600; /* Coffee theme color */
+        color: #003366; /* German blue theme color */
         font-weight: bold;
       }
     }

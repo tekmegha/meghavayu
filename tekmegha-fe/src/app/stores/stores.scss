@@ -1,12 +1,13 @@
 .stores-container {
   padding: 20px;
-}
 
-h1 {
-  text-align: center;
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 30px;
+  h2 {
+    font-size: 1.4rem; /* More compact for mobile */
+    margin-bottom: 10px; /* Further reduced margin */
+    text-align: center;
+    color: #333;
+    padding: 0;
+  }
 }
 
 .store-list {
@@ -31,7 +32,7 @@ h1 {
       padding: 15px;
 
       h2 {
-        font-size: 1.3rem;
+        font-size: 1.4rem; /* Slightly increased for prominence */
         color: #333;
         margin-bottom: 8px;
       }
@@ -42,21 +43,21 @@ h1 {
         margin-bottom: 5px;
       }
 
-      button {
-        background-color: #ff6600; /* Coffee theme color */
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        margin-top: 15px;
+          button {
+            background-color: #003366; /* German blue theme color */
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 15px;
 
-        &:hover {
-          background-color: #e65c00;
-        }
-      }
+            &:hover {
+              background-color: #002244;
+            }
+          }
     }
   }
 }

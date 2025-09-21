@@ -1,37 +1,40 @@
 .profile-container {
   padding: 20px;
-}
 
-h1 {
-  text-align: center;
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 30px;
-}
-
-.profile-header {
-  text-align: center;
-  margin-bottom: 30px;
-
-  .profile-picture {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 15px;
-    border: 3px solid #ff6600; /* Coffee theme color */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-
-  h2 {
-    font-size: 1.8rem;
+  h1 {
+    font-size: 1.4rem; /* More compact for mobile */
+    margin-bottom: 10px; /* Further reduced margin */
+    text-align: center;
     color: #333;
-    margin-bottom: 5px;
+    padding: 0;
   }
 
-  p {
-    font-size: 1rem;
-    color: #777;
+  .profile-header {
+    text-align: center;
+    margin-bottom: 30px;
+
+        .profile-picture {
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          object-fit: cover;
+          margin-bottom: 15px;
+          border: 3px solid #003366; /* German blue theme color */
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+          font-size: 1.3rem; /* More compact for mobile */
+          margin-top: 8px; /* Further reduced margin */
+          margin-bottom: 4px; /* Further reduced margin */
+          color: #333;
+          padding: 0;
+        }
+
+    p {
+      font-size: 0.95rem; /* Adjusted for compactness */
+      color: #777;
+    }
   }
 }
 
@@ -42,15 +45,15 @@ h1 {
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 
-  h3 {
-    font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 15px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-  }
+      h3 {
+        font-size: 1.2rem; /* More compact for mobile */
+        color: #333;
+        margin-bottom: 10px; /* Further reduced margin */
+        border-bottom: 1px solid #eee;
+        padding-bottom: 6px;
+      }
 }
 
 .detail-item {
@@ -72,6 +75,7 @@ h1 {
   p {
     text-align: center;
     color: #777;
+    font-size: 0.95rem; /* Adjusted for compactness */
     margin-bottom: 15px;
   }
 
@@ -99,15 +103,15 @@ h1 {
   li {
     margin-bottom: 10px;
 
-    a {
-      text-decoration: none;
-      color: #ff6600; /* Coffee theme color */
-      font-size: 1rem;
+        a {
+          text-decoration: none;
+          color: #003366; /* German blue theme color */
+          font-size: 0.95rem; /* Adjusted for compactness */
 
-      &:hover {
-        text-decoration: underline;
-      }
-    }
+          &:hover {
+            text-decoration: underline;
+          }
+        }
   }
 }
 

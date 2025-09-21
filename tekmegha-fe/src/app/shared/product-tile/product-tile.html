@@ -1,29 +1,25 @@
 <div class="product-tile">
-  <div class="product-details-text">
-    <div class="veg-indicator"></div> <!-- Placeholder for veg/non-veg indicator -->
-    <h3 class="product-name">{{ product.name }}</h3>
-    <p class="product-price">₹{{ product.price | number:'1.2-2' }}</p>
-    <div class="product-rating">
-      <span class="material-icons star">star</span>
-      <span>{{ product.rating }} ({{ product.reviewCount }})</span>
-    </div>
-    <p class="product-serves">Serves {{ product.serves }} | {{ product.description }} <span class="more-link">more</span></p>
-  </div>
-  <div class="product-image-container">
-    <img [src]="product.imageUrl" [alt]="product.name" class="product-image" (error)="onImageError($event)">
-    <div class="quantity-selector">
-      @if (quantity === 0) {
-        <button class="add-button" (click)="onAdd()">ADD</button>
-      } @else {
-        <div class="quantity-controls">
-          <button (click)="onDecrement()">-</button>
-          <span>{{ quantity }}</span>
-          <button (click)="onIncrement()">+</button>
-        </div>
+  <div class="product-tile-card">
+    <div class="image-wrapper">
+      <img [src]="product.imageUrl" [alt]="product.name" class="product-image" (error)="onImageError($event)">
+      @if (product.discountPercentage) {
+        <div class="discount-badge">{{ product.discountPercentage }}% OFF</div>
       }
+      <div class="favorite-icon"><span class="material-icons">star</span></div>
     </div>
-    @if (product.customisable) {
-      <p class="customisable-text">Customisable</p>
-    }
+    <div class="product-info">
+      <h3 class="product-name">{{ product.name }}</h3>
+      <p class="product-description">{{ product.description }}</p>
+      <div class="price-and-add">
+        <div class="prices">
+          <span class="current-price">₹{{ product.price | number:'1.2-2' }}</span>
+          @if (product.oldPrice) {
+            <span class="old-price">₹{{ product.oldPrice | number:'1.2-2' }}</span>
+          }
+        </div>
+        <button class="add-to-cart-button" (click)="onAdd()">Add</button>
+        <!-- Quantity controls will be a separate component or integrated here if needed later -->
+      </div>
+    </div>
   </div>
 </div>

@@ -11,3 +11,276 @@ body {
   margin: 0 auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: add a subtle shadow to make the wrapper more visible */
 }
+
+/* Mobile Media Queries */
+@media (max-width: 768px) {
+  body {
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  .main-content-wrapper {
+    max-width: 100%;
+    box-shadow: none; /* Remove shadow on mobile for cleaner look */
+  }
+
+  /* Top Navbar Mobile Adjustments */
+  .top-navbar {
+    padding: 10px 12px !important;
+  }
+
+  .top-navbar .nav-item {
+    padding: 4px 6px !important;
+    font-size: 0.9rem !important;
+  }
+
+  .top-navbar .material-icons {
+    font-size: 1.3rem !important;
+  }
+
+  .top-navbar .center-item .title-link {
+    font-size: 1.1rem !important;
+  }
+
+  /* Bottom Navbar Mobile Adjustments */
+  .bottom-navbar {
+    padding: 8px 0 !important;
+  }
+
+  .bottom-navbar .nav-item {
+    padding: 4px 2px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .bottom-navbar .material-icons {
+    font-size: 1.3rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  /* Checkout Banner Mobile Adjustments */
+  .checkout-banner {
+    padding: 10px 12px !important;
+    bottom: 60px !important;
+  }
+
+  .checkout-banner .cart-info {
+    gap: 6px !important;
+  }
+
+  .checkout-banner .item-count,
+  .checkout-banner .total-price {
+    font-size: 1rem !important;
+  }
+
+  .checkout-banner .proceed-button {
+    padding: 6px 12px !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* Product Tiles Mobile Adjustments */
+  .product-tile-card {
+    margin: 8px !important;
+    max-width: 100% !important;
+  }
+
+  .product-tile-card .image-wrapper {
+    height: 130px !important;
+  }
+
+  .product-tile-card .product-info {
+    padding: 12px !important;
+  }
+
+  .product-tile-card .product-name {
+    font-size: 1.1rem !important;
+  }
+
+  .product-tile-card .product-description {
+    font-size: 0.9rem !important;
+    margin-bottom: 12px !important;
+  }
+
+  .product-tile-card .current-price {
+    font-size: 1.2rem !important;
+  }
+
+  .product-tile-card .add-to-cart-button {
+    padding: 6px 12px !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* Grid Layouts Mobile Adjustments */
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    padding: 0 8px !important;
+  }
+
+  /* Horizontal Scroller Mobile Adjustments */
+  .product-scroller {
+    padding: 0 8px !important;
+  }
+
+  .product-scroll-item {
+    width: 180px !important; /* Slightly smaller for mobile */
+  }
+
+  .categories-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  /* Hero Section Mobile Adjustments */
+  .hero-section {
+    margin-bottom: 30px !important;
+  }
+
+  .hero-section .hero-image {
+    height: 180px !important;
+  }
+
+  .hero-section .hero-content h1 {
+    font-size: 2rem !important;
+  }
+
+  .hero-section .hero-content p {
+    font-size: 0.9rem !important;
+  }
+
+  .hero-section .call-to-action {
+    padding: 10px 20px !important;
+    font-size: 0.95rem !important;
+  }
+
+  /* Coffee Categories Mobile Adjustments */
+  .coffee-categories {
+    margin-top: 20px !important;
+    padding: 15px !important;
+  }
+
+  .coffee-categories h3 {
+    font-size: 1.3rem !important;
+    margin-bottom: 15px !important;
+  }
+
+  .coffee-categories .category-item {
+    padding: 12px 8px !important;
+  }
+
+  .coffee-categories .material-icons {
+    font-size: 1.8rem !important;
+    margin-bottom: 6px !important;
+  }
+
+  .coffee-categories .category-name {
+    font-size: 0.85rem !important;
+  }
+
+  /* Section Titles Mobile Adjustments */
+  .section-title {
+    font-size: 1.3rem !important;
+    margin-bottom: 10px !important;
+    padding-bottom: 6px !important;
+  }
+
+  /* General Container Mobile Adjustments */
+  .home-container,
+  .menu-container,
+  .cart-container,
+  .stores-container,
+  .profile-container {
+    padding: 15px !important;
+  }
+
+  /* Headings Mobile Adjustments */
+  h1 {
+    font-size: 1.4rem !important;
+    margin-bottom: 10px !important;
+    padding: 0 !important;
+  }
+
+  h2 {
+    font-size: 1.3rem !important;
+    margin-bottom: 8px !important;
+    padding: 0 !important;
+  }
+
+  h3 {
+    font-size: 1.1rem !important;
+    margin-bottom: 6px !important;
+    padding: 0 !important;
+  }
+
+  /* Paragraphs Mobile Adjustments */
+  p {
+    font-size: 0.9rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Buttons Mobile Adjustments */
+  button {
+    padding: 8px 16px !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* Store Cards Mobile Adjustments */
+  .store-card .store-image {
+    height: 160px !important;
+  }
+
+  .store-card .store-details {
+    padding: 12px !important;
+  }
+
+  .store-card .store-details h3 {
+    font-size: 1.3rem !important;
+  }
+
+  .store-card .store-details p {
+    font-size: 0.9rem !important;
+  }
+
+  .store-card .store-details button {
+    padding: 8px 16px !important;
+    font-size: 0.85rem !important;
+  }
+}
+
+/* Extra Small Mobile Devices */
+@media (max-width: 375px) {
+  .product-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  .categories-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .coffee-categories .category-item {
+    padding: 10px 6px !important;
+  }
+
+  .coffee-categories .material-icons {
+    font-size: 1.6rem !important;
+  }
+
+  .coffee-categories .category-name {
+    font-size: 0.8rem !important;
+  }
+
+  .top-navbar {
+    padding: 8px 10px !important;
+  }
+
+  .bottom-navbar {
+    padding: 6px 0 !important;
+  }
+
+  .checkout-banner {
+    padding: 8px 10px !important;
+  }
+}

@@ -1,9 +1,11 @@
 <div class="main-content-wrapper">
-  <app-top-navbar
-    [navbarItems]="topNavbarConfig"
-    (menuToggle)="onMenuToggle()"
-    (searchOpen)="onSearchOpen()"
-  ></app-top-navbar>
+      <app-top-navbar
+        [navbarItems]="topNavbarConfig"
+        (menuToggle)="onMenuToggle()"
+        (searchOpen)="onSearchOpen()"
+        (loginOpen)="onLoginOpen()"
+        (cartOpen)="onCartOpen()"
+      ></app-top-navbar>
 
   <div class="main-content">
     <!-- Your main application content goes here, and will be scrollable -->
@@ -13,4 +15,5 @@
   <app-bottom-sticky-navbar
     [navbarItems]="bottomNavbarConfig"
   ></app-bottom-sticky-navbar>
+  <app-checkout-banner></app-checkout-banner>
 </div>

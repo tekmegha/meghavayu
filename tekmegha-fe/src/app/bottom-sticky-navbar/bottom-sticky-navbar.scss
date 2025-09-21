@@ -22,7 +22,7 @@
   align-items: center;
   text-decoration: none;
   color: #777;
-  font-size: 0.75rem;
+  font-size: 0.8rem; /* Slightly increased for readability */
   padding: 5px;
   transition: color 0.3s ease;
 
@@ -32,11 +32,11 @@
   }
 
   .label {
-    font-size: 0.8rem;
+    font-size: 0.9rem; /* Slightly increased for readability */
   }
 
-  &.active,
-  &:hover {
-    color: #ff6600; // Orange color from the image
-  }
+      &.active,
+      &:hover {
+        color: #003366; // German blue theme color
+      }
 }

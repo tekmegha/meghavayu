@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router } from '@angular/router';
 import { TopNavbar } from '../top-navbar/top-navbar';
 import { BottomStickyNavbar } from '../bottom-sticky-navbar/bottom-sticky-navbar';
+import { CheckoutBannerComponent } from '../shared/checkout-banner/checkout-banner';
 import { NavbarItem } from '../shared/interfaces/navbar-item.interface';
 
 interface LayoutConfig {
@@ -12,7 +13,7 @@ interface LayoutConfig {
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, TopNavbar, BottomStickyNavbar],
+  imports: [RouterOutlet, TopNavbar, BottomStickyNavbar, CheckoutBannerComponent],
   templateUrl: './layout.html',
   styleUrl: './layout.scss'
 })
@@ -20,7 +21,7 @@ export class Layout implements OnInit {
   topNavbarConfig: NavbarItem[] = [];
   bottomNavbarConfig: NavbarItem[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
     this.http.get<LayoutConfig>('assets/brew-buddy-content.json')
@@ -38,5 +39,17 @@ export class Layout implements OnInit {
   onSearchOpen() {
     console.log('Search Opened!');
     // Implement actual search opening logic here (e.g., open a search overlay)
+  }
+
+  onLoginOpen() {
+    console.log('Login Opened!');
+    // Navigate to login page
+    this.router.navigate(['/login']);
+  }
+
+  onCartOpen() {
+    console.log('Cart Opened!');
+    // Navigate to cart page
+    this.router.navigate(['/cart']);
   }
 }

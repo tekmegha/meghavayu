@@ -7,7 +7,7 @@
   width: 100%;
   background-color: #fff;
   border-bottom: 1px solid #eee;
-  padding: 10px 15px; /* Added horizontal padding */
+  padding: 12px 15px; /* Adjusted vertical padding */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 }
@@ -37,7 +37,7 @@
   align-items: center;
   text-decoration: none;
   color: #777;
-  font-size: 0.9rem; /* Adjusted font size */
+  font-size: 0.95rem; /* Adjusted for consistency with label */
   padding: 5px 8px; /* Adjusted padding */
   transition: color 0.3s ease;
 
@@ -47,10 +47,10 @@
   }
 
   .label {
-    font-size: 0.9rem;
+    font-size: 0.95rem; /* Slightly increased for readability */
   }
 
-  &:hover {
-    color: #ff6600; /* Coffee theme highlight color */
-  }
+      &:hover {
+        color: #003366; /* German blue theme highlight color */
+      }
 }

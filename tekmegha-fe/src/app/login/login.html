@@ -1,0 +1,60 @@
+<div class="login-container">
+  <!-- Top Navigation -->
+  <div class="login-header">
+    <button class="back-button" (click)="onBack()">
+      <span class="material-icons">arrow_back</span>
+    </button>
+  </div>
+
+  <!-- Main Login Content -->
+  <div class="login-content">
+    <div class="login-form">
+      <h1 class="login-title">LOGIN</h1>
+      <p class="login-subtitle">Enter your phone number to continue</p>
+      
+      <div class="phone-input-container">
+        <label class="phone-label">PHONE NUMBER</label>
+        <div class="phone-input-wrapper">
+          <span class="country-code">IN +91 -</span>
+          <input 
+            type="tel" 
+            class="phone-input" 
+            [(ngModel)]="phoneNumber"
+            placeholder="Enter your phone number"
+            maxlength="10"
+          >
+        </div>
+      </div>
+
+      <button 
+        class="continue-button" 
+        (click)="onLogin()"
+        [disabled]="!phoneNumber.trim() || isLoading"
+        [class.loading]="isLoading"
+      >
+        @if (isLoading) {
+          <span class="loading-spinner"></span>
+          LOGGING IN...
+        } @else {
+          CONTINUE
+        }
+      </button>
+
+      <p class="terms-text">
+        By clicking, I accept the <strong>Terms & Conditions</strong> & <strong>Privacy Policy</strong>
+      </p>
+    </div>
+  </div>
+
+  <!-- Decorative Element -->
+  <div class="decorative-element">
+    <div class="drink-illustration">
+      <div class="glass">
+        <div class="liquid"></div>
+        <div class="straw"></div>
+        <div class="lemon-slice"></div>
+        <div class="logo-inside"></div>
+      </div>
+    </div>
+  </div>
+</div>

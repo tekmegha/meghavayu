@@ -1,0 +1,65 @@
+.checkout-banner {
+  position: fixed;
+  bottom: 70px; /* Adjusted to be above the bottom-sticky-navbar */
+  left: 0;
+  right: 0;
+  margin: auto;
+  max-width: 768px; /* Match app's max-width */
+  width: 100%;
+  background-color: #008000; /* Green background */
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 999; /* Below bottom-sticky-navbar but above content */
+  border-radius: 8px 8px 0 0; /* Rounded top corners */
+  transform: translateY(100%); /* Start hidden */
+  animation: slideIn 0.3s forwards ease-out;
+
+  @keyframes slideIn {
+    to { transform: translateY(0); }
+  }
+
+  .cart-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .item-count {
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .dot {
+      font-size: 1.1rem;
+    }
+
+    .total-price {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  }
+
+  .proceed-button {
+    background-color: #fff; /* White button */
+    color: #008000; /* Green text */
+    padding: 7px 14px; /* Slightly adjusted padding */
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #f0f0f0;
+    }
+
+    .material-icons {
+      font-size: 1.2rem;
+    }
+  }
+}

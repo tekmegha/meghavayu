@@ -2,35 +2,33 @@
   <app-skeleton-loader></app-skeleton-loader>
 } @else {
   <div class="home-container">
-    <section class="hero-section">
-      <img src="assets/images/brew-buddy/hero-brewbuddy.jpg" alt="BrewBuddy Coffee" class="hero-image" (error)="onImageError($event)">
-      <div class="hero-content">
-        <h1>Welcome to BrewBuddy</h1>
-        <p>Your daily dose of happiness, delivered to your door.</p>
-        <button class="call-to-action">Order Now</button>
-      </div>
-    </section>
+        <section class="hero-section">
+           
+          
+          <div class="coffee-categories">
+            <h3>Browse Categories</h3>
+            <div class="categories-grid">
+              @for (category of coffeeCategories; track category.name) {
+                <a [routerLink]="category.route" class="category-item">
+                  <span class="material-icons">{{ category.icon }}</span>
+                  <span class="category-name">{{ category.name }}</span>
+                </a>
+              }
+            </div>
+          </div>
+        </section>
 
     <section class="featured-products">
-      <h2>Our Featured Brews</h2>
-      <div class="product-grid">
-        <div class="product-card">
-          <img src="assets/images/brew-buddy/espresso.jpg" alt="Espresso" class="product-image" (error)="onImageError($event)">
-          <h3>Classic Espresso</h3>
-          <p>$3.50</p>
-          <button>Add to Cart</button>
-        </div>
-        <div class="product-card">
-          <img src="assets/images/brew-buddy/latte.jpg" alt="Latte" class="product-image" (error)="onImageError($event)">
-          <h3>Creamy Latte</h3>
-          <p>$4.50</p>
-          <button>Add to Cart</button>
-        </div>
-        <div class="product-card">
-          <img src="assets/images/brew-buddy/cappuccino.jpg" alt="Cappuccino" class="product-image" (error)="onImageError($event)">
-          <h3>Rich Cappuccino</h3>
-          <p>$4.00</p>
-          <button>Add to Cart</button>
+      <div class="section-title">Coffee Time</div>
+      <div class="product-scroller">
+        <div class="product-scroll-container">
+          @for (product of products; track product.id) {
+            <div class="product-scroll-item">
+              <app-product-tile
+                [product]="product"
+              ></app-product-tile>
+            </div>
+          }
         </div>
       </div>
     </section>
@@ -38,7 +36,7 @@
     <section class="about-us">
       <h2>Our Story</h2>
       <p>BrewBuddy started with a simple idea: to bring exceptional coffee experiences to everyone. We source the finest beans and craft them into your favorite beverages, all with a touch of warmth and passion.</p>
-      <img src="assets/images/brew-buddy/about-us.jpg" alt="About Us" class="about-image" (error)="onImageError($event)">
+      <img src="assets/images/brew-buddy/our-story.jpeg" alt="About Us" class="about-image" (error)="onImageError($event)">
     </section>
   </div>
 }

@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product } from '../interfaces/product.interface';
+import { CartService } from '../services/cart-service'; // Import CartService
 
 @Component({
   selector: 'app-product-tile',
@@ -11,31 +12,34 @@ import { Product } from '../interfaces/product.interface';
 })
 export class ProductTileComponent implements OnInit {
   @Input() product!: Product;
-  @Output() addProduct = new EventEmitter<Product>();
-  @Output() updateQuantity = new EventEmitter<{ product: Product; quantity: number }>();
-
+  // Removed @Output() addProduct and @Output() updateQuantity as CartService will handle this
   quantity: number = 0;
 
+  constructor(private cartService: CartService) { } // Inject CartService
+
   ngOnInit() {
-    if (this.product && this.product.initialQuantity) {
-      this.quantity = this.product.initialQuantity;
+    if (this.product) {
+      const cartItem = this.cartService.getCartState().items.find(item => item.id === this.product.id);
+      if (cartItem) {
+        this.quantity = cartItem.quantity;
+      }
     }
   }
 
   onAdd() {
-    this.quantity = 1;
-    this.addProduct.emit(this.product);
+    this.cartService.addToCart(this.product);
+    this.quantity = 1; // Update local quantity display immediately
   }
 
   onIncrement() {
     this.quantity++;
-    this.updateQuantity.emit({ product: this.product, quantity: this.quantity });
+    this.cartService.updateCartItemQuantity(this.product, this.quantity);
   }
 
   onDecrement() {
     if (this.quantity > 0) {
       this.quantity--;
-      this.updateQuantity.emit({ product: this.product, quantity: this.quantity });
+      this.cartService.updateCartItemQuantity(this.product, this.quantity);
     }
   }
 

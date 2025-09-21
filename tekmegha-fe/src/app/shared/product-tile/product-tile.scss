@@ -1,158 +1,140 @@
 .product-tile {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 16px;
-  border-bottom: 1px solid #f0f0f0;
-  background-color: #fff;
+  /* Removed flex display from here as the card itself will manage its layout */
+  padding: 0;
+  border-bottom: none;
+  background-color: transparent;
 
-  .product-details-text {
-    flex-grow: 1;
-    padding-right: 16px;
-
-    .veg-indicator {
-      width: 12px;
-      height: 12px;
-      border: 1px solid #008000;
-      display: inline-block;
-      margin-right: 8px;
-      position: relative;
-      top: 2px;
-
-      &::after {
-        content: '';
-        width: 6px;
-        height: 6px;
-        background-color: #008000;
-        border-radius: 50%;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-    }
-
-    .product-name {
-      font-size: 1.1em;
-      font-weight: 600;
-      margin: 8px 0 4px 0;
-      color: #333;
-    }
-
-    .product-price {
-      font-size: 1em;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #1a1a1a;
-    }
-
-    .product-rating {
-      display: flex;
-      align-items: center;
-      font-size: 0.9em;
-      color: #666;
-      margin-bottom: 8px;
-
-      .star {
-        font-size: 1em;
-        color: #fbc02d; /* A yellow color for stars */
-        margin-right: 4px;
-      }
-    }
-
-    .product-serves {
-      font-size: 0.85em;
-      color: #777;
-      line-height: 1.4;
-
-      .more-link {
-        color: #f44336; /* A reddish color for 'more' */
-        font-weight: 500;
-        cursor: pointer;
-      }
-    }
-  }
-
-  .product-image-container {
-    position: relative;
-    width: 120px;
-    height: 120px;
-    flex-shrink: 0;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-    .product-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .quantity-selector {
-      position: absolute;
-      bottom: 0; /* Align with the bottom of the image */
-      left: 50%;
-      transform: translateX(-50%);
-      width: 90px;
-      height: 35px;
-      background-color: #fff; /* White background for the selector */
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-
-      button {
-        background: none; /* No background for +/- buttons */
-        border: none;
-        color: #666; /* Darker color for +/- */
-        font-size: 1.2em;
-        font-weight: bold;
-        cursor: pointer;
-        padding: 0 8px;
-        height: 100%;
+      .product-tile-card {
+        background-color: #fff;
+        border-radius: 12px; /* More rounded corners for the card */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for card lift */
+        overflow: hidden;
         display: flex;
-        align-items: center;
+        flex-direction: column;
+        width: 100%;
+        max-width: 250px; /* Max width for a single card as in the image */
+        margin: 10px; /* Spacing between cards in a grid */
+        height: 320px; /* Fixed height for all product tiles */
+        min-height: 320px; /* Ensure minimum height */
 
-        &:active {
-          background-color: #f0f0f0;
-        }
-      }
+        .image-wrapper {
+          position: relative;
+          width: 100%;
+          height: 150px; /* Fixed height for the image */
+          overflow: hidden;
 
-      span {
-        font-size: 1em;
-        font-weight: 600;
-        color: #333;
-      }
-
-      .add-button {
+      .product-image {
         width: 100%;
         height: 100%;
-        background-color: #fff; /* White background for ADD button */
-        color: #008000; /* Green color for ADD text */
-        border: 1px solid #008000; /* Green border for ADD button */
-        border-radius: 4px;
-        font-size: 1em;
-        font-weight: bold;
-        text-transform: uppercase;
-        cursor: pointer;
-        transition: background-color 0.2s ease-in-out;
+        object-fit: cover;
+      }
 
-        &:hover {
-          background-color: #e6ffe6; /* Lighter green on hover */
+      .discount-badge {
+        position: absolute;
+        top: 10px;
+        left: -8px; /* Slightly off-center to the left */
+        background-color: #f44336; /* Red color for discount */
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 0 5px 5px 0; /* Rounded on the right side */
+        font-size: 0.8em;
+        font-weight: bold;
+        z-index: 5; /* Above the image */
+        transform: rotate(-5deg); /* Slight tilt */
+      }
+
+      .favorite-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+        border-radius: 50%;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 5;
+
+        .material-icons {
+          font-size: 1.2rem;
+          color: #ff9800; /* Orange star */
         }
       }
     }
 
-    .customisable-text {
-      position: absolute;
-      bottom: -25px; /* Position below the quantity selector, adjust as needed */
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.75em;
-      color: #888;
-      white-space: nowrap;
+        .product-info {
+          padding: 15px;
+          display: flex;
+          flex-direction: column;
+          flex-grow: 1;
+          height: 170px; /* Fixed height for product info section */
+          justify-content: space-between; /* Distribute content evenly */
+
+          .product-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            line-height: 1.3;
+            height: 30px; /* Fixed height for product name */
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+          }
+
+          .product-description {
+            font-size: 0.95rem; /* Adjusted for improved readability */
+            color: #777;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            flex-grow: 1; /* Allows description to take available space */
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+          }
+
+      .price-and-add {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto; /* Push to the bottom */
+
+        .prices {
+          display: flex;
+          align-items: baseline;
+          gap: 8px;
+
+              .current-price {
+                font-size: 1.3rem;
+                font-weight: bold;
+                color: #003366; /* German blue theme color */
+              }
+
+          .old-price {
+            font-size: 0.9rem;
+            color: #aaa;
+            text-decoration: line-through;
+          }
+        }
+
+            .add-to-cart-button {
+              background-color: #003366; /* German blue Add button */
+              color: #fff;
+              border: none;
+              padding: 8px 15px;
+              border-radius: 6px; /* Rounded button */
+              font-size: 0.95rem;
+              font-weight: bold;
+              cursor: pointer;
+              transition: background-color 0.2s ease;
+
+              &:hover {
+                background-color: #002244;
+              }
+            }
+      }
     }
   }
 }
