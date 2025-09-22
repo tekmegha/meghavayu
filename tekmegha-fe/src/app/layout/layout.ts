@@ -4,6 +4,7 @@ import { RouterOutlet, Router } from '@angular/router';
 import { TopNavbar } from '../top-navbar/top-navbar';
 import { BottomStickyNavbar } from '../bottom-sticky-navbar/bottom-sticky-navbar';
 import { CheckoutBannerComponent } from '../shared/checkout-banner/checkout-banner';
+import { NetworkStatusComponent } from '../shared/network-status/network-status';
 import { NavbarItem } from '../shared/interfaces/navbar-item.interface';
 
 interface LayoutConfig {
@@ -13,7 +14,7 @@ interface LayoutConfig {
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, TopNavbar, BottomStickyNavbar, CheckoutBannerComponent],
+  imports: [RouterOutlet, TopNavbar, BottomStickyNavbar, CheckoutBannerComponent, NetworkStatusComponent],
   templateUrl: './layout.html',
   styleUrl: './layout.scss'
 })

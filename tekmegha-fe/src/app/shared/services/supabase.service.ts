@@ -155,20 +155,50 @@ export class SupabaseService {
 
   // Product Methods
   async getProducts(): Promise<{ data: Product[] | null; error: any }> {
-    const { data, error } = await this.supabase
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false });
-    return { data, error };
+    try {
+      if (!this.supabase) {
+        throw new Error('Supabase client not initialized');
+      }
+      
+      const { data, error } = await this.supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false });
+      return { data, error };
+    } catch (error) {
+      console.error('Network error fetching products:', error);
+      return { 
+        data: null, 
+        error: { 
+          message: 'Network error: Unable to connect to server. Please check your internet connection.',
+          code: 'NETWORK_ERROR'
+        } 
+      };
+    }
   }
 
   async getProductsByCategory(category: string): Promise<{ data: Product[] | null; error: any }> {
-    const { data, error } = await this.supabase
-      .from('products')
-      .select('*')
-      .eq('category', category)
-      .order('created_at', { ascending: false });
-    return { data, error };
+    try {
+      if (!this.supabase) {
+        throw new Error('Supabase client not initialized');
+      }
+      
+      const { data, error } = await this.supabase
+        .from('products')
+        .select('*')
+        .eq('category', category)
+        .order('created_at', { ascending: false });
+      return { data, error };
+    } catch (error) {
+      console.error('Network error fetching products by category:', error);
+      return { 
+        data: null, 
+        error: { 
+          message: 'Network error: Unable to connect to server.',
+          code: 'NETWORK_ERROR'
+        } 
+      };
+    }
   }
 
   async getProduct(id: string): Promise<{ data: Product | null; error: any }> {

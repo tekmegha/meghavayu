@@ -4,6 +4,7 @@ import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-load
 import { HttpClient } from '@angular/common/http';
 import { Store } from '../shared/interfaces/store.interface';
 import { SupabaseService, Store as SupabaseStore } from '../shared/services/supabase.service';
+import { FallbackDataService } from '../shared/services/fallback-data.service';
 
 interface BrewBuddyContent {
   topNavbar: any[];
@@ -23,7 +24,8 @@ export class Stores implements OnInit {
 
   constructor(
     private http: HttpClient,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private fallbackDataService: FallbackDataService
   ) {}
 
   async ngOnInit() {
@@ -34,9 +36,10 @@ export class Stores implements OnInit {
     try {
       const { data, error } = await this.supabaseService.getStores();
       if (error) {
-        console.error('Error loading stores:', error);
-        // Fallback to JSON file
-        this.loadStoresFromJson();
+        console.warn('Supabase error, using fallback data:', error.message);
+        // Use fallback data when Supabase fails
+        this.stores = this.fallbackDataService.getFallbackStores();
+        this.isLoading = false;
         return;
       }
       
@@ -44,9 +47,10 @@ export class Stores implements OnInit {
       this.stores = (data || []).map(this.transformSupabaseStore);
       this.isLoading = false;
     } catch (error) {
-      console.error('Error loading stores:', error);
-      // Fallback to JSON file
-      this.loadStoresFromJson();
+      console.warn('Network error, using fallback data:', error);
+      // Use fallback data when network fails
+      this.stores = this.fallbackDataService.getFallbackStores();
+      this.isLoading = false;
     }
   }
 

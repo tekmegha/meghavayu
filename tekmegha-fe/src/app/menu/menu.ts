@@ -4,6 +4,7 @@ import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-load
 import { ProductTileComponent } from '../shared/product-tile/product-tile';
 import { Product } from '../shared/interfaces/product.interface';
 import { SupabaseService, Product as SupabaseProduct } from '../shared/services/supabase.service';
+import { FallbackDataService } from '../shared/services/fallback-data.service';
 
 @Component({
   selector: 'app-menu',
@@ -24,7 +25,10 @@ export class Menu implements OnInit {
     { id: 'Pastries & Snacks', name: 'Pastries & Snacks' }
   ];
 
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(
+    private supabaseService: SupabaseService,
+    private fallbackDataService: FallbackDataService
+  ) {}
 
   async ngOnInit() {
     await this.loadProducts();
@@ -34,9 +38,9 @@ export class Menu implements OnInit {
     try {
       const { data, error } = await this.supabaseService.getProducts();
       if (error) {
-        console.error('Error loading products:', error);
-        // Fallback to dummy data
-        this.products = this.getDummyProducts();
+        console.warn('Supabase error, using fallback data:', error.message);
+        // Use fallback data when Supabase fails
+        this.products = this.fallbackDataService.getFallbackProducts();
         this.filteredProducts = this.products;
         this.isLoading = false;
         return;
@@ -47,9 +51,9 @@ export class Menu implements OnInit {
       this.filteredProducts = this.products;
       this.isLoading = false;
     } catch (error) {
-      console.error('Error loading products:', error);
-      // Fallback to dummy data
-      this.products = this.getDummyProducts();
+      console.warn('Network error, using fallback data:', error);
+      // Use fallback data when network fails
+      this.products = this.fallbackDataService.getFallbackProducts();
       this.filteredProducts = this.products;
       this.isLoading = false;
     }
