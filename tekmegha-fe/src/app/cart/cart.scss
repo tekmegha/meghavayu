@@ -12,6 +12,23 @@
   .cart-items {
     margin-bottom: 30px;
 
+    .empty-cart {
+      text-align: center;
+      padding: 40px 20px;
+      color: #666;
+
+      h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      p {
+        font-size: 1rem;
+        color: #777;
+      }
+    }
+
     .cart-item {
       display: flex;
       align-items: center;

@@ -5,32 +5,34 @@
     <h1>Your Cart</h1>
 
     <div class="cart-items">
-      <div class="cart-item">
-        <img src="assets/images/brew-buddy/espresso.jpg" alt="Espresso" class="item-image" (error)="onImageError($event)">
-        <div class="item-details">
-          <h3>Classic Espresso</h3>
-          <p>Quantity: 1</p>
-          <span class="price">$3.50</span>
+      @if ((cartState$ | async)?.items.length === 0) {
+        <div class="empty-cart">
+          <h3>Your cart is empty</h3>
+          <p>Add some delicious coffee items to get started!</p>
         </div>
-        <button class="remove-item">Remove</button>
-      </div>
-      <div class="cart-item">
-        <img src="assets/images/brew-buddy/latte.jpg" alt="Latte" class="item-image" (error)="onImageError($event)">
-        <div class="item-details">
-          <h3>Creamy Latte</h3>
-          <p>Quantity: 2</p>
-          <span class="price">$9.00</span>
-        </div>
-        <button class="remove-item">Remove</button>
-      </div>
+      } @else {
+        @for (item of (cartState$ | async)?.items; track item.id) {
+          <div class="cart-item">
+            <img [src]="item.imageUrl" [alt]="item.name" class="item-image" (error)="onImageError($event)">
+            <div class="item-details">
+              <h3>{{ item.name }}</h3>
+              <p>Quantity: {{ item.quantity }}</p>
+              <span class="price">₹{{ (item.price * item.quantity) | number:'1.2-2' }}</span>
+            </div>
+            <button class="remove-item">Remove</button>
+          </div>
+        }
+      }
     </div>
 
-    <div class="cart-summary">
-      <h3>Order Summary</h3>
-      <p>Subtotal: ₹700.00</p>
-      <p>Delivery Fee: ₹50.00</p>
-      <h4>Total: ₹750.00</h4>
-      <button class="pay-button" (click)="payWithRazorpay()">Pay Now</button>
-    </div>
+    @if ((cartState$ | async)?.items.length > 0) {
+      <div class="cart-summary">
+        <h3>Order Summary</h3>
+        <p>Subtotal: ₹{{ (cartState$ | async)?.totalAmount | number:'1.2-2' }}</p>
+        <p>Delivery Fee: ₹{{ deliveryFee | number:'1.2-2' }}</p>
+        <h4>Total: ₹{{ getTotalWithDelivery((cartState$ | async)!) | number:'1.2-2' }}</h4>
+        <button class="pay-button" (click)="payWithRazorpay()">Pay Now</button>
+      </div>
+    }
   </div>
 }

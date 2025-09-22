@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader';
+import { CartService, CartState } from '../shared/services/cart-service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-cart',
@@ -10,6 +12,12 @@ import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-load
 })
 export class Cart implements OnInit {
   isLoading = true;
+  cartState$: Observable<CartState>;
+  deliveryFee = 50; // Fixed delivery fee
+
+  constructor(private cartService: CartService) {
+    this.cartState$ = this.cartService.cartState$;
+  }
 
   ngOnInit() {
     // Simulate data loading
@@ -18,38 +26,77 @@ export class Cart implements OnInit {
     }, 2000); // Show skeleton for 2 seconds
   }
 
+  getTotalWithDelivery(cartState: CartState): number {
+    return cartState.totalAmount + this.deliveryFee;
+  }
+
   onImageError(event: Event) {
     (event.target as HTMLImageElement).src = 'assets/images/brew-buddy/default.png';
   }
 
   payWithRazorpay() {
+    // Check if Razorpay is loaded
+    if (typeof (window as any).Razorpay === 'undefined') {
+      alert('Razorpay SDK not loaded. Please refresh the page and try again.');
+      return;
+    }
+
+    // Get current cart state
+    const cartState = this.cartService.getCartState();
+    const totalAmount = this.getTotalWithDelivery(cartState);
+    
+    // Check if cart is empty
+    if (cartState.items.length === 0) {
+      alert('Your cart is empty. Please add some items before proceeding to payment.');
+      return;
+    }
+
     const options = {
-      "key": "rzp_test_RKMGS8fK1yROHg", // Replace with your actual Key ID
-      "amount": "75000", // Amount in currency subunits (e.g., 75000 for ₹750)
+      "key": "rzp_test_1DP5mmOlF5G5ag", // Updated test key
+      "amount": (totalAmount * 100).toString(), // Convert to paise (₹1 = 100 paise)
       "currency": "INR",
       "name": "BrewBuddy",
-      "description": "Order Payment",
-      "image": "assets/images/brew-buddy/hero-brewbuddy.jpg", // Your app logo
-      "order_id": "order_test_12345", // Replace with a dynamically generated order ID
-      "handler": function (response: any) {
+      "description": "Coffee Order Payment",
+      "image": "assets/images/brew-buddy/hero-brewbuddy.jpg",
+      "order_id": "", // Remove order_id for direct payment
+      "handler": (response: any) => {
+        console.log('Payment successful:', response);
         alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
-        // You would typically send this response to your backend for verification
+        // Clear cart after successful payment
+        this.cartService.clearCart();
+        // Here you would typically send this response to your backend for verification
+        // and then redirect to success page or update order status
       },
       "prefill": {
-        "name": "tekmegha", // Replace with customer's name
-        "email": "info@tekmegha.com", // Replace with customer's email
-        "contact": "+919876543210" // Replace with customer's phone number
+        "name": "BrewBuddy Customer",
+        "email": "customer@brewbuddy.com",
+        "contact": "+919876543210"
       },
       "notes": {
-        "address": "BrewBuddy Office"
+        "address": "BrewBuddy Coffee Shop",
+        "order_type": "Coffee Delivery",
+        "items_count": cartState.items.length.toString()
       },
       "theme": {
-        "color": "#ff6600" // Your brand color
+        "color": "#003366" // Updated to German blue theme
+      },
+      "modal": {
+        "ondismiss": () => {
+          console.log('Payment modal dismissed');
+        }
       }
     };
 
-    // Ensure Razorpay object is available globally (from script in index.html)
-    const rzp1 = new (window as any).Razorpay(options);
-    rzp1.open();
+    try {
+      const rzp1 = new (window as any).Razorpay(options);
+      rzp1.on('payment.failed', (response: any) => {
+        console.error('Payment failed:', response.error);
+        alert('Payment failed: ' + response.error.description);
+      });
+      rzp1.open();
+    } catch (error) {
+      console.error('Error initializing Razorpay:', error);
+      alert('Error initializing payment. Please try again.');
+    }
   }
 }
