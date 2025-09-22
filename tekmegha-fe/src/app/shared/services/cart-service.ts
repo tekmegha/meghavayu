@@ -50,8 +50,8 @@ export class CartService {
 
   async addToCart(product: Product) {
     const user = this.supabaseService.getCurrentUser();
-    if (!user) {
-      // Fallback to local storage for non-authenticated users
+    if (!user || !this.supabaseService.isSupabaseReady()) {
+      // Fallback to local storage for non-authenticated users or if Supabase isn't ready
       this.addToLocalCart(product);
       return;
     }
@@ -60,18 +60,22 @@ export class CartService {
       const { error } = await this.supabaseService.addToCart(product.id, 1);
       if (error) {
         console.error('Error adding to cart:', error);
+        // Fallback to local storage on error
+        this.addToLocalCart(product);
         return;
       }
       await this.loadCartFromSupabase();
     } catch (error) {
       console.error('Error adding to cart:', error);
+      // Fallback to local storage on error
+      this.addToLocalCart(product);
     }
   }
 
   async updateCartItemQuantity(product: Product, quantity: number) {
     const user = this.supabaseService.getCurrentUser();
-    if (!user) {
-      // Fallback to local storage for non-authenticated users
+    if (!user || !this.supabaseService.isSupabaseReady()) {
+      // Fallback to local storage for non-authenticated users or if Supabase isn't ready
       this.updateLocalCartQuantity(product, quantity);
       return;
     }
@@ -91,11 +95,15 @@ export class CartService {
       const { error } = await this.supabaseService.updateCartItemQuantity(supabaseItem.id, quantity);
       if (error) {
         console.error('Error updating cart item:', error);
+        // Fallback to local storage on error
+        this.updateLocalCartQuantity(product, quantity);
         return;
       }
       await this.loadCartFromSupabase();
     } catch (error) {
       console.error('Error updating cart item:', error);
+      // Fallback to local storage on error
+      this.updateLocalCartQuantity(product, quantity);
     }
   }
 

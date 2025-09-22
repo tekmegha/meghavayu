@@ -69,44 +69,75 @@ export interface Store {
   providedIn: 'root'
 })
 export class SupabaseService {
-  private supabase: SupabaseClient;
+  private supabase!: SupabaseClient;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor() {
-    this.supabase = createClient(environment.supabase.url, environment.supabase.anonKey);
-    this.initializeAuth();
+    // Add a small delay to prevent lock conflicts
+    setTimeout(() => {
+      this.supabase = createClient(environment.supabase.url, environment.supabase.anonKey, {
+        auth: {
+          autoRefreshToken: true,
+          persistSession: true,
+          detectSessionInUrl: false,
+          flowType: 'pkce'
+        },
+        global: {
+          headers: {
+            'X-Client-Info': 'brewbuddy-app'
+          }
+        }
+      });
+      this.initializeAuth();
+    }, 100);
   }
 
   private async initializeAuth() {
-    // Get initial session
-    const { data: { session } } = await this.supabase.auth.getSession();
-    this.currentUserSubject.next(session?.user ?? null);
-
-    // Listen for auth changes
-    this.supabase.auth.onAuthStateChange((event, session) => {
+    try {
+      // Get initial session
+      const { data: { session } } = await this.supabase.auth.getSession();
       this.currentUserSubject.next(session?.user ?? null);
-    });
+
+      // Listen for auth changes
+      this.supabase.auth.onAuthStateChange((event, session) => {
+        this.currentUserSubject.next(session?.user ?? null);
+      });
+    } catch (error) {
+      console.warn('Auth initialization error (non-critical):', error);
+      // Set user as null if auth fails to initialize
+      this.currentUserSubject.next(null);
+    }
   }
 
   // Authentication Methods
   async signInWithPhone(phone: string) {
-    const { data, error } = await this.supabase.auth.signInWithOtp({
-      phone: `+91${phone}`,
-      options: {
-        channel: 'sms'
-      }
-    });
-    return { data, error };
+    try {
+      const { data, error } = await this.supabase.auth.signInWithOtp({
+        phone: `+91${phone}`,
+        options: {
+          channel: 'sms'
+        }
+      });
+      return { data, error };
+    } catch (error) {
+      console.error('Phone sign-in error:', error);
+      return { data: null, error: { message: 'Failed to send OTP. Please try again.' } };
+    }
   }
 
   async verifyOtp(phone: string, token: string) {
-    const { data, error } = await this.supabase.auth.verifyOtp({
-      phone: `+91${phone}`,
-      token,
-      type: 'sms'
-    });
-    return { data, error };
+    try {
+      const { data, error } = await this.supabase.auth.verifyOtp({
+        phone: `+91${phone}`,
+        token,
+        type: 'sms'
+      });
+      return { data, error };
+    } catch (error) {
+      console.error('OTP verification error:', error);
+      return { data: null, error: { message: 'Failed to verify OTP. Please try again.' } };
+    }
   }
 
   async signOut() {
@@ -116,6 +147,10 @@ export class SupabaseService {
 
   getCurrentUser(): User | null {
     return this.currentUserSubject.value;
+  }
+
+  isSupabaseReady(): boolean {
+    return !!this.supabase;
   }
 
   // Product Methods
