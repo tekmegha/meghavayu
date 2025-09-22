@@ -10,35 +10,78 @@
   <div class="login-content">
     <div class="login-form">
       <h1 class="login-title">LOGIN</h1>
-      <p class="login-subtitle">Enter your phone number to continue</p>
+      <p class="login-subtitle">
+        @if (!showOtpInput) {
+          Enter your phone number to continue
+        } @else {
+          Enter the OTP sent to +91{{ phoneNumber }}
+        }
+      </p>
       
-      <div class="phone-input-container">
-        <label class="phone-label">PHONE NUMBER</label>
-        <div class="phone-input-wrapper">
-          <span class="country-code">IN +91 -</span>
-          <input 
-            type="tel" 
-            class="phone-input" 
-            [(ngModel)]="phoneNumber"
-            placeholder="Enter your phone number"
-            maxlength="10"
-          >
+      @if (!showOtpInput) {
+        <div class="phone-input-container">
+          <label class="phone-label">PHONE NUMBER</label>
+          <div class="phone-input-wrapper">
+            <span class="country-code">IN +91 -</span>
+            <input 
+              type="tel" 
+              class="phone-input" 
+              [(ngModel)]="phoneNumber"
+              placeholder="Enter your phone number"
+              maxlength="10"
+            >
+          </div>
         </div>
-      </div>
+      } @else {
+        <div class="otp-input-container">
+          <label class="phone-label">OTP CODE</label>
+          <div class="otp-input-wrapper">
+            <input 
+              type="tel" 
+              class="otp-input" 
+              [(ngModel)]="otpCode"
+              placeholder="Enter 6-digit OTP"
+              maxlength="6"
+            >
+          </div>
+        </div>
+      }
+
+      @if (errorMessage) {
+        <div class="error-message">{{ errorMessage }}</div>
+      }
 
       <button 
         class="continue-button" 
-        (click)="onLogin()"
-        [disabled]="!phoneNumber.trim() || isLoading"
+        (click)="showOtpInput ? onVerifyOtp() : onLogin()"
+        [disabled]="(!phoneNumber.trim() && !showOtpInput) || (!otpCode.trim() && showOtpInput) || isLoading"
         [class.loading]="isLoading"
       >
         @if (isLoading) {
           <span class="loading-spinner"></span>
-          LOGGING IN...
+          @if (showOtpInput) {
+            VERIFYING...
+          } @else {
+            SENDING OTP...
+          }
         } @else {
-          CONTINUE
+          @if (showOtpInput) {
+            VERIFY OTP
+          } @else {
+            CONTINUE
+          }
         }
       </button>
+
+      @if (showOtpInput) {
+        <button 
+          class="resend-button" 
+          (click)="onResendOtp()"
+          [disabled]="isLoading"
+        >
+          Resend OTP
+        </button>
+      }
 
       <p class="terms-text">
         By clicking, I accept the <strong>Terms & Conditions</strong> & <strong>Privacy Policy</strong>

@@ -4,42 +4,33 @@
   <div class="menu-container">
     <h1>Our Coffee Menu</h1>
 
-    <section class="coffee-categories">
-      <!-- Espresso Drinks Category -->
-      <div class="category">
-        <h2>Espresso Drinks</h2>
-        <div class="menu-items-grid">
-          @for (product of products | filterByCategory:'Espresso Drinks'; track product.id) {
-            <app-product-tile
-              [product]="product"
-            ></app-product-tile>
-          }
-        </div>
-      </div>
+    <!-- Category Filter -->
+    <div class="category-filter">
+      @for (category of categories; track category.id) {
+        <button 
+          class="category-button"
+          [class.active]="selectedCategory === category.id"
+          (click)="onCategoryChange(category.id)"
+        >
+          {{ category.name }}
+        </button>
+      }
+    </div>
 
-      <!-- Brewed Coffee Category -->
-      <div class="category">
-        <h2>Brewed Coffee</h2>
-        <div class="menu-items-grid">
-          @for (product of products | filterByCategory:'Brewed Coffee'; track product.id) {
-            <app-product-tile
-              [product]="product"
-            ></app-product-tile>
-          }
-        </div>
-      </div>
+    <!-- Products Grid -->
+    <div class="menu-items-grid">
+      @for (product of filteredProducts; track product.id) {
+        <app-product-tile
+          [product]="product"
+        ></app-product-tile>
+      }
+    </div>
 
-      <!-- Pastries & Snacks Category -->
-      <div class="category">
-        <h2>Pastries & Snacks</h2>
-        <div class="menu-items-grid">
-          @for (product of products | filterByCategory:'Pastries & Snacks'; track product.id) {
-            <app-product-tile
-              [product]="product"
-            ></app-product-tile>
-          }
-        </div>
+    @if (filteredProducts.length === 0) {
+      <div class="no-products">
+        <h3>No products found</h3>
+        <p>Try selecting a different category or check back later.</p>
       </div>
-    </section>
+    }
   </div>
 }

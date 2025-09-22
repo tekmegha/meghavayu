@@ -3,24 +3,82 @@ import { CommonModule } from '@angular/common';
 import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader';
 import { ProductTileComponent } from '../shared/product-tile/product-tile';
 import { Product } from '../shared/interfaces/product.interface';
-import { FilterByCategoryPipe } from '../shared/filter-by-category.pipe';
+import { SupabaseService, Product as SupabaseProduct } from '../shared/services/supabase.service';
 
 @Component({
   selector: 'app-menu',
-  imports: [CommonModule, SkeletonLoaderComponent, ProductTileComponent, FilterByCategoryPipe],
+  imports: [CommonModule, SkeletonLoaderComponent, ProductTileComponent],
   templateUrl: './menu.html',
   styleUrl: './menu.scss'
 })
 export class Menu implements OnInit {
   isLoading = true;
   products: Product[] = [];
+  filteredProducts: Product[] = [];
+  selectedCategory: string = 'all';
 
-  ngOnInit() {
-    // Simulate data loading
-    setTimeout(() => {
-      this.products = this.getDummyProducts(); // Load dummy products
+  categories = [
+    { id: 'all', name: 'All Products' },
+    { id: 'Espresso Drinks', name: 'Espresso Drinks' },
+    { id: 'Brewed Coffee', name: 'Brewed Coffee' },
+    { id: 'Pastries & Snacks', name: 'Pastries & Snacks' }
+  ];
+
+  constructor(private supabaseService: SupabaseService) {}
+
+  async ngOnInit() {
+    await this.loadProducts();
+  }
+
+  async loadProducts() {
+    try {
+      const { data, error } = await this.supabaseService.getProducts();
+      if (error) {
+        console.error('Error loading products:', error);
+        // Fallback to dummy data
+        this.products = this.getDummyProducts();
+        this.filteredProducts = this.products;
+        this.isLoading = false;
+        return;
+      }
+      
+      // Transform Supabase products to local Product interface
+      this.products = (data || []).map(this.transformSupabaseProduct);
+      this.filteredProducts = this.products;
       this.isLoading = false;
-    }, 2000); // Show skeleton for 2 seconds
+    } catch (error) {
+      console.error('Error loading products:', error);
+      // Fallback to dummy data
+      this.products = this.getDummyProducts();
+      this.filteredProducts = this.products;
+      this.isLoading = false;
+    }
+  }
+
+  private transformSupabaseProduct(supabaseProduct: SupabaseProduct): Product {
+    return {
+      id: supabaseProduct.id,
+      name: supabaseProduct.name,
+      price: supabaseProduct.price,
+      rating: supabaseProduct.rating,
+      reviewCount: supabaseProduct.review_count,
+      serves: supabaseProduct.serves,
+      description: supabaseProduct.description,
+      imageUrl: supabaseProduct.image_url,
+      customisable: supabaseProduct.customisable,
+      category: supabaseProduct.category,
+      discountPercentage: supabaseProduct.discount_percentage,
+      oldPrice: supabaseProduct.old_price
+    };
+  }
+
+  onCategoryChange(category: string) {
+    this.selectedCategory = category;
+    if (category === 'all') {
+      this.filteredProducts = this.products;
+    } else {
+      this.filteredProducts = this.products.filter(product => product.category === category);
+    }
   }
 
   getDummyProducts(): Product[] {

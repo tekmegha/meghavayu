@@ -60,7 +60,8 @@
     line-height: 1.5;
   }
 
-  .phone-input-container {
+  .phone-input-container,
+  .otp-input-container {
     margin-bottom: 30px;
     text-align: left;
 
@@ -73,7 +74,8 @@
       letter-spacing: 1px;
     }
 
-    .phone-input-wrapper {
+    .phone-input-wrapper,
+    .otp-input-wrapper {
       display: flex;
       align-items: center;
       border-bottom: 2px solid #e0e0e0;
@@ -91,18 +93,50 @@
         font-weight: 500;
       }
 
-      .phone-input {
+      .phone-input,
+      .otp-input {
         flex: 1;
         border: none;
         outline: none;
         font-size: 1.1rem;
         color: #333;
         background: transparent;
+        text-align: center;
 
         &::placeholder {
           color: #999;
         }
       }
+    }
+  }
+
+  .error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    border-left: 4px solid #c62828;
+  }
+
+  .resend-button {
+    background: none;
+    border: none;
+    color: #003366;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: underline;
+    margin-bottom: 20px;
+    transition: color 0.3s ease;
+
+    &:hover:not(:disabled) {
+      color: #002244;
+    }
+
+    &:disabled {
+      color: #ccc;
+      cursor: not-allowed;
     }
   }
 
