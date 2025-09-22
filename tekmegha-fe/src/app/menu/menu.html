@@ -4,6 +4,25 @@
   <div class="menu-container">
     <h1>Our Coffee Menu</h1>
 
+    <!-- Search Bar -->
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <span class="material-icons search-icon">search</span>
+        <input 
+          type="text" 
+          class="search-input"
+          placeholder="Search coffee, drinks, pastries..."
+          [(ngModel)]="searchQuery"
+          (input)="onSearchChange()"
+        >
+        @if (searchQuery) {
+          <button class="clear-search" (click)="searchQuery = ''; onSearchChange()">
+            <span class="material-icons">close</span>
+          </button>
+        }
+      </div>
+    </div>
+
     <!-- Category Filter -->
     <div class="category-filter">
       @for (category of categories; track category.id) {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader';
 import { ProductTileComponent } from '../shared/product-tile/product-tile';
 import { Product } from '../shared/interfaces/product.interface';
@@ -8,7 +9,7 @@ import { FallbackDataService } from '../shared/services/fallback-data.service';
 
 @Component({
   selector: 'app-menu',
-  imports: [CommonModule, SkeletonLoaderComponent, ProductTileComponent],
+  imports: [CommonModule, FormsModule, SkeletonLoaderComponent, ProductTileComponent],
   templateUrl: './menu.html',
   styleUrl: './menu.scss'
 })
@@ -17,6 +18,7 @@ export class Menu implements OnInit {
   products: Product[] = [];
   filteredProducts: Product[] = [];
   selectedCategory: string = 'all';
+  searchQuery: string = '';
 
   categories = [
     { id: 'all', name: 'All Products' },
@@ -78,11 +80,32 @@ export class Menu implements OnInit {
 
   onCategoryChange(category: string) {
     this.selectedCategory = category;
-    if (category === 'all') {
-      this.filteredProducts = this.products;
-    } else {
-      this.filteredProducts = this.products.filter(product => product.category === category);
+    this.applyFilters();
+  }
+
+  onSearchChange() {
+    this.applyFilters();
+  }
+
+  private applyFilters() {
+    let filtered = this.products;
+
+    // Apply category filter
+    if (this.selectedCategory !== 'all') {
+      filtered = filtered.filter(product => product.category === this.selectedCategory);
     }
+
+    // Apply search filter
+    if (this.searchQuery.trim()) {
+      const query = this.searchQuery.toLowerCase().trim();
+      filtered = filtered.filter(product => 
+        product.name.toLowerCase().includes(query) ||
+        product.description.toLowerCase().includes(query) ||
+        product.category.toLowerCase().includes(query)
+      );
+    }
+
+    this.filteredProducts = filtered;
   }
 
   getDummyProducts(): Product[] {

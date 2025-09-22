@@ -2,6 +2,12 @@
   <app-skeleton-loader></app-skeleton-loader>
 } @else {
   <div class="home-container">
+    @if (!isOnline) {
+      <div class="offline-banner">
+        <span class="material-icons">wifi_off</span>
+        <span>You're offline - showing cached content</span>
+      </div>
+    }
         <section class="hero-section">
            
           

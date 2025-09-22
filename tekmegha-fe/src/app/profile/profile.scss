@@ -11,29 +11,36 @@
 
   .profile-header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 
-        .profile-picture {
-          width: 120px;
-          height: 120px;
-          border-radius: 50%;
-          object-fit: cover;
-          margin-bottom: 15px;
-          border: 3px solid #003366; /* German blue theme color */
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
+    .profile-picture {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+      border: 3px solid #003366;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
-        h2 {
-          font-size: 1.3rem; /* More compact for mobile */
-          margin-top: 8px; /* Further reduced margin */
-          margin-bottom: 4px; /* Further reduced margin */
-          color: #333;
-          padding: 0;
-        }
+    h2 {
+      font-size: 1.2rem;
+      margin-top: 0;
+      margin-bottom: 4px;
+      color: #333;
+      padding: 0;
+    }
 
     p {
-      font-size: 0.95rem; /* Adjusted for compactness */
+      font-size: 0.9rem;
       color: #777;
+      margin-bottom: 4px;
+    }
+
+    .offline-indicator {
+      font-size: 0.8rem;
+      color: #ff9800;
+      font-weight: 500;
     }
   }
 }
@@ -80,18 +87,64 @@
   }
 
   button {
-    background-color: #007bff; /* Blue for action button */
+    background-color: #007bff;
     color: #fff;
     border: none;
-    padding: 10px 20px;
+    padding: 8px 16px;
     border-radius: 5px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
     width: 100%;
 
     &:hover {
       background-color: #0056b3;
+    }
+  }
+
+  .order-item {
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-left: 3px solid #003366;
+
+    .order-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+
+      .order-id {
+        font-weight: 600;
+        color: #333;
+        font-size: 0.9rem;
+      }
+
+      .order-date {
+        color: #666;
+        font-size: 0.8rem;
+      }
+    }
+
+    .order-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .order-status {
+        background-color: #003366;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        text-transform: capitalize;
+      }
+
+      .order-total {
+        font-weight: 600;
+        color: #003366;
+        font-size: 0.9rem;
+      }
     }
   }
 }
@@ -116,19 +169,21 @@
 }
 
 .logout-button {
-  background-color: #dc3545; /* Red for logout */
+  background: var(--gradient-accent);
   color: #fff;
   border: none;
   padding: 12px 25px;
-  border-radius: 5px;
+  border-radius: 12px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
   width: 100%;
   display: block;
   margin-top: 30px;
+  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
 
   &:hover {
-    background-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
   }
 }

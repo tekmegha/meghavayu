@@ -10,7 +10,7 @@
   flex-direction: column;
   overflow-y: auto; /* Enable scrolling within the content wrapper */
   /* Padding to ensure content isn't hidden by sticky navbar */
-  padding-bottom: 130px; /* Adjusted to accommodate both bottom navbar and checkout banner */
+  padding-bottom: 100px; /* Reduced for mobile optimization */
 }
 
 .main-content {

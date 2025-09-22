@@ -5,17 +5,24 @@
   background-color: transparent;
 
       .product-tile-card {
-        background-color: #fff;
-        border-radius: 12px; /* More rounded corners for the card */
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow for card lift */
+        background: var(--surface-color);
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.15);
         overflow: hidden;
         display: flex;
         flex-direction: column;
         width: 100%;
-        max-width: 250px; /* Max width for a single card as in the image */
-        margin: 10px; /* Spacing between cards in a grid */
-        height: 320px; /* Fixed height for all product tiles */
-        min-height: 320px; /* Ensure minimum height */
+        max-width: 250px;
+        margin: 10px;
+        height: 320px;
+        min-height: 320px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 12px 35px rgba(99, 102, 241, 0.25);
+        }
 
         .image-wrapper {
           position: relative;
@@ -32,32 +39,35 @@
       .discount-badge {
         position: absolute;
         top: 10px;
-        left: -8px; /* Slightly off-center to the left */
-        background-color: #f44336; /* Red color for discount */
+        left: -8px;
+        background: var(--gradient-accent);
         color: #fff;
         padding: 4px 10px;
-        border-radius: 0 5px 5px 0; /* Rounded on the right side */
+        border-radius: 0 8px 8px 0;
         font-size: 0.8em;
         font-weight: bold;
-        z-index: 5; /* Above the image */
-        transform: rotate(-5deg); /* Slight tilt */
+        z-index: 5;
+        transform: rotate(-5deg);
+        box-shadow: 0 2px 8px rgba(236, 72, 153, 0.4);
       }
 
       .favorite-icon {
         position: absolute;
         top: 10px;
         right: 10px;
-        background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+        background: rgba(255, 255, 255, 0.9);
         border-radius: 50%;
         padding: 5px;
         display: flex;
         align-items: center;
         justify-content: center;
         z-index: 5;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
         .material-icons {
           font-size: 1.2rem;
-          color: #ff9800; /* Orange star */
+          color: var(--accent-color);
         }
       }
     }
@@ -109,29 +119,31 @@
               .current-price {
                 font-size: 1.3rem;
                 font-weight: bold;
-                color: #003366; /* German blue theme color */
+                color: var(--primary-color);
               }
 
           .old-price {
             font-size: 0.9rem;
-            color: #aaa;
+            color: var(--text-secondary);
             text-decoration: line-through;
           }
         }
 
             .add-to-cart-button {
-              background-color: #003366; /* German blue Add button */
+              background: var(--gradient-primary);
               color: #fff;
               border: none;
               padding: 8px 15px;
-              border-radius: 6px; /* Rounded button */
+              border-radius: 12px;
               font-size: 0.95rem;
               font-weight: bold;
               cursor: pointer;
-              transition: background-color 0.2s ease;
+              transition: all 0.3s ease;
+              box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
 
               &:hover {
-                background-color: #002244;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
               }
             }
       }

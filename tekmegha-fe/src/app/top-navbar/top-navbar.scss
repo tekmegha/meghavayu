@@ -5,11 +5,12 @@
   position: sticky;
   top: 0;
   width: 100%;
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
-  padding: 12px 15px; /* Adjusted vertical padding */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background: var(--navbar-gradient);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px 15px;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
   z-index: 1000;
+  backdrop-filter: blur(10px);
 }
 
 .left-items,
@@ -24,10 +25,11 @@
   text-align: center;
 
   .title-link {
-    color: #333; /* Darker color for the title */
+    color: #ffffff; /* White text for contrast on gradient */
     font-weight: bold;
-    font-size: 1.2rem; /* Larger font size for the title */
+    font-size: 1.2rem;
     text-decoration: none;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -36,21 +38,24 @@
   flex-direction: row; /* Changed to row for icons and labels in top bar */
   align-items: center;
   text-decoration: none;
-  color: #777;
-  font-size: 0.95rem; /* Adjusted for consistency with label */
-  padding: 5px 8px; /* Adjusted padding */
-  transition: color 0.3s ease;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+  padding: 5px 8px;
+  transition: all 0.3s ease;
+  border-radius: 8px;
 
   .material-icons {
-    font-size: 1.5rem; /* Icon size */
-    margin-right: 5px; /* Space between icon and label */
+    font-size: 1.5rem;
+    margin-right: 5px;
   }
 
   .label {
-    font-size: 0.95rem; /* Slightly increased for readability */
+    font-size: 0.95rem;
   }
 
-      &:hover {
-        color: #003366; /* German blue theme highlight color */
-      }
+  &:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+  }
 }

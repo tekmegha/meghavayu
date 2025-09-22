@@ -19,7 +19,7 @@
               <p>Quantity: {{ item.quantity }}</p>
               <span class="price">₹{{ (item.price * item.quantity) | number:'1.2-2' }}</span>
             </div>
-            <button class="remove-item">Remove</button>
+                <button class="remove-item" (click)="onRemoveItem(item.id)">Remove</button>
           </div>
         }
       }

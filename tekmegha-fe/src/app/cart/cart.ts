@@ -34,6 +34,14 @@ export class Cart implements OnInit {
     (event.target as HTMLImageElement).src = 'assets/images/brew-buddy/default.png';
   }
 
+  async onRemoveItem(productId: string) {
+    try {
+      await this.cartService.removeFromCart(productId);
+    } catch (error) {
+      console.error('Error removing item from cart:', error);
+    }
+  }
+
   payWithRazorpay() {
     // Check if Razorpay is loaded
     if (typeof (window as any).Razorpay === 'undefined') {

@@ -142,11 +142,11 @@
 
   .continue-button {
     width: 100%;
-    background: #003366;
+    background: var(--gradient-primary);
     color: #fff;
     border: none;
     padding: 16px;
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 1.1rem;
     font-weight: bold;
     letter-spacing: 1px;
@@ -157,11 +157,11 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 
     &:hover:not(:disabled) {
-      background: #002244;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 51, 102, 0.3);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
     }
 
     &:disabled {

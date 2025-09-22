@@ -122,6 +122,41 @@ export class CartService {
     return this._cartState.getValue();
   }
 
+  async removeFromCart(productId: string) {
+    const user = this.supabaseService.getCurrentUser();
+    if (!user || !this.supabaseService.isSupabaseReady()) {
+      // Fallback to local storage for non-authenticated users or if Supabase isn't ready
+      this.removeFromLocalCart(productId);
+      return;
+    }
+
+    try {
+      const currentState = this._cartState.getValue();
+      const cartItem = currentState.items.find(item => item.id === productId);
+      
+      if (!cartItem) return;
+
+      // Find the Supabase cart item ID
+      const { data: supabaseCartItems } = await this.supabaseService.getCartItems();
+      const supabaseItem = supabaseCartItems?.find(item => item.product_id === productId);
+      
+      if (!supabaseItem) return;
+
+      const { error } = await this.supabaseService.removeFromCart(supabaseItem.id);
+      if (error) {
+        console.error('Error removing from cart:', error);
+        // Fallback to local storage on error
+        this.removeFromLocalCart(productId);
+        return;
+      }
+      await this.loadCartFromSupabase();
+    } catch (error) {
+      console.error('Error removing from cart:', error);
+      // Fallback to local storage on error
+      this.removeFromLocalCart(productId);
+    }
+  }
+
   async clearCart() {
     const user = this.supabaseService.getCurrentUser();
     if (!user) {
@@ -217,6 +252,12 @@ export class CartService {
       return item;
     }).filter(item => item.quantity > 0);
 
+    this._updateCart(updatedItems);
+  }
+
+  private removeFromLocalCart(productId: string) {
+    const currentState = this._cartState.getValue();
+    const updatedItems = currentState.items.filter(item => item.id !== productId);
     this._updateCart(updatedItems);
   }
 

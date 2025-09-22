@@ -6,30 +6,50 @@
 
     <div class="profile-header">
       <img src="assets/images/brew-buddy/profile-picture.jpg" alt="Profile Picture" class="profile-picture" (error)="onImageError($event)">
-      <h2>John Doe</h2>
-      <p>johndoe@example.com</p>
+      <h2>{{ getDisplayName() }}</h2>
+      <p>{{ getDisplayEmail() }}</p>
+      @if (!isOnline) {
+        <p class="offline-indicator">Offline Mode</p>
+      }
     </div>
 
     <section class="profile-details">
       <h3>Personal Information</h3>
       <div class="detail-item">
         <span>Name:</span>
-        <span>John Doe</span>
+        <span>{{ getDisplayName() }}</span>
       </div>
       <div class="detail-item">
         <span>Phone:</span>
-        <span>(123) 456-7890</span>
+        <span>{{ getDisplayPhone() }}</span>
       </div>
       <div class="detail-item">
-        <span>Address:</span>
-        <span>123 Brew Lane, Coffee City</span>
+        <span>Status:</span>
+        <span>{{ currentUser ? 'Logged In' : 'Guest User' }}</span>
       </div>
     </section>
 
     <section class="order-history">
       <h3>Order History</h3>
-      <p>No recent orders.</p>
-      <button>View All Orders</button>
+      @if (userOrders.length === 0) {
+        <p>No recent orders.</p>
+      } @else {
+        @for (order of userOrders; track order.id) {
+          <div class="order-item">
+            <div class="order-info">
+              <span class="order-id">Order #{{ order.id.slice(-8) }}</span>
+              <span class="order-date">{{ order.created_at | date:'short' }}</span>
+            </div>
+            <div class="order-details">
+              <span class="order-status">{{ order.status }}</span>
+              <span class="order-total">₹{{ order.total_amount | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        }
+      }
+      @if (isOnline) {
+        <button>View All Orders</button>
+      }
     </section>
 
     <section class="settings">
@@ -41,6 +61,8 @@
       </ul>
     </section>
 
-    <button class="logout-button">Logout</button>
+    <button class="logout-button" (click)="onLogout()">
+      {{ currentUser ? 'Logout' : 'Login' }}
+    </button>
   </div>
 }

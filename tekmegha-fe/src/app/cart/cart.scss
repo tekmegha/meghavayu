@@ -106,18 +106,20 @@
   }
 
   .checkout-button {
-    background-color: #007bff; /* Blue for checkout button */
+    background: var(--gradient-primary);
     color: #fff;
     border: none;
     padding: 12px 25px;
-    border-radius: 5px;
+    border-radius: 12px;
     font-size: 1rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
     margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 
     &:hover {
-      background-color: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
     }
   }
 }

@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader';
-import { ProductTileComponent } from '../shared/product-tile/product-tile'; // Import ProductTileComponent
-import { Product } from '../shared/interfaces/product.interface'; // Import Product interface
+import { ProductTileComponent } from '../shared/product-tile/product-tile';
+import { Product } from '../shared/interfaces/product.interface';
+import { NetworkStatusService } from '../shared/services/network-status.service';
 
 @Component({
   selector: 'app-home',
@@ -13,7 +14,8 @@ import { Product } from '../shared/interfaces/product.interface'; // Import Prod
 })
 export class Home implements OnInit {
   isLoading = true;
-  products: Product[] = []; // Initialize products array
+  products: Product[] = [];
+  isOnline = true;
   coffeeCategories = [
     { name: 'Espresso', icon: 'local_cafe', route: '/menu' },
     { name: 'Latte', icon: 'coffee', route: '/menu' },
@@ -23,11 +25,18 @@ export class Home implements OnInit {
     { name: 'Tea', icon: 'emoji_food_beverage', route: '/menu' }
   ];
 
+  constructor(private networkStatus: NetworkStatusService) {}
+
   ngOnInit() {
+    this.isOnline = this.networkStatus.isOnline();
+    this.networkStatus.isOnline$.subscribe(online => {
+      this.isOnline = online;
+    });
+
     // Simulate data loading
     setTimeout(() => {
       this.isLoading = false;
-        this.products = [
+      this.products = [
           {
             id: 'home-product1',
             name: 'Espresso Blend',
