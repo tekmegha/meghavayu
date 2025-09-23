@@ -13,6 +13,14 @@
   padding-bottom: 100px; /* Reduced for mobile optimization */
 }
 
+/* Location bar specific styles */
+app-location-bar {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
 .main-content {
   flex-grow: 1; /* Allows main content to take available space */
   overflow-y: auto; /* Allow scrolling within the main content area */

@@ -1,0 +1,86 @@
+<div class="location-bar">
+  <div class="location-info" (click)="onLocationClick()">
+    <div class="location-details">
+      <span class="material-icons location-icon">{{ getLocationIcon() }}</span>
+      <div class="location-text">
+        <span class="delivery-to">Deliver to</span>
+        <span class="current-location">{{ currentLocation }}</span>
+      </div>
+    </div>
+    <div class="delivery-time">
+      <span class="material-icons delivery-icon">{{ getDeliveryIcon() }}</span>
+      <span class="time-text">{{ deliveryTime }}</span>
+    </div>
+  </div>
+
+  <!-- Location Selection Modal -->
+  @if (isLocationModalOpen) {
+    <div class="location-modal-overlay" (click)="onCloseModal()">
+      <div class="location-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Select Delivery Location</h3>
+          <button class="close-button" (click)="onCloseModal()">
+            <span class="material-icons">close</span>
+          </button>
+        </div>
+        
+        <div class="location-options">
+          <div class="location-option" (click)="onLocationSelect('Hyderabad, Telangana')">
+            <span class="material-icons">location_on</span>
+            <div class="option-details">
+              <span class="location-name">Hyderabad, Telangana</span>
+              <span class="delivery-time-option">25-30 mins</span>
+            </div>
+            @if (currentLocation === 'Hyderabad, Telangana') {
+              <span class="material-icons check-icon">check</span>
+            }
+          </div>
+
+          <div class="location-option" (click)="onLocationSelect('Secunderabad, Telangana')">
+            <span class="material-icons">location_on</span>
+            <div class="option-details">
+              <span class="location-name">Secunderabad, Telangana</span>
+              <span class="delivery-time-option">20-25 mins</span>
+            </div>
+            @if (currentLocation === 'Secunderabad, Telangana') {
+              <span class="material-icons check-icon">check</span>
+            }
+          </div>
+
+          <div class="location-option" (click)="onLocationSelect('Gachibowli, Hyderabad')">
+            <span class="material-icons">location_on</span>
+            <div class="option-details">
+              <span class="location-name">Gachibowli, Hyderabad</span>
+              <span class="delivery-time-option">30-35 mins</span>
+            </div>
+            @if (currentLocation === 'Gachibowli, Hyderabad') {
+              <span class="material-icons check-icon">check</span>
+            }
+          </div>
+
+          <div class="location-option" (click)="onLocationSelect('HITEC City, Hyderabad')">
+            <span class="material-icons">location_on</span>
+            <div class="option-details">
+              <span class="location-name">HITEC City, Hyderabad</span>
+              <span class="delivery-time-option">25-30 mins</span>
+            </div>
+            @if (currentLocation === 'HITEC City, Hyderabad') {
+              <span class="material-icons check-icon">check</span>
+            }
+          </div>
+
+          <div class="location-option" (click)="onLocationSelect('Banjara Hills, Hyderabad')">
+            <span class="material-icons">location_on</span>
+            <div class="option-details">
+              <span class="location-name">Banjara Hills, Hyderabad</span>
+              <span class="delivery-time-option">20-25 mins</span>
+            </div>
+            @if (currentLocation === 'Banjara Hills, Hyderabad') {
+              <span class="material-icons check-icon">check</span>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

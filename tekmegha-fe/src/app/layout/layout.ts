@@ -5,6 +5,7 @@ import { TopNavbar } from '../top-navbar/top-navbar';
 import { BottomStickyNavbar } from '../bottom-sticky-navbar/bottom-sticky-navbar';
 import { CheckoutBannerComponent } from '../shared/checkout-banner/checkout-banner';
 import { NetworkStatusComponent } from '../shared/network-status/network-status';
+import { LocationBarComponent } from '../shared/location-bar/location-bar';
 import { NavbarItem } from '../shared/interfaces/navbar-item.interface';
 
 interface LayoutConfig {
@@ -14,7 +15,7 @@ interface LayoutConfig {
 
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, TopNavbar, BottomStickyNavbar, CheckoutBannerComponent, NetworkStatusComponent],
+  imports: [RouterOutlet, TopNavbar, BottomStickyNavbar, CheckoutBannerComponent, NetworkStatusComponent, LocationBarComponent],
   templateUrl: './layout.html',
   styleUrl: './layout.scss'
 })
