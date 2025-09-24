@@ -10,7 +10,7 @@
           "position": "center"
         },
         {
-          "icon": "login",
+          "icon": "account_circle",
           "position": "right",
           "action": "openLogin",
           "route": "/login"

@@ -9,67 +9,142 @@
   <!-- Main Login Content -->
   <div class="login-content">
     <div class="login-form">
-      <h1 class="login-title">LOGIN</h1>
+      <h1 class="login-title">{{ isSignUp ? 'SIGN UP' : 'LOGIN' }}</h1>
+      
+      <!-- Login Method Toggle -->
+      <div class="login-method-toggle">
+        <button 
+          class="method-button" 
+          [class.active]="loginMethod === 'phone'"
+          (click)="switchToPhone()"
+        >
+          <span class="material-icons">phone</span>
+          Phone
+        </button>
+        <button 
+          class="method-button" 
+          [class.active]="loginMethod === 'email'"
+          (click)="switchToEmail()"
+        >
+          <span class="material-icons">email</span>
+          Email
+        </button>
+      </div>
+
       <p class="login-subtitle">
-        @if (!showOtpInput) {
-          Enter your phone number to continue
+        @if (loginMethod === 'phone') {
+          @if (!showOtpInput) {
+            Enter your phone number to continue
+          } @else {
+            Enter the OTP sent to +91{{ phoneNumber }}
+          }
         } @else {
-          Enter the OTP sent to +91{{ phoneNumber }}
+          @if (isSignUp) {
+            Create your BrewBuddy account
+          } @else {
+            Enter your email and password to continue
+          }
         }
       </p>
       
-      @if (!showOtpInput) {
-        <div class="phone-input-container">
-          <label class="phone-label">PHONE NUMBER</label>
-          <div class="phone-input-wrapper">
-            <span class="country-code">IN +91 -</span>
+      <!-- Phone Authentication -->
+      @if (loginMethod === 'phone') {
+        @if (!showOtpInput) {
+          <div class="phone-input-container">
+            <label class="phone-label">PHONE NUMBER</label>
+            <div class="phone-input-wrapper">
+              <span class="country-code">IN +91 -</span>
+              <input 
+                type="tel" 
+                class="phone-input" 
+                [(ngModel)]="phoneNumber"
+                placeholder="Enter your phone number"
+                maxlength="10"
+              >
+            </div>
+          </div>
+        } @else {
+          <div class="otp-input-container">
+            <label class="phone-label">OTP CODE</label>
+            <div class="otp-input-wrapper">
+              <input 
+                type="tel" 
+                class="otp-input" 
+                [(ngModel)]="otpCode"
+                placeholder="Enter 6-digit OTP"
+                maxlength="6"
+              >
+            </div>
+          </div>
+        }
+      }
+
+      <!-- Email Authentication -->
+      @if (loginMethod === 'email') {
+        @if (isSignUp) {
+          <div class="email-input-container">
+            <label class="phone-label">FULL NAME</label>
             <input 
-              type="tel" 
-              class="phone-input" 
-              [(ngModel)]="phoneNumber"
-              placeholder="Enter your phone number"
-              maxlength="10"
+              type="text" 
+              class="email-input" 
+              [(ngModel)]="fullName"
+              placeholder="Enter your full name"
             >
           </div>
+        }
+
+        <div class="email-input-container">
+          <label class="phone-label">EMAIL ADDRESS</label>
+          <input 
+            type="email" 
+            class="email-input" 
+            [(ngModel)]="email"
+            placeholder="Enter your email address"
+          >
         </div>
-      } @else {
-        <div class="otp-input-container">
-          <label class="phone-label">OTP CODE</label>
-          <div class="otp-input-wrapper">
+
+        <div class="email-input-container">
+          <label class="phone-label">PASSWORD</label>
+          <input 
+            type="password" 
+            class="email-input" 
+            [(ngModel)]="password"
+            placeholder="Enter your password"
+          >
+        </div>
+
+        @if (isSignUp) {
+          <div class="email-input-container">
+            <label class="phone-label">CONFIRM PASSWORD</label>
             <input 
-              type="tel" 
-              class="otp-input" 
-              [(ngModel)]="otpCode"
-              placeholder="Enter 6-digit OTP"
-              maxlength="6"
+              type="password" 
+              class="email-input" 
+              [(ngModel)]="confirmPassword"
+              placeholder="Confirm your password"
             >
           </div>
-        </div>
+        }
       }
 
       @if (errorMessage) {
         <div class="error-message">{{ errorMessage }}</div>
       }
 
+      @if (successMessage) {
+        <div class="success-message">{{ successMessage }}</div>
+      }
+
       <button 
         class="continue-button" 
-        (click)="showOtpInput ? onVerifyOtp() : onLogin()"
-        [disabled]="(!phoneNumber.trim() && !showOtpInput) || (!otpCode.trim() && showOtpInput) || isLoading"
+        (click)="getButtonAction()"
+        [disabled]="isButtonDisabled() || isLoading"
         [class.loading]="isLoading"
       >
         @if (isLoading) {
           <span class="loading-spinner"></span>
-          @if (showOtpInput) {
-            VERIFYING...
-          } @else {
-            SENDING OTP...
-          }
+          {{ getLoadingText() }}
         } @else {
-          @if (showOtpInput) {
-            VERIFY OTP
-          } @else {
-            CONTINUE
-          }
+          {{ getButtonText() }}
         }
       </button>
 
@@ -81,6 +156,20 @@
         >
           Resend OTP
         </button>
+      }
+
+      <!-- Email Authentication Links -->
+      @if (loginMethod === 'email') {
+        <div class="auth-links">
+          @if (!isSignUp) {
+            <button class="link-button" (click)="onForgotPassword()">
+              Forgot Password?
+            </button>
+          }
+          <button class="link-button" (click)="toggleSignUp()">
+            {{ isSignUp ? 'Already have an account? Login' : "Don't have an account? Sign up" }}
+          </button>
+        </div>
       }
 
       <p class="terms-text">

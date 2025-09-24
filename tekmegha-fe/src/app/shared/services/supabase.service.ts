@@ -140,6 +140,50 @@ export class SupabaseService {
     }
   }
 
+  async signInWithEmail(email: string, password: string) {
+    try {
+      const { data, error } = await this.supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      return { data, error };
+    } catch (error) {
+      console.error('Email sign-in error:', error);
+      return { data: null, error: { message: 'Failed to sign in. Please check your credentials.' } };
+    }
+  }
+
+  async signUpWithEmail(email: string, password: string, fullName?: string) {
+    try {
+      const { data, error } = await this.supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName || '',
+            phone: ''
+          }
+        }
+      });
+      return { data, error };
+    } catch (error) {
+      console.error('Email sign-up error:', error);
+      return { data: null, error: { message: 'Failed to create account. Please try again.' } };
+    }
+  }
+
+  async resetPassword(email: string) {
+    try {
+      const { data, error } = await this.supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/login`
+      });
+      return { data, error };
+    } catch (error) {
+      console.error('Password reset error:', error);
+      return { data: null, error: { message: 'Failed to send reset email. Please try again.' } };
+    }
+  }
+
   async signOut() {
     const { error } = await this.supabase.auth.signOut();
     return { error };
