@@ -254,6 +254,33 @@ export class SupabaseService {
     return { data, error };
   }
 
+  async addProduct(product: Partial<Product>): Promise<{ data: Product | null; error: any }> {
+    const { data, error } = await this.supabase
+      .from('products')
+      .insert([product])
+      .select()
+      .single();
+    return { data, error };
+  }
+
+  async updateProduct(id: string, updates: Partial<Product>): Promise<{ data: Product | null; error: any }> {
+    const { data, error } = await this.supabase
+      .from('products')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    return { data, error };
+  }
+
+  async deleteProduct(id: string): Promise<{ error: any }> {
+    const { error } = await this.supabase
+      .from('products')
+      .delete()
+      .eq('id', id);
+    return { error };
+  }
+
   // Cart Methods
   async getCartItems(): Promise<{ data: CartItem[] | null; error: any }> {
     const user = this.getCurrentUser();

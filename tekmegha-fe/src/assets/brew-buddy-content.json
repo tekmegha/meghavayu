@@ -40,6 +40,11 @@
       "route": "/cart"
     },
     {
+      "icon": "inventory",
+      "label": "Inventory",
+      "route": "/inventory"
+    },
+    {
       "icon": "location_on",
       "label": "Stores",
       "route": "/stores"
