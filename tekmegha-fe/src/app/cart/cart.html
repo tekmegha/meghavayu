@@ -16,10 +16,17 @@
             <img [src]="item.imageUrl" [alt]="item.name" class="item-image" (error)="onImageError($event)">
             <div class="item-details">
               <h3>{{ item.name }}</h3>
-              <p>Quantity: {{ item.quantity }}</p>
-              <span class="price">₹{{ (item.price * item.quantity) | number:'1.2-2' }}</span>
+              <p class="item-price">₹{{ item.price | number:'1.2-2' }} each</p>
+              <span class="total-price">₹{{ (item.price * item.quantity) | number:'1.2-2' }}</span>
             </div>
-                <button class="remove-item" (click)="onRemoveItem(item.id)">Remove</button>
+            <div class="quantity-controls">
+              <button class="quantity-btn minus" (click)="onDecrementQuantity(item.id)">-</button>
+              <span class="quantity-display">{{ item.quantity }}</span>
+              <button class="quantity-btn plus" (click)="onIncrementQuantity(item.id)">+</button>
+            </div>
+            <button class="remove-item" (click)="onRemoveItem(item.id)">
+              <span class="material-icons">delete</span>
+            </button>
           </div>
         }
       }

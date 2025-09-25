@@ -30,6 +30,11 @@
           @if (item.label) {
             <span class="label">{{ item.label }}</span>
           }
+          @if (item.icon === 'shopping_cart') {
+            @if ((cartState$ | async)?.totalQuantity && (cartState$ | async)!.totalQuantity > 0) {
+              <span class="cart-badge">{{ (cartState$ | async)!.totalQuantity }}</span>
+            }
+          }
         </a>
       }
     }

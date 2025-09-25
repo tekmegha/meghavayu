@@ -42,6 +42,26 @@ export class Cart implements OnInit {
     }
   }
 
+  onIncrementQuantity(itemId: string) {
+    const cartState = this.cartService.getCartState();
+    const item = cartState.items.find(item => item.id === itemId);
+    if (item) {
+      this.cartService.updateCartItemQuantity(item, item.quantity + 1);
+    }
+  }
+
+  onDecrementQuantity(itemId: string) {
+    const cartState = this.cartService.getCartState();
+    const item = cartState.items.find(item => item.id === itemId);
+    if (item) {
+      if (item.quantity > 1) {
+        this.cartService.updateCartItemQuantity(item, item.quantity - 1);
+      } else {
+        this.cartService.removeFromCart(itemId);
+      }
+    }
+  }
+
   payWithRazorpay() {
     // Check if Razorpay is loaded
     if (typeof (window as any).Razorpay === 'undefined') {

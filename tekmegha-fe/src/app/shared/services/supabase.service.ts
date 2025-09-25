@@ -281,6 +281,33 @@ export class SupabaseService {
     return { error };
   }
 
+  // Delivery Methods
+  async createDeliveryRequest(request: any): Promise<{ data: any; error: any }> {
+    const { data, error } = await this.supabase
+      .from('delivery_requests')
+      .insert([request])
+      .select()
+      .single();
+    return { data, error };
+  }
+
+  async updateDeliveryStatus(orderId: string, status: string): Promise<{ error: any }> {
+    const { error } = await this.supabase
+      .from('delivery_requests')
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq('order_id', orderId);
+    return { error };
+  }
+
+  async getDeliveryTracking(orderId: string): Promise<{ data: any; error: any }> {
+    const { data, error } = await this.supabase
+      .from('delivery_requests')
+      .select('*')
+      .eq('order_id', orderId)
+      .single();
+    return { data, error };
+  }
+
   // Cart Methods
   async getCartItems(): Promise<{ data: CartItem[] | null; error: any }> {
     const user = this.getCurrentUser();

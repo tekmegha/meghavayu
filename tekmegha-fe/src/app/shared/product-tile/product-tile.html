@@ -17,8 +17,15 @@
             <span class="old-price">₹{{ product.oldPrice | number:'1.2-2' }}</span>
           }
         </div>
-        <button class="add-to-cart-button" (click)="onAdd()">Add</button>
-        <!-- Quantity controls will be a separate component or integrated here if needed later -->
+        @if (quantity === 0) {
+          <button class="add-to-cart-button" (click)="onAdd()">Add</button>
+        } @else {
+          <div class="quantity-controls">
+            <button class="quantity-btn minus" (click)="onDecrement()">-</button>
+            <span class="quantity-display">{{ quantity }}</span>
+            <button class="quantity-btn plus" (click)="onIncrement()">+</button>
+          </div>
+        }
       </div>
     </div>
   </div>
