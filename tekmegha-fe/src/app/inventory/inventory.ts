@@ -52,6 +52,8 @@ export class Inventory implements OnInit {
     'Pastries & Snacks'
   ];
 
+  currentUser: any = null;
+
   constructor(
     private inventoryService: InventoryService,
     private supabaseService: SupabaseService,
@@ -59,6 +61,7 @@ export class Inventory implements OnInit {
   ) {}
 
   async ngOnInit() {
+    this.currentUser = this.supabaseService.getCurrentUser();
     await this.loadData();
   }
 
@@ -251,5 +254,14 @@ export class Inventory implements OnInit {
 
   formatCurrency(amount: number): string {
     return `₹${amount.toFixed(2)}`;
+  }
+
+  async onLogout() {
+    try {
+      await this.supabaseService.signOut();
+      this.router.navigate(['/inventory-login']);
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
   }
 }

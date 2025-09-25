@@ -11,34 +11,76 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 16px;
 
-  h1 {
-    font-size: 2rem;
-    color: var(--text-primary);
-    margin: 0;
-  }
-
-  .add-product-btn {
-    background: var(--gradient-primary);
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
+  .header-left {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 8px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    h1 {
+      font-size: 2rem;
+      color: var(--text-primary);
+      margin: 0;
     }
 
-    .material-icons {
-      font-size: 1.2rem;
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+
+      .material-icons {
+        font-size: 1.1rem;
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    .add-product-btn, .logout-btn {
+      border: none;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+
+      .material-icons {
+        font-size: 1.2rem;
+      }
+    }
+
+    .add-product-btn {
+      background: var(--gradient-primary);
+      color: white;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+      }
+    }
+
+    .logout-btn {
+      background: var(--gradient-accent);
+      color: white;
+      box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+      }
     }
   }
 }

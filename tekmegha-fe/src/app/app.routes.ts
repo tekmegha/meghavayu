@@ -6,6 +6,8 @@ import { Stores } from './stores/stores';
 import { Profile } from './profile/profile';
 import { Login } from './login/login';
 import { Inventory } from './inventory/inventory';
+import { InventoryLogin } from './inventory-login/inventory-login';
+import { InventoryAuthGuard } from './shared/guards/inventory-auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -15,5 +17,6 @@ export const routes: Routes = [
   { path: 'stores', component: Stores },
   { path: 'profile', component: Profile },
   { path: 'login', component: Login },
-  { path: 'inventory', component: Inventory },
+  { path: 'inventory-login', component: InventoryLogin },
+  { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] },
 ];

@@ -1,0 +1,98 @@
+<div class="inventory-login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="logo">
+        <span class="material-icons">inventory</span>
+        <h1>Inventory Access</h1>
+      </div>
+      <p class="subtitle">Staff & Manager Login</p>
+    </div>
+
+    <form class="login-form" (ngSubmit)="onLogin()">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrapper">
+          <span class="material-icons input-icon">email</span>
+          <input 
+            type="email" 
+            id="email"
+            [(ngModel)]="email" 
+            name="email"
+            placeholder="Enter your email"
+            [disabled]="isLoading"
+            required
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <span class="material-icons input-icon">lock</span>
+          <input 
+            type="password" 
+            id="password"
+            [(ngModel)]="password" 
+            name="password"
+            placeholder="Enter your password"
+            [disabled]="isLoading"
+            required
+          >
+        </div>
+      </div>
+
+      @if (errorMessage) {
+        <div class="error-message">
+          <span class="material-icons">error</span>
+          <span>{{ errorMessage }}</span>
+        </div>
+      }
+
+      @if (successMessage) {
+        <div class="success-message">
+          <span class="material-icons">check_circle</span>
+          <span>{{ successMessage }}</span>
+        </div>
+      }
+
+      <button 
+        type="submit" 
+        class="login-button"
+        [disabled]="isLoading"
+        [class.loading]="isLoading"
+      >
+        @if (isLoading) {
+          <div class="spinner"></div>
+          <span>Signing In...</span>
+        } @else {
+          <span class="material-icons">login</span>
+          <span>Sign In to Inventory</span>
+        }
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <button class="forgot-password" (click)="onForgotPassword()">
+        Forgot Password?
+      </button>
+      
+      <div class="divider">
+        <span>or</span>
+      </div>
+      
+      <button class="customer-login" (click)="goToCustomerLogin()">
+        <span class="material-icons">person</span>
+        <span>Customer Login</span>
+      </button>
+    </div>
+
+    <div class="access-info">
+      <h3>Who can access?</h3>
+      <ul>
+        <li><span class="material-icons">admin_panel_settings</span> Store Administrators</li>
+        <li><span class="material-icons">manage_accounts</span> Store Managers</li>
+        <li><span class="material-icons">inventory_2</span> Inventory Staff</li>
+      </ul>
+    </div>
+  </div>
+</div>

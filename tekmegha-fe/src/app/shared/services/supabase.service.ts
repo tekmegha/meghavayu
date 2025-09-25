@@ -308,6 +308,25 @@ export class SupabaseService {
     return { data, error };
   }
 
+  // User Role Management
+  async getUserRole(userId: string): Promise<{ data: any; error: any }> {
+    const { data, error } = await this.supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .single();
+    return { data, error };
+  }
+
+  async createUserRole(userId: string, role: string): Promise<{ data: any; error: any }> {
+    const { data, error } = await this.supabase
+      .from('user_roles')
+      .insert([{ user_id: userId, role }])
+      .select()
+      .single();
+    return { data, error };
+  }
+
   // Cart Methods
   async getCartItems(): Promise<{ data: CartItem[] | null; error: any }> {
     const user = this.getCurrentUser();

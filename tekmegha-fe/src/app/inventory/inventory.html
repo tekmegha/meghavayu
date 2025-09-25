@@ -1,10 +1,24 @@
 <div class="inventory-container">
   <div class="inventory-header">
-    <h1>Inventory Management</h1>
-    <button class="add-product-btn" (click)="openAddModal()">
-      <span class="material-icons">add</span>
-      Add Product
-    </button>
+    <div class="header-left">
+      <h1>Inventory Management</h1>
+      @if (currentUser) {
+        <div class="user-info">
+          <span class="material-icons">person</span>
+          <span>{{ currentUser.email }}</span>
+        </div>
+      }
+    </div>
+    <div class="header-actions">
+      <button class="add-product-btn" (click)="openAddModal()">
+        <span class="material-icons">add</span>
+        Add Product
+      </button>
+      <button class="logout-btn" (click)="onLogout()">
+        <span class="material-icons">logout</span>
+        Logout
+      </button>
+    </div>
   </div>
 
   <!-- Stats Cards -->
