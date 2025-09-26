@@ -76,7 +76,8 @@ export class InventoryService {
         serves: product.serves || 1,
         customisable: product.customisable || false,
         discount_percentage: product.discount_percentage,
-        old_price: product.old_price
+        old_price: product.old_price,
+        brand_id: this.supabaseService.getCurrentBrand()
       });
 
       if (error) {
@@ -118,7 +119,8 @@ export class InventoryService {
         serves: updates.serves,
         customisable: updates.customisable,
         discount_percentage: updates.discount_percentage,
-        old_price: updates.old_price
+        old_price: updates.old_price,
+        brand_id: this.supabaseService.getCurrentBrand()
       });
 
       if (error) {

@@ -9,8 +9,9 @@ export interface Product {
   description: string;
   imageUrl: string;
   customisable: boolean;
-  category: 'Espresso Drinks' | 'Brewed Coffee' | 'Pastries & Snacks'; // Add category
+  category: 'Espresso Drinks' | 'Brewed Coffee' | 'Pastries & Snacks' | 'Educational' | 'Action Figures' | 'Board Games' | 'Dolls' | 'Outdoor' | 'Puzzles' | 'Dresses' | 'Men\'s' | 'Accessories' | 'Footwear' | 'Jewelry'; // Multi-brand categories
   discountPercentage?: number; // Optional, for displaying discounts
   oldPrice?: number; // Optional, for displaying old price with discount
   initialQuantity?: number; // Optional, for items already in cart
+  brand_id: string; // Brand identifier for multi-brand support
 }

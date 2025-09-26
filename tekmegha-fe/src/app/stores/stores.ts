@@ -38,7 +38,7 @@ export class Stores implements OnInit {
       if (error) {
         console.warn('Supabase error, using fallback data:', error.message);
         // Use fallback data when Supabase fails
-        this.stores = this.fallbackDataService.getFallbackStores();
+        this.stores = this.fallbackDataService.getFallbackStores(this.supabaseService.getCurrentBrand());
         this.isLoading = false;
         return;
       }
@@ -60,7 +60,8 @@ export class Stores implements OnInit {
       name: supabaseStore.name,
       address: supabaseStore.address,
       phone: supabaseStore.phone,
-      hours: supabaseStore.hours
+      hours: supabaseStore.hours,
+      brand_id: supabaseStore.brand_id
     };
   }
 

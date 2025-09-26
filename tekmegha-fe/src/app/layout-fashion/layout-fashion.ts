@@ -1,35 +1,34 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { TopNavbar } from '../top-navbar/top-navbar';
 import { BottomStickyNavbar } from '../bottom-sticky-navbar/bottom-sticky-navbar';
 import { CheckoutBannerComponent } from '../shared/checkout-banner/checkout-banner';
 import { NetworkStatusComponent } from '../shared/network-status/network-status';
 import { LocationBarComponent } from '../shared/location-bar/location-bar';
-import { NavbarItem } from '../shared/interfaces/navbar-item.interface';
 import { BrandService, BrandConfig } from '../shared/services/brand.service';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-interface LayoutConfig {
-  topNavbar: NavbarItem[];
-  bottomNavbar: NavbarItem[];
-}
-
 @Component({
-  selector: 'app-layout',
-  imports: [RouterOutlet, TopNavbar, BottomStickyNavbar, CheckoutBannerComponent, NetworkStatusComponent, LocationBarComponent],
-  templateUrl: './layout.html',
-  styleUrl: './layout.scss'
+  selector: 'app-layout-fashion',
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    TopNavbar,
+    BottomStickyNavbar,
+    CheckoutBannerComponent,
+    NetworkStatusComponent,
+    LocationBarComponent
+  ],
+  templateUrl: './layout-fashion.html',
+  styleUrl: './layout-fashion.scss'
 })
-export class Layout implements OnInit, OnDestroy {
-  topNavbarConfig: NavbarItem[] = [];
-  bottomNavbarConfig: NavbarItem[] = [];
+export class LayoutFashion implements OnInit, OnDestroy {
   currentBrand: BrandConfig | null = null;
   private subscription: Subscription = new Subscription();
 
   constructor(
-    private http: HttpClient, 
     private router: Router,
     private brandService: BrandService
   ) {}
@@ -39,10 +38,6 @@ export class Layout implements OnInit, OnDestroy {
     this.subscription.add(
       this.brandService.currentBrand$.subscribe(brand => {
         this.currentBrand = brand;
-        if (brand) {
-          this.topNavbarConfig = brand.navigation.topNavbar;
-          this.bottomNavbarConfig = brand.navigation.bottomNavbar;
-        }
       })
     );
 
@@ -63,25 +58,11 @@ export class Layout implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  onMenuToggle() {
-    console.log('Menu Toggled!');
-    // Implement actual menu toggle logic here (e.g., open a side navigation)
-  }
-
-  onSearchOpen() {
-    console.log('Search Opened!');
-    // Implement actual search opening logic here (e.g., open a search overlay)
-  }
-
   onLoginOpen() {
-    console.log('Login Opened!');
-    // Navigate to login page
     this.router.navigate(['/login']);
   }
 
   onCartOpen() {
-    console.log('Cart Opened!');
-    // Navigate to cart page
     this.router.navigate(['/cart']);
   }
 
@@ -92,5 +73,13 @@ export class Layout implements OnInit, OnDestroy {
         item.active = url === item.route || (item.route === '/home' && url === '/');
       });
     }
+  }
+
+  getTopNavbarItems() {
+    return this.currentBrand?.navigation.topNavbar || [];
+  }
+
+  getBottomNavbarItems() {
+    return this.currentBrand?.navigation.bottomNavbar || [];
   }
 }

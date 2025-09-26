@@ -8,6 +8,8 @@ import { Login } from './login/login';
 import { Inventory } from './inventory/inventory';
 import { InventoryLogin } from './inventory-login/inventory-login';
 import { InventoryAuthGuard } from './shared/guards/inventory-auth.guard';
+import { LayoutFashion } from './layout-fashion/layout-fashion';
+import { LayoutToys } from './layout-toys/layout-toys';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -19,4 +21,26 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'inventory-login', component: InventoryLogin },
   { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] },
+  
+  // Brand-specific routes
+  { path: 'fashion', component: LayoutFashion, children: [
+    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    { path: 'home', component: Home },
+    { path: 'menu', component: Menu },
+    { path: 'cart', component: Cart },
+    { path: 'stores', component: Stores },
+    { path: 'profile', component: Profile },
+    { path: 'login', component: Login },
+    { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] }
+  ]},
+  { path: 'toys', component: LayoutToys, children: [
+    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    { path: 'home', component: Home },
+    { path: 'menu', component: Menu },
+    { path: 'cart', component: Cart },
+    { path: 'stores', component: Stores },
+    { path: 'profile', component: Profile },
+    { path: 'login', component: Login },
+    { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] }
+  ]}
 ];

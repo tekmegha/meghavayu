@@ -5,4 +5,5 @@ export interface Store {
   phone: string;
   hours: string;
   imageUrl?: string; // Optional, if you want to add specific images for stores later
+  brand_id: string; // Brand identifier for multi-brand support
 }

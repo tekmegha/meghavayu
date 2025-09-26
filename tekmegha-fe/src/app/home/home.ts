@@ -49,7 +49,8 @@ export class Home implements OnInit {
             customisable: false,
             category: 'Brewed Coffee',
             discountPercentage: 15,
-            oldPrice: 5.29
+            oldPrice: 5.29,
+            brand_id: 'brew-buddy'
           },
           {
             id: 'home-product2',
@@ -63,7 +64,8 @@ export class Home implements OnInit {
             customisable: true,
             category: 'Espresso Drinks',
             discountPercentage: 10,
-            oldPrice: 5.85
+            oldPrice: 5.85,
+            brand_id: 'brew-buddy'
           },
           {
             id: 'home-product3',
@@ -75,7 +77,8 @@ export class Home implements OnInit {
             description: 'Flaky pastry with a rich chocolate filling.',
             imageUrl: 'assets/images/brew-buddy/muffin.jpg',
             customisable: false,
-            category: 'Pastries & Snacks'
+            category: 'Pastries & Snacks',
+            brand_id: 'brew-buddy'
           },
           {
             id: 'home-product4',
@@ -89,7 +92,8 @@ export class Home implements OnInit {
             customisable: true,
             category: 'Espresso Drinks',
             discountPercentage: 12,
-            oldPrice: 5.40
+            oldPrice: 5.40,
+            brand_id: 'brew-buddy'
           },
           {
             id: 'home-product5',
@@ -103,7 +107,8 @@ export class Home implements OnInit {
             customisable: false,
             category: 'Brewed Coffee',
             discountPercentage: 8,
-            oldPrice: 4.62
+            oldPrice: 4.62,
+            brand_id: 'brew-buddy'
           },
           {
             id: 'home-product6',
@@ -117,7 +122,8 @@ export class Home implements OnInit {
             customisable: true,
             category: 'Espresso Drinks',
             discountPercentage: 15,
-            oldPrice: 6.47
+            oldPrice: 6.47,
+            brand_id: 'brew-buddy'
           },
           {
             id: 'home-product7',
@@ -129,7 +135,8 @@ export class Home implements OnInit {
             description: 'Fresh baked muffin with juicy blueberries.',
             imageUrl: 'assets/images/brew-buddy/blueberry-muffin.jpg',
             customisable: false,
-            category: 'Pastries & Snacks'
+            category: 'Pastries & Snacks',
+            brand_id: 'brew-buddy'
           },
           {
             id: 'home-product8',
@@ -141,7 +148,8 @@ export class Home implements OnInit {
             description: 'Classic espresso with hot water for a clean taste.',
             imageUrl: 'assets/images/brew-buddy/americano.jpg',
             customisable: false,
-            category: 'Espresso Drinks'
+            category: 'Espresso Drinks',
+            brand_id: 'brew-buddy'
           }
         ];
     }, 2000); // Show skeleton for 2 seconds

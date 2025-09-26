@@ -42,7 +42,7 @@ export class Menu implements OnInit {
       if (error) {
         console.warn('Supabase error, using fallback data:', error.message);
         // Use fallback data when Supabase fails
-        this.products = this.fallbackDataService.getFallbackProducts();
+        this.products = this.fallbackDataService.getFallbackProducts(this.supabaseService.getCurrentBrand());
         this.filteredProducts = this.products;
         this.isLoading = false;
         return;
@@ -74,7 +74,8 @@ export class Menu implements OnInit {
       customisable: supabaseProduct.customisable,
       category: supabaseProduct.category,
       discountPercentage: supabaseProduct.discount_percentage,
-      oldPrice: supabaseProduct.old_price
+      oldPrice: supabaseProduct.old_price,
+      brand_id: supabaseProduct.brand_id
     };
   }
 
@@ -122,7 +123,8 @@ export class Menu implements OnInit {
         customisable: true,
         category: 'Espresso Drinks', // Assign category
         discountPercentage: 17, // Example discount
-        oldPrice: 5.99 // Example old price
+        oldPrice: 5.99, // Example old price
+        brand_id: 'brew-buddy'
       },
       {
         id: '2',
@@ -135,7 +137,8 @@ export class Menu implements OnInit {
         imageUrl: 'assets/images/brew-buddy/fries.jpg',
         customisable: false,
         initialQuantity: 1, // Example of an item already in cart
-        category: 'Pastries & Snacks' // Assign category
+        category: 'Pastries & Snacks', // Assign category
+        brand_id: 'brew-buddy'
       },
       {
         id: '3',
@@ -149,7 +152,8 @@ export class Menu implements OnInit {
         customisable: true,
         category: 'Espresso Drinks', // Assign category
         discountPercentage: 10, // Example discount
-        oldPrice: 4.00 // Example old price
+        oldPrice: 4.00, // Example old price
+        brand_id: 'brew-buddy'
       },
       {
         id: '4',
@@ -161,7 +165,8 @@ export class Menu implements OnInit {
         description: 'Espresso with steamed milk and a thin layer of foam',
         imageUrl: 'assets/images/brew-buddy/latte.jpg',
         customisable: false,
-        category: 'Espresso Drinks' // Assign category
+        category: 'Espresso Drinks', // Assign category
+        brand_id: 'brew-buddy'
       },
       {
         id: '5',
@@ -173,7 +178,8 @@ export class Menu implements OnInit {
         description: 'Freshly baked with juicy blueberries',
         imageUrl: 'assets/images/brew-buddy/muffin.jpg',
         customisable: false,
-        category: 'Pastries & Snacks' // Assign category
+        category: 'Pastries & Snacks', // Assign category
+        brand_id: 'brew-buddy'
       }
     ];
   }

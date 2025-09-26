@@ -13,8 +13,9 @@ export interface CartItem {
   description: string;
   imageUrl: string;
   customisable: boolean;
-  category: 'Espresso Drinks' | 'Brewed Coffee' | 'Pastries & Snacks';
+  category: 'Espresso Drinks' | 'Brewed Coffee' | 'Pastries & Snacks' | 'Educational' | 'Action Figures' | 'Board Games' | 'Dolls' | 'Outdoor' | 'Puzzles' | 'Dresses' | 'Men\'s' | 'Accessories' | 'Footwear' | 'Jewelry';
   quantity: number;
+  brand_id: string;
 }
 
 export interface CartState {
@@ -208,7 +209,8 @@ export class CartService {
         imageUrl: item.product?.image_url || '',
         customisable: item.product?.customisable || false,
         category: item.product?.category || 'Brewed Coffee',
-        quantity: item.quantity
+        quantity: item.quantity,
+        brand_id: item.product?.brand_id || item.brand_id || 'brew-buddy'
       }));
 
       const totalQuantity = transformedItems.reduce((total, item) => total + item.quantity, 0);

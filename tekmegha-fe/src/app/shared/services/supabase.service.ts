@@ -13,9 +13,10 @@ export interface Product {
   description: string;
   image_url: string;
   customisable: boolean;
-  category: 'Espresso Drinks' | 'Brewed Coffee' | 'Pastries & Snacks';
+  category: 'Espresso Drinks' | 'Brewed Coffee' | 'Pastries & Snacks' | 'Educational' | 'Action Figures' | 'Board Games' | 'Dolls' | 'Outdoor' | 'Puzzles' | 'Dresses' | 'Men\'s' | 'Accessories' | 'Footwear' | 'Jewelry';
   discount_percentage?: number;
   old_price?: number;
+  brand_id: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -25,6 +26,7 @@ export interface CartItem {
   user_id: string;
   product_id: string;
   quantity: number;
+  brand_id: string;
   created_at?: string;
   updated_at?: string;
   product?: Product;
@@ -39,6 +41,7 @@ export interface Order {
   payment_id?: string;
   delivery_address?: string;
   phone_number?: string;
+  brand_id: string;
   created_at?: string;
   updated_at?: string;
   order_items?: OrderItem[];
@@ -50,6 +53,7 @@ export interface OrderItem {
   product_id: string;
   quantity: number;
   price: number;
+  brand_id: string;
   product?: Product;
 }
 
@@ -61,6 +65,7 @@ export interface Store {
   hours: string;
   latitude?: number;
   longitude?: number;
+  brand_id: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -91,6 +96,18 @@ export class SupabaseService {
       });
       this.initializeAuth();
     }, 100);
+  }
+
+  // Get current brand based on URL path
+  getCurrentBrand(): string {
+    const path = window.location.pathname;
+    if (path.startsWith('/fashion')) {
+      return 'opula';
+    } else if (path.startsWith('/toys')) {
+      return 'little-ducks';
+    } else {
+      return 'brew-buddy'; // Default brand
+    }
   }
 
   private async initializeAuth() {
@@ -204,9 +221,11 @@ export class SupabaseService {
         throw new Error('Supabase client not initialized');
       }
       
+      const currentBrand = this.getCurrentBrand();
       const { data, error } = await this.supabase
         .from('products')
         .select('*')
+        .eq('brand_id', currentBrand)
         .order('created_at', { ascending: false });
       return { data, error };
     } catch (error) {
@@ -227,9 +246,11 @@ export class SupabaseService {
         throw new Error('Supabase client not initialized');
       }
       
+      const currentBrand = this.getCurrentBrand();
       const { data, error } = await this.supabase
         .from('products')
         .select('*')
+        .eq('brand_id', currentBrand)
         .eq('category', category)
         .order('created_at', { ascending: false });
       return { data, error };
@@ -332,6 +353,7 @@ export class SupabaseService {
     const user = this.getCurrentUser();
     if (!user) return { data: null, error: 'User not authenticated' };
 
+    const currentBrand = this.getCurrentBrand();
     const { data, error } = await this.supabase
       .from('cart_items')
       .select(`
@@ -339,6 +361,7 @@ export class SupabaseService {
         product:products(*)
       `)
       .eq('user_id', user.id)
+      .eq('brand_id', currentBrand)
       .order('created_at', { ascending: false });
     return { data, error };
   }
@@ -365,12 +388,14 @@ export class SupabaseService {
       return { data, error };
     } else {
       // Add new item
+      const currentBrand = this.getCurrentBrand();
       const { data, error } = await this.supabase
         .from('cart_items')
         .insert({
           user_id: user.id,
           product_id: productId,
-          quantity
+          quantity,
+          brand_id: currentBrand
         })
         .select();
       return { data, error };
@@ -462,9 +487,11 @@ export class SupabaseService {
 
   // Store Methods
   async getStores(): Promise<{ data: Store[] | null; error: any }> {
+    const currentBrand = this.getCurrentBrand();
     const { data, error } = await this.supabase
       .from('stores')
       .select('*')
+      .eq('brand_id', currentBrand)
       .order('name', { ascending: true });
     return { data, error };
   }

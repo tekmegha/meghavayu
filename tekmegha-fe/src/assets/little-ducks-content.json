@@ -1,0 +1,76 @@
+{
+  "topNavbar": [
+    {
+      "icon": "menu",
+      "position": "left",
+      "action": "toggleMenu"
+    },
+    {
+      "label": "Little Ducks",
+      "position": "center"
+    },
+    {
+      "icon": "account_circle",
+      "position": "right",
+      "action": "openLogin",
+      "route": "/login"
+    },
+    {
+      "icon": "shopping_cart",
+      "position": "right",
+      "action": "openCart",
+      "route": "/cart"
+    }
+  ],
+  "bottomNavbar": [
+    {
+      "icon": "home",
+      "label": "Home",
+      "route": "/home",
+      "active": true
+    },
+    {
+      "icon": "toys",
+      "label": "Toys",
+      "route": "/menu"
+    },
+    {
+      "icon": "shopping_cart",
+      "label": "Cart",
+      "route": "/cart"
+    },
+    {
+      "icon": "inventory",
+      "label": "Inventory",
+      "route": "/inventory"
+    },
+    {
+      "icon": "person",
+      "label": "Profile",
+      "route": "/profile"
+    }
+  ],
+  "stores": [
+    {
+      "id": "toys-store1",
+      "name": "Little Ducks Downtown",
+      "address": "123 Play Street, Downtown, City, State 12345",
+      "phone": "+1 555 123 4567",
+      "hours": "Mon-Sun: 9 AM - 8 PM"
+    },
+    {
+      "id": "toys-store2",
+      "name": "Little Ducks Mall",
+      "address": "456 Mall Drive, Shopping Center, City, State 12345",
+      "phone": "+1 555 234 5678",
+      "hours": "Mon-Sun: 10 AM - 9 PM"
+    },
+    {
+      "id": "toys-store3",
+      "name": "Little Ducks Family",
+      "address": "789 Family Ave, Residential Area, City, State 12345",
+      "phone": "+1 555 345 6789",
+      "hours": "Mon-Fri: 10 AM - 7 PM, Sat-Sun: 9 AM - 8 PM"
+    }
+  ]
+}
