@@ -285,20 +285,24 @@ export class SupabaseService {
   }
 
   async updateProduct(id: string, updates: Partial<Product>): Promise<{ data: Product | null; error: any }> {
+    const currentBrand = this.getCurrentBrand();
     const { data, error } = await this.supabase
       .from('products')
       .update(updates)
       .eq('id', id)
+      .eq('brand_id', currentBrand)
       .select()
       .single();
     return { data, error };
   }
 
   async deleteProduct(id: string): Promise<{ error: any }> {
+    const currentBrand = this.getCurrentBrand();
     const { error } = await this.supabase
       .from('products')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .eq('brand_id', currentBrand);
     return { error };
   }
 
