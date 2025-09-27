@@ -38,7 +38,15 @@
         <p>Subtotal: ₹{{ (cartState$ | async)?.totalAmount | number:'1.2-2' }}</p>
         <p>Delivery Fee: ₹{{ deliveryFee | number:'1.2-2' }}</p>
         <h4>Total: ₹{{ getTotalWithDelivery((cartState$ | async)!) | number:'1.2-2' }}</h4>
-        <button class="pay-button" (click)="payWithRazorpay()">Pay Now</button>
+        
+        @if (!isLoggedIn) {
+          <div class="login-prompt">
+            <p>Please login to proceed with checkout</p>
+            <button class="login-button" (click)="router.navigate(['/login'])">Login</button>
+          </div>
+        } @else {
+          <button class="pay-button" (click)="payWithRazorpay()">Pay Now</button>
+        }
       </div>
     }
   </div>

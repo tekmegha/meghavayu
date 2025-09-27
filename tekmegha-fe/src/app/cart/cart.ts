@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader';
 import { CartService, CartState } from '../shared/services/cart-service';
-import { Observable } from 'rxjs';
+import { SupabaseService } from '../shared/services/supabase.service';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cart',
@@ -10,20 +12,54 @@ import { Observable } from 'rxjs';
   templateUrl: './cart.html',
   styleUrl: './cart.scss'
 })
-export class Cart implements OnInit {
+export class Cart implements OnInit, OnDestroy {
   isLoading = true;
   cartState$: Observable<CartState>;
   deliveryFee = 50; // Fixed delivery fee
+  isLoggedIn = false;
+  private authSubscription?: Subscription;
 
-  constructor(private cartService: CartService) {
+  constructor(
+    private cartService: CartService,
+    private supabaseService: SupabaseService,
+    public router: Router
+  ) {
     this.cartState$ = this.cartService.cartState$;
   }
 
   ngOnInit() {
+    // Check authentication status
+    this.checkAuthStatus();
+    
+    // Subscribe to authentication state changes
+    this.authSubscription = this.supabaseService.currentUser$.subscribe(user => {
+      this.isLoggedIn = !!user;
+    });
+    
     // Simulate data loading
     setTimeout(() => {
       this.isLoading = false;
     }, 2000); // Show skeleton for 2 seconds
+  }
+
+  ngOnDestroy() {
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+  }
+
+  async checkAuthStatus() {
+    try {
+      const user = await this.supabaseService.getCurrentUser();
+      this.isLoggedIn = !!user;
+    } catch (error) {
+      console.error('Error checking auth status:', error);
+      this.isLoggedIn = false;
+    }
+  }
+
+  async refreshAuthStatus() {
+    await this.checkAuthStatus();
   }
 
   getTotalWithDelivery(cartState: CartState): number {
@@ -62,7 +98,18 @@ export class Cart implements OnInit {
     }
   }
 
-  payWithRazorpay() {
+  async payWithRazorpay() {
+    // Check if user is logged in
+    if (!this.isLoggedIn) {
+      const shouldLogin = confirm('You need to be logged in to proceed with checkout. Would you like to login now?');
+      if (shouldLogin) {
+        this.router.navigate(['/login']);
+        return;
+      } else {
+        return;
+      }
+    }
+
     // Check if Razorpay is loaded
     if (typeof (window as any).Razorpay === 'undefined') {
       alert('Razorpay SDK not loaded. Please refresh the page and try again.');

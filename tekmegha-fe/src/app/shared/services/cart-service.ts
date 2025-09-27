@@ -36,15 +36,15 @@ export class CartService {
   readonly cartState$: Observable<CartState> = this._cartState.asObservable();
 
   constructor(private supabaseService: SupabaseService) {
-    // Load cart from Supabase on initialization
-    this.loadCartFromSupabase();
+    // Load initial cart state
+    this.initializeCart();
     
-    // Subscribe to auth changes to reload cart
+    // Subscribe to auth changes to handle cart persistence
     this.supabaseService.currentUser$.subscribe(user => {
       if (user) {
-        this.loadCartFromSupabase();
+        this.handleUserLogin();
       } else {
-        this.clearCart();
+        this.handleUserLogout();
       }
     });
   }
@@ -231,18 +231,21 @@ export class CartService {
     const currentState = this._cartState.getValue();
     const existingItemIndex = currentState.items.findIndex(item => item.id === product.id);
 
+    let updatedItems: CartItem[];
     if (existingItemIndex > -1) {
-      const updatedItems = currentState.items.map((item, index) => {
+      updatedItems = currentState.items.map((item, index) => {
         if (index === existingItemIndex) {
           return { ...item, quantity: item.quantity + 1 };
         }
         return item;
       });
-      this._updateCart(updatedItems);
     } else {
       const newItem: CartItem = { ...product, quantity: 1 };
-      this._updateCart([...currentState.items, newItem]);
+      updatedItems = [...currentState.items, newItem];
     }
+    
+    this._updateCart(updatedItems);
+    this.saveCartToLocalStorage(updatedItems);
   }
 
   private updateLocalCartQuantity(product: Product, quantity: number) {
@@ -255,12 +258,14 @@ export class CartService {
     }).filter(item => item.quantity > 0);
 
     this._updateCart(updatedItems);
+    this.saveCartToLocalStorage(updatedItems);
   }
 
   private removeFromLocalCart(productId: string) {
     const currentState = this._cartState.getValue();
     const updatedItems = currentState.items.filter(item => item.id !== productId);
     this._updateCart(updatedItems);
+    this.saveCartToLocalStorage(updatedItems);
   }
 
   private clearLocalCart() {
@@ -269,5 +274,96 @@ export class CartService {
       totalQuantity: 0,
       totalAmount: 0
     });
+    localStorage.removeItem('brew-buddy-cart');
+  }
+
+  // Cart persistence methods
+  private async initializeCart() {
+    const user = await this.supabaseService.getCurrentUser();
+    if (user) {
+      await this.loadCartFromSupabase();
+    } else {
+      this.loadCartFromLocalStorage();
+    }
+  }
+
+  private async handleUserLogin() {
+    const localCartItems = this.getLocalCartItems();
+    
+    // Load cart from Supabase first
+    await this.loadCartFromSupabase();
+    
+    // If there are local cart items, merge them with Supabase cart
+    if (localCartItems.length > 0) {
+      await this.mergeLocalCartWithSupabase(localCartItems);
+    }
+  }
+
+  private handleUserLogout() {
+    // Save current cart to local storage before clearing
+    const currentState = this._cartState.getValue();
+    this.saveCartToLocalStorage(currentState.items);
+    
+    // Clear the cart state
+    this._cartState.next({
+      items: [],
+      totalQuantity: 0,
+      totalAmount: 0
+    });
+  }
+
+  private getLocalCartItems(): CartItem[] {
+    try {
+      const saved = localStorage.getItem('brew-buddy-cart');
+      return saved ? JSON.parse(saved) : [];
+    } catch (error) {
+      console.error('Error loading cart from local storage:', error);
+      return [];
+    }
+  }
+
+  private saveCartToLocalStorage(items: CartItem[]) {
+    try {
+      localStorage.setItem('brew-buddy-cart', JSON.stringify(items));
+    } catch (error) {
+      console.error('Error saving cart to local storage:', error);
+    }
+  }
+
+  private loadCartFromLocalStorage() {
+    const localItems = this.getLocalCartItems();
+    this._updateCart(localItems);
+  }
+
+  private async mergeLocalCartWithSupabase(localItems: CartItem[]) {
+    try {
+      // Get current Supabase cart items
+      const { data: supabaseItems } = await this.supabaseService.getCartItems();
+      const supabaseCartItems = supabaseItems || [];
+
+      // Merge local items with Supabase items
+      for (const localItem of localItems) {
+        const existingSupabaseItem = supabaseCartItems.find(
+          item => item.product_id === localItem.id
+        );
+
+        if (existingSupabaseItem) {
+          // Update quantity if item exists in both
+          const newQuantity = existingSupabaseItem.quantity + localItem.quantity;
+          await this.supabaseService.updateCartItemQuantity(existingSupabaseItem.id, newQuantity);
+        } else {
+          // Add new item to Supabase cart
+          await this.supabaseService.addToCart(localItem.id, localItem.quantity);
+        }
+      }
+
+      // Clear local storage after merging
+      localStorage.removeItem('brew-buddy-cart');
+      
+      // Reload cart from Supabase
+      await this.loadCartFromSupabase();
+    } catch (error) {
+      console.error('Error merging local cart with Supabase:', error);
+    }
   }
 }
