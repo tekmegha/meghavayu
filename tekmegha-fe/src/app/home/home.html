@@ -1,4 +1,6 @@
-@if (isLoading) {
+@if (showStoreSelector) {
+  <app-store-selector></app-store-selector>
+} @else if (isLoading) {
   <app-skeleton-loader></app-skeleton-loader>
 } @else {
   <div class="home-container">
@@ -6,6 +8,19 @@
       <div class="offline-banner">
         <span class="material-icons">wifi_off</span>
         <span>You're offline - showing cached content</span>
+      </div>
+    }
+    
+    @if (selectedStore) {
+      <div class="store-header">
+        <div class="store-info">
+          <h2>Welcome to {{ selectedStore.storeName }}</h2>
+          <p>{{ getStoreDescription(selectedStore.storeCode) }}</p>
+        </div>
+        <button class="change-store-btn" (click)="showStoreSelector = true">
+          <span class="material-icons">store</span>
+          Change Store
+        </button>
       </div>
     }
         <section class="hero-section">

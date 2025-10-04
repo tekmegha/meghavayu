@@ -1,21 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader';
 import { ProductTileComponent } from '../shared/product-tile/product-tile';
+import { StoreSelectorComponent } from '../shared/store-selector/store-selector';
 import { Product } from '../shared/interfaces/product.interface';
 import { NetworkStatusService } from '../shared/services/network-status.service';
+import { StoreSessionService, StoreSession } from '../shared/services/store-session.service';
+import { BrandService } from '../shared/services/brand.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, RouterLink, SkeletonLoaderComponent, ProductTileComponent], // Add RouterLink and ProductTileComponent
+  imports: [CommonModule, RouterLink, SkeletonLoaderComponent, ProductTileComponent, StoreSelectorComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
-export class Home implements OnInit {
+export class Home implements OnInit, OnDestroy {
   isLoading = true;
   products: Product[] = [];
   isOnline = true;
+  selectedStore: StoreSession | null = null;
+  showStoreSelector = false;
+  private subscription = new Subscription();
+  
   coffeeCategories = [
     { name: 'Espresso', icon: 'local_cafe', route: '/menu' },
     { name: 'Latte', icon: 'coffee', route: '/menu' },
@@ -25,7 +33,12 @@ export class Home implements OnInit {
     { name: 'Tea', icon: 'emoji_food_beverage', route: '/menu' }
   ];
 
-  constructor(private networkStatus: NetworkStatusService) {}
+  constructor(
+    private networkStatus: NetworkStatusService,
+    private storeSessionService: StoreSessionService,
+    private brandService: BrandService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.isOnline = this.networkStatus.isOnline();
@@ -33,6 +46,34 @@ export class Home implements OnInit {
       this.isOnline = online;
     });
 
+    // Subscribe to store session changes
+    this.subscription.add(
+      this.storeSessionService.selectedStore$.subscribe(store => {
+        this.selectedStore = store;
+        this.showStoreSelector = !store;
+        if (store) {
+          this.loadProductsForStore(store);
+          this.initializeBrandForStore(store);
+        }
+      })
+    );
+
+    // Check if we need to show store selector
+    const currentStore = this.storeSessionService.getSelectedStore();
+    if (!currentStore) {
+      this.showStoreSelector = true;
+    } else {
+      this.selectedStore = currentStore;
+      this.loadProductsForStore(currentStore);
+      this.initializeBrandForStore(currentStore);
+    }
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  private loadProductsForStore(store: StoreSession) {
     // Simulate data loading
     setTimeout(() => {
       this.isLoading = false;
@@ -157,5 +198,34 @@ export class Home implements OnInit {
 
   onImageError(event: Event) {
     (event.target as HTMLImageElement).src = 'assets/images/brew-buddy/default.png';
+  }
+
+  getStoreDescription(storeCode: string): string {
+    switch (storeCode) {
+      case 'brew-buddy':
+        return 'Premium coffee and beverages';
+      case 'little-ducks':
+        return 'Educational toys and games';
+      case 'opula':
+        return 'Fashion and accessories';
+      default:
+        return 'General store';
+    }
+  }
+
+  private initializeBrandForStore(store: StoreSession) {
+    // Set the brand based on the selected store
+    this.brandService.setCurrentBrand(store.storeCode);
+    
+    // Apply store-specific theme to body
+    document.body.className = document.body.className.replace(/-\w+-theme/g, '');
+    document.body.classList.add(`${store.storeCode}-theme`);
+    
+    // Update URL to include store code if not already present
+    const currentPath = window.location.pathname;
+    if (!currentPath.includes(`/${store.storeCode}`)) {
+      const newPath = `/${store.storeCode}${currentPath}`;
+      this.router.navigateByUrl(newPath, { replaceUrl: true });
+    }
   }
 }

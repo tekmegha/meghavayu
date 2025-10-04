@@ -2,6 +2,82 @@
   padding: 20px;
 }
 
+.store-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+
+  .store-info {
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+      color: white;
+    }
+
+    p {
+      font-size: 1rem;
+      margin: 0;
+      opacity: 0.9;
+    }
+  }
+
+  .change-store-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .material-icons {
+      font-size: 18px;
+    }
+  }
+}
+
+// Mobile responsive for store header
+@media (max-width: 768px) {
+  .store-header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+
+    .store-info {
+      h2 {
+        font-size: 1.3rem;
+      }
+
+      p {
+        font-size: 0.9rem;
+      }
+    }
+
+    .change-store-btn {
+      padding: 10px 16px;
+      font-size: 0.85rem;
+    }
+  }
+}
+
 .hero-section {
   text-align: center;
   margin-bottom: 40px;

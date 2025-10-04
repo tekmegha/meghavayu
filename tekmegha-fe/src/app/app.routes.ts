@@ -7,12 +7,14 @@ import { Profile } from './profile/profile';
 import { Login } from './login/login';
 import { Inventory } from './inventory/inventory';
 import { InventoryLogin } from './inventory-login/inventory-login';
+import { TekMeghaClientsComponent } from './tekmegha-clients/tekmegha-clients';
 import { InventoryAuthGuard } from './shared/guards/inventory-auth.guard';
-import { LayoutFashion } from './layout-fashion/layout-fashion';
-import { LayoutToys } from './layout-toys/layout-toys';
+import { DynamicLayoutComponent } from './shared/dynamic-layout/dynamic-layout';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
+  
+  // Default routes (Brew Buddy)
   { path: 'home', component: Home },
   { path: 'menu', component: Menu },
   { path: 'cart', component: Cart },
@@ -21,9 +23,10 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'inventory-login', component: InventoryLogin },
   { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] },
+  { path: 'tekmegha-clients', component: TekMeghaClientsComponent },
   
-  // Brand-specific routes
-  { path: 'fashion', component: LayoutFashion, children: [
+  // Store-specific routes with dynamic layout
+  { path: 'brew-buddy', component: DynamicLayoutComponent, children: [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: 'home', component: Home },
     { path: 'menu', component: Menu },
@@ -31,9 +34,10 @@ export const routes: Routes = [
     { path: 'stores', component: Stores },
     { path: 'profile', component: Profile },
     { path: 'login', component: Login },
-    { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] }
+    { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] },
+    { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
   ]},
-  { path: 'toys', component: LayoutToys, children: [
+  { path: 'little-ducks', component: DynamicLayoutComponent, children: [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: 'home', component: Home },
     { path: 'menu', component: Menu },
@@ -41,6 +45,18 @@ export const routes: Routes = [
     { path: 'stores', component: Stores },
     { path: 'profile', component: Profile },
     { path: 'login', component: Login },
-    { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] }
+    { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] },
+    { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
+  ]},
+  { path: 'opula', component: DynamicLayoutComponent, children: [
+    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    { path: 'home', component: Home },
+    { path: 'menu', component: Menu },
+    { path: 'cart', component: Cart },
+    { path: 'stores', component: Stores },
+    { path: 'profile', component: Profile },
+    { path: 'login', component: Login },
+    { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] },
+    { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
   ]}
 ];

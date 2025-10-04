@@ -1,77 +1,145 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DeliveryService, DeliveryOption } from '../services/delivery.service';
+import { FormsModule } from '@angular/forms';
+import { StoreSessionService, StoreSession } from '../services/store-session.service';
+import { SupabaseService } from '../services/supabase.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-store-selector',
-  imports: [CommonModule],
-  templateUrl: './store-selector.html',
-  styleUrl: './store-selector.scss'
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  template: `
+    <div class="store-selector" *ngIf="showSelector">
+      <div class="store-selector-header">
+        <h3>Select Your Store</h3>
+        <p>Choose a store to browse products and place orders</p>
+      </div>
+      
+      <div class="stores-grid" *ngIf="!isLoading; else loadingTemplate">
+        <div 
+          *ngFor="let store of availableStores" 
+          class="store-card"
+          [class.selected]="isStoreSelected(store)"
+          (click)="selectStore(store)"
+        >
+          <div class="store-icon">
+            <span class="material-icons">{{ getStoreIcon(store.storeCode) }}</span>
+          </div>
+          <div class="store-info">
+            <h4>{{ store.storeName }}</h4>
+            <p>{{ getStoreDescription(store.storeCode) }}</p>
+            <span class="store-type">{{ store.storeType }}</span>
+          </div>
+          <div class="store-status" *ngIf="store.isActive">
+            <span class="status-badge active">Open</span>
+          </div>
+        </div>
+      </div>
+      
+      <ng-template #loadingTemplate>
+        <div class="loading-stores">
+          <div class="skeleton-card" *ngFor="let i of [1,2,3]">
+            <div class="skeleton-icon"></div>
+            <div class="skeleton-content">
+              <div class="skeleton-title"></div>
+              <div class="skeleton-description"></div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+      
+      <div class="store-selector-footer" *ngIf="selectedStore">
+        <p>Selected: <strong>{{ selectedStore.storeName }}</strong></p>
+        <button class="continue-btn" (click)="continueWithStore()">
+          Continue Shopping
+        </button>
+      </div>
+    </div>
+  `,
+  styleUrls: ['./store-selector.scss']
 })
-export class StoreSelectorComponent implements OnInit {
-  @Input() showModal = false;
-  @Output() storeSelected = new EventEmitter<DeliveryOption>();
-  @Output() modalClosed = new EventEmitter<void>();
-
-  deliveryOptions: DeliveryOption[] = [];
-  selectedStore: DeliveryOption | null = null;
+export class StoreSelectorComponent implements OnInit, OnDestroy {
+  availableStores: StoreSession[] = [];
+  selectedStore: StoreSession | null = null;
   isLoading = true;
+  showSelector = true;
+  private subscription = new Subscription();
 
-  constructor(private deliveryService: DeliveryService) {}
+  constructor(
+    private storeSessionService: StoreSessionService,
+    private supabaseService: SupabaseService
+  ) {}
 
   ngOnInit() {
-    this.loadDeliveryOptions();
+    this.loadStores();
+    
+    // Subscribe to store changes
+    this.subscription.add(
+      this.storeSessionService.selectedStore$.subscribe(store => {
+        this.selectedStore = store;
+        if (store) {
+          this.showSelector = false;
+        }
+      })
+    );
   }
 
-  async loadDeliveryOptions() {
-    this.isLoading = true;
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  async loadStores() {
     try {
-      await this.deliveryService.loadDeliveryOptions();
-      this.deliveryService.deliveryOptions$.subscribe(options => {
-        this.deliveryOptions = options;
-        this.isLoading = false;
-      });
+      this.isLoading = true;
+      this.availableStores = await this.storeSessionService.getAvailableStores();
     } catch (error) {
-      console.error('Error loading delivery options:', error);
+      console.error('Error loading stores:', error);
+    } finally {
       this.isLoading = false;
     }
   }
 
-  selectStore(store: DeliveryOption) {
+  selectStore(store: StoreSession) {
     this.selectedStore = store;
-    this.deliveryService.selectStore(store.storeId);
-    this.storeSelected.emit(store);
-    this.closeModal();
+    this.storeSessionService.setSelectedStore(store);
   }
 
-  closeModal() {
-    this.modalClosed.emit();
+  isStoreSelected(store: StoreSession): boolean {
+    return this.selectedStore?.storeId === store.storeId;
   }
 
-  formatTime(minutes: number): string {
-    if (minutes < 60) {
-      return `${minutes} min`;
+  continueWithStore() {
+    if (this.selectedStore) {
+      // Update URL to match selected store
+      this.storeSessionService.updateUrlForStore(this.selectedStore.storeCode);
+      this.showSelector = false;
     }
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours}h ${mins}m`;
   }
 
-  formatDistance(km: number): string {
-    return `${km.toFixed(1)} km`;
+  getStoreIcon(storeCode: string): string {
+    switch (storeCode) {
+      case 'brew-buddy':
+        return 'local_cafe';
+      case 'little-ducks':
+        return 'toys';
+      case 'opula':
+        return 'shopping_bag';
+      default:
+        return 'store';
+    }
   }
 
-  getStatusColor(store: DeliveryOption): string {
-    if (!store.isAvailable) return 'unavailable';
-    if (store.estimatedTime <= 20) return 'fast';
-    if (store.estimatedTime <= 40) return 'medium';
-    return 'slow';
-  }
-
-  getStatusText(store: DeliveryOption): string {
-    if (!store.isAvailable) return 'Closed';
-    if (store.estimatedTime <= 20) return 'Fast Delivery';
-    if (store.estimatedTime <= 40) return 'Normal Delivery';
-    return 'Slower Delivery';
+  getStoreDescription(storeCode: string): string {
+    switch (storeCode) {
+      case 'brew-buddy':
+        return 'Premium coffee and beverages';
+      case 'little-ducks':
+        return 'Educational toys and games';
+      case 'opula':
+        return 'Fashion and accessories';
+      default:
+        return 'General store';
+    }
   }
 }

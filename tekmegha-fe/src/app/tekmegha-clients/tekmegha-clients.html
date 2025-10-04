@@ -1,0 +1,302 @@
+<div class="tekmegha-clients-container">
+  <!-- Header -->
+   
+
+  <!-- View Toggle -->
+  <div class="view-toggle" *ngIf="!isLoading">
+    <button 
+      class="toggle-btn" 
+      [class.active]="!showBillingView"
+      (click)="showBillingView = false">
+      <span class="material-icons">table_view</span>
+      Table View
+    </button>
+    <button 
+      class="toggle-btn" 
+      [class.active]="showBillingView"
+      (click)="toggleBillingView()">
+      <span class="material-icons">calendar_month</span>
+      Billing Calendar
+    </button>
+  </div>
+
+  
+
+  <!-- Billing Calendar View -->
+  <div class="billing-calendar" *ngIf="showBillingView && !isLoading">
+    
+    
+    <div class="billing-months-grid">
+      <div 
+        *ngFor="let billingMonth of billingMonths; trackBy: trackByBillingMonth" 
+        class="billing-month-card"
+        [ngClass]="getBillingMonthClass(billingMonth)">
+        <div class="month-header">
+          <h3>{{ billingMonth.month }} {{ billingMonth.year }}</h3>
+          <span class="month-status">{{ getBillingMonthStatus(billingMonth) }}</span>
+        </div>
+        
+        <!-- Clients Expiring This Month -->
+        <div class="section-title" *ngIf="billingMonth.clients.length > 0">
+          <h4>Expiring This Month ({{ billingMonth.clients.length }})</h4>
+        </div>
+        
+        <div class="clients-list" *ngIf="billingMonth.clients.length > 0">
+          <div 
+            *ngFor="let client of billingMonth.clients; trackBy: trackByClientId" 
+            class="client-item expiring">
+            <div class="client-info">
+              <strong>{{ client.client_name }}</strong>
+              <span class="contact">{{ client.contact_person }}</span>
+            </div>
+            <div class="client-details">
+              <span class="expiry-date">{{ formatDate(client.Expiry_Date) }}</span>
+              <span class="product-type">{{ client.Product_Type }}</span>
+            </div>
+            <div class="client-actions">
+              <a [href]="'mailto:' + client.email" class="action-btn email">
+                <span class="material-icons">email</span>
+              </a>
+              <a [href]="'tel:' + client.phone" class="action-btn phone">
+                <span class="material-icons">phone</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Clients Billing This Month -->
+        <div class="section-title" *ngIf="billingMonth.groupedBillingClients.length > 0">
+          <h4>Billing This Month ({{ billingMonth.groupedBillingClients.length }} Clients)</h4>
+        </div>
+        
+        <div class="billing-clients-list" *ngIf="billingMonth.groupedBillingClients.length > 0">
+          <div 
+            *ngFor="let client of billingMonth.groupedBillingClients; trackBy: trackByGroupedClient" 
+            class="client-item billing">
+            <div class="client-info">
+              <strong>{{ client.client_name }}</strong>
+              <span class="contact">{{ client.contact_person }}</span>
+              <span class="client-count" *ngIf="client.client_count > 1">
+                ({{ client.client_count }} products)
+              </span>
+            </div>
+            <div class="client-details">
+              <span class="billing-month">Billing Month: {{ client.tm_billing_month }}</span>
+              <span class="product-type">{{ getProductsList(client.products) }}</span>
+            </div>
+            <div class="client-actions">
+              <a [href]="'mailto:' + client.email" class="action-btn email">
+                <span class="material-icons">email</span>
+              </a>
+              <a [href]="'tel:' + client.phone" class="action-btn phone">
+                <span class="material-icons">phone</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="no-clients" *ngIf="billingMonth.clients.length === 0 && billingMonth.billingClients.length === 0">
+          <span class="material-icons">event_available</span>
+          <p>No payments due this month</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters and Search -->
+  <div class="filters-section" *ngIf="!isLoading && !showBillingView">
+    <div class="filters-row">
+      <div class="search-box">
+        <span class="material-icons">search</span>
+        <input 
+          type="text" 
+          placeholder="Search clients..." 
+          [(ngModel)]="searchTerm"
+          (input)="onSearchChange()"
+        >
+      </div>
+
+      <div class="filter-group">
+        <label>Status:</label>
+        <select [(ngModel)]="statusFilter" (change)="onStatusFilterChange()">
+          <option value="all">All Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+          <option value="pending">Pending</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Expiry:</label>
+        <select [(ngModel)]="renewalFilter" (change)="onRenewalFilterChange()">
+          <option value="all">All Expiry Dates</option>
+          <option value="expired">Expired</option>
+          <option value="this_month">Expires This Month</option>
+          <option value="next_month">Expires Next Month</option>
+          <option value="next_3_months">Expires Next 3 Months</option>
+        </select>
+      </div>
+    </div>
+  </div>
+<!-- Stats Cards -->
+<div class="stats-grid" *ngIf="!isLoading">
+  <div class="stat-card">
+    <div class="stat-icon">
+      <span class="material-icons">people</span>
+    </div>
+    <div class="stat-content">
+      <h3>{{ stats.total_clients }}</h3>
+      <p>Total Clients</p>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon active">
+      <span class="material-icons">check_circle</span>
+    </div>
+    <div class="stat-content">
+      <h3>{{ stats.active_clients }}</h3>
+      <p>Active Clients</p>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon pending">
+      <span class="material-icons">schedule</span>
+    </div>
+    <div class="stat-content">
+      <h3>{{ stats.pending_renewals }}</h3>
+      <p>Pending Renewals</p>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon warning">
+      <span class="material-icons">warning</span>
+    </div>
+    <div class="stat-content">
+      <h3>{{ stats.expiring_this_month }}</h3>
+      <p>Expires This Month</p>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon info">
+      <span class="material-icons">info</span>
+    </div>
+    <div class="stat-content">
+      <h3>{{ stats.expiring_next_month }}</h3>
+      <p>Expires Next Month</p>
+    </div>
+  </div>
+</div>
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="loading-spinner">
+      <span class="material-icons">refresh</span>
+    </div>
+    <p>Loading clients...</p>
+  </div>
+
+  <!-- Clients Table -->
+  <div class="clients-table-container" *ngIf="!isLoading && !showBillingView">
+    <div class="table-header">
+      <h3>Clients ({{ filteredClients.length }})</h3>
+      <button class="refresh-btn" (click)="loadClients()">
+        <span class="material-icons">refresh</span>
+        Refresh
+      </button>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="clients-table">
+        <thead>
+          <tr>
+            <th (click)="onSort('client_name')" class="sortable">
+              Client Name
+              <span class="material-icons sort-icon">
+                {{ sortBy === 'client_name' ? (sortOrder === 'asc' ? 'keyboard_arrow_up' : 'keyboard_arrow_down') : 'unfold_more' }}
+              </span>
+            </th>
+            <th (click)="onSort('contact_person')" class="sortable">
+              Contact Person
+              <span class="material-icons sort-icon">
+                {{ sortBy === 'contact_person' ? (sortOrder === 'asc' ? 'keyboard_arrow_up' : 'keyboard_arrow_down') : 'unfold_more' }}
+              </span>
+            </th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Location</th>
+            <th (click)="onSort('Expiry_Date')" class="sortable">
+              Expiry Date
+              <span class="material-icons sort-icon">
+                {{ sortBy === 'Expiry_Date' ? (sortOrder === 'asc' ? 'keyboard_arrow_up' : 'keyboard_arrow_down') : 'unfold_more' }}
+              </span>
+            </th>
+            <th>Products</th>
+            <th (click)="onSort('status')" class="sortable">
+              Status
+              <span class="material-icons sort-icon">
+                {{ sortBy === 'status' ? (sortOrder === 'asc' ? 'keyboard_arrow_up' : 'keyboard_arrow_down') : 'unfold_more' }}
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let client of filteredClients; trackBy: trackByClientId" class="client-row">
+            <td class="client-name">
+              <div class="client-info">
+                <strong>{{ client.client_name }}</strong>
+              </div>
+            </td>
+            
+            
+            <td class="renewal-date">
+              <div class="renewal-info">
+                <span class="date">{{ formatDate(client.Expiry_Date) }}</span>
+                <span class="renewal-status" [ngClass]="getRenewalStatus(client.Expiry_Date).class">
+                  {{ getRenewalStatus(client.Expiry_Date).status }}
+                  <small>({{ getRenewalStatus(client.Expiry_Date).days }} days)</small>
+                </span>
+              </div>
+            </td>
+            <td class="products">
+              <div class="products-list">
+                {{ client.Product_Type}}
+              </div>
+            </td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(client.status)">
+                {{ client.status | titlecase }}
+              </span>
+            </td>
+            <td>{{ client.contact_person }}</td>
+            <td>
+              <a [href]="'mailto:' + client.email" class="email-link">
+                {{ client.email }}
+              </a>
+            </td>
+            <td>
+              <a [href]="'tel:' + client.phone" class="phone-link">
+                {{ client.phone }}
+              </a>
+            </td>
+            <td class="location">
+              <div class="location-info">
+                <span>{{ client.city }}, {{ client.state }}</span>
+                <small>{{ client.pincode }}</small>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- No Results -->
+    <div class="no-results" *ngIf="filteredClients.length === 0">
+      <span class="material-icons">search_off</span>
+      <h3>No clients found</h3>
+      <p>Try adjusting your search or filter criteria</p>
+    </div>
+  </div>
+</div>
