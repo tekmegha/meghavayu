@@ -22,11 +22,14 @@ jobs:
         run: npm install
         working-directory: ./tekmegha-fe
 
+      - name: Replace Supabase key in environment file
+        run: |
+          sed -i "s/SUPABASE_ANON_KEY_PLACEHOLDER/${{ secrets.SUPABASE_ANON_KEY }}/g" src/environments/environment.prod.ts
+        working-directory: ./tekmegha-fe
+
       - name: Build Angular application
         run: npm run build -- --configuration=production --base-href "/" --project tekmegha-fe
         working-directory: ./tekmegha-fe
-        env:
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
