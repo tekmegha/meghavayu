@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { SupabaseService, Product } from './supabase.service';
+import { SupabaseService } from './supabase.service';
+import { Product } from '../interfaces/product.interface';
 
 export interface InventoryProduct extends Product {
   stock_quantity: number;

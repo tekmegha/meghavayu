@@ -25,6 +25,8 @@ jobs:
       - name: Build Angular application
         run: npm run build -- --configuration=production --base-href "/" --project tekmegha-fe
         working-directory: ./tekmegha-fe
+        env:
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
@@ -48,10 +50,10 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.0
         with:
           server: 5.183.10.37
-          username: u250903974.tekmeghahostingervayu
-          password: Mydefaultdeploy*800
+          username: u250903974.tekmeghastoreftp
+          password: ${{ secrets.FTP_STORE }}
           local-dir: dist/
-          server-dir: /
+          server-dir: /store/
           delete-excluded: true
           exclude: | # Files/directories to exclude from upload
             .git/

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { SupabaseService, Store } from './supabase.service';
+import { SupabaseService, Store, StoreLocation } from './supabase.service';
 
 export interface DeliveryOption {
   id: string;
@@ -76,7 +76,7 @@ export class DeliveryService {
 
   async loadDeliveryOptions(): Promise<void> {
     try {
-      const { data: stores, error } = await this.supabaseService.getStores();
+      const { data: stores, error } = await this.supabaseService.getStoreLocations();
       if (error) {
         console.error('Error loading stores:', error);
         return;
@@ -189,14 +189,14 @@ export class DeliveryService {
     );
   }
 
-  private calculateEstimatedTime(store: Store): number {
+  private calculateEstimatedTime(store: StoreLocation): number {
     // Base time + distance factor
     const baseTime = 15; // 15 minutes base
     const distance = this.calculateDistance(store);
     return baseTime + (distance * 2); // 2 minutes per km
   }
 
-  private calculateDeliveryFee(store: Store): number {
+  private calculateDeliveryFee(store: StoreLocation): number {
     // Base fee + distance factor
     const baseFee = 30; // ₹30 base fee
     const distance = this.calculateDistance(store);
@@ -204,7 +204,7 @@ export class DeliveryService {
     return Math.max(baseFee, baseFee + distanceFactor);
   }
 
-  private isStoreAvailable(store: Store): boolean {
+  private isStoreAvailable(store: StoreLocation): boolean {
     // Check if store is open and has capacity
     const now = new Date();
     const currentHour = now.getHours();
@@ -213,7 +213,7 @@ export class DeliveryService {
     return currentHour >= 7 && currentHour <= 22;
   }
 
-  private calculateDistance(store: Store): number {
+  private calculateDistance(store: StoreLocation): number {
     // Mock distance calculation - in real app, use geolocation API
     return Math.random() * 10 + 1; // 1-11 km
   }

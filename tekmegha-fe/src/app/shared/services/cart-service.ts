@@ -1,21 +1,28 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Product } from '../interfaces/product.interface';
-import { SupabaseService, CartItem as SupabaseCartItem } from './supabase.service';
+import { CartItem as SupabaseCartItem, Order, OrderItem } from '../interfaces/store.interface';
+import { SupabaseService } from './supabase.service';
 
+// Legacy CartItem interface for backward compatibility
 export interface CartItem {
   id: string;
   name: string;
   price: number;
   rating: number;
-  reviewCount: number;
+  reviewCount?: number; // Made optional for backward compatibility
   serves: number;
   description: string;
-  imageUrl: string;
+  imageUrl?: string; // Made optional for backward compatibility
   customisable: boolean;
-  category: 'Espresso Drinks' | 'Brewed Coffee' | 'Pastries & Snacks' | 'Educational' | 'Action Figures' | 'Board Games' | 'Dolls' | 'Outdoor' | 'Puzzles' | 'Dresses' | 'Men\'s' | 'Accessories' | 'Footwear' | 'Jewelry';
+  category: string;
   quantity: number;
-  brand_id: string;
+  brand_id?: string; // Made optional for backward compatibility
+}
+
+// New CartItem interface matching the schema with product data
+export interface NewCartItem extends SupabaseCartItem {
+  product?: Product;
 }
 
 export interface CartState {
@@ -108,6 +115,43 @@ export class CartService {
     }
   }
 
+  // New method for updating cart item quantity by product ID (for CartItem objects)
+  async updateCartItemQuantityById(productId: string, quantity: number) {
+    const user = this.supabaseService.getCurrentUser();
+    if (!user || !this.supabaseService.isSupabaseReady()) {
+      // Fallback to local storage
+      this.updateLocalCartQuantityById(productId, quantity);
+      return;
+    }
+
+    try {
+      const currentState = this._cartState.getValue();
+      const cartItem = currentState.items.find(item => item.id === productId);
+      
+      if (!cartItem) return;
+
+      // Use the new schema method
+      await this.updateCartItemQuantityNewSchema(productId, quantity);
+    } catch (error) {
+      console.error('Error updating cart item:', error);
+      // Fallback to local storage on error
+      this.updateLocalCartQuantityById(productId, quantity);
+    }
+  }
+
+  private updateLocalCartQuantityById(productId: string, quantity: number) {
+    const currentState = this._cartState.getValue();
+    const updatedItems = currentState.items.map(item => {
+      if (item.id === productId) {
+        return { ...item, quantity: quantity };
+      }
+      return item;
+    }).filter(item => item.quantity > 0);
+
+    this._updateCart(updatedItems);
+    this.saveCartToLocalStorage(updatedItems);
+  }
+
   private _updateCart(items: CartItem[]) {
     const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
     const totalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -198,19 +242,19 @@ export class CartService {
       }
 
       const cartItems = data || [];
-      const transformedItems: CartItem[] = cartItems.map(item => ({
-        id: item.product?.id || item.product_id,
+      const transformedItems: CartItem[] = cartItems.map((item: any) => ({
+        id: item.product_id,
         name: item.product?.name || '',
-        price: item.product?.price || 0,
+        price: item.product?.price || item.unit_price || 0,
         rating: item.product?.rating || 0,
-        reviewCount: item.product?.review_count || 0,
+        reviewCount: item.product?.review_count || item.product?.reviewCount || 0,
         serves: item.product?.serves || 1,
         description: item.product?.description || '',
-        imageUrl: item.product?.image_url || '',
+        imageUrl: item.product?.image_url || item.product?.imageUrl || '',
         customisable: item.product?.customisable || false,
         category: item.product?.category || 'Brewed Coffee',
         quantity: item.quantity,
-        brand_id: item.product?.brand_id || item.brand_id || 'brew-buddy'
+        brand_id: item.megha_store_id || item.brand_id || 'brew-buddy'
       }));
 
       const totalQuantity = transformedItems.reduce((total, item) => total + item.quantity, 0);
@@ -364,6 +408,219 @@ export class CartService {
       await this.loadCartFromSupabase();
     } catch (error) {
       console.error('Error merging local cart with Supabase:', error);
+    }
+  }
+
+  // ===================================================================
+  // NEW SCHEMA METHODS
+  // ===================================================================
+
+  // New schema cart methods
+  async addToCartNewSchema(product: Product, quantity: number = 1, customizations?: any): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { data, error } = await this.supabaseService.addToCart(
+        product.id,
+        quantity,
+        customizations
+      );
+
+      if (error) {
+        console.error('Error adding to cart:', error);
+        return { success: false, error: error.message || 'Failed to add item to cart' };
+      }
+
+      // Reload cart after adding
+      await this.loadCartFromSupabaseNewSchema();
+      return { success: true };
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      return { success: false, error: 'Failed to add item to cart' };
+    }
+  }
+
+  async loadCartFromSupabaseNewSchema(): Promise<void> {
+    try {
+      const { data, error } = await this.supabaseService.getCartItems();
+      
+      if (error) {
+        console.error('Error loading cart from Supabase:', error);
+        return;
+      }
+
+      const cartItems = data || [];
+      const transformedItems: CartItem[] = cartItems.map((item: any) => ({
+        id: item.product_id,
+        name: item.product?.name || '',
+        price: item.product?.price || item.unit_price || 0,
+        rating: item.product?.rating || 0,
+        reviewCount: item.product?.review_count || item.product?.reviewCount || 0,
+        serves: item.product?.serves || 1,
+        description: item.product?.description || '',
+        imageUrl: item.product?.image_url || item.product?.imageUrl || '',
+        customisable: item.product?.customisable || false,
+        category: item.product?.category || 'General',
+        quantity: item.quantity,
+        brand_id: item.megha_store_id || item.brand_id || 'brew-buddy' // Legacy compatibility
+      }));
+
+      const totalQuantity = transformedItems.reduce((total, item) => total + item.quantity, 0);
+      const totalAmount = transformedItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+      this._cartState.next({
+        items: transformedItems,
+        totalQuantity,
+        totalAmount
+      });
+    } catch (error) {
+      console.error('Error loading cart:', error);
+    }
+  }
+
+  async removeFromCartNewSchema(productId: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const user = this.supabaseService.getCurrentUser();
+      const storeId = await this.supabaseService.getCurrentStoreId();
+      
+      if (!user || !storeId) {
+        return { success: false, error: 'User not authenticated or store not found' };
+      }
+
+      const { error } = await this.supabaseService.getSupabaseClient()
+        .from('cart_items')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('product_id', productId)
+        .eq('megha_store_id', storeId);
+
+      if (error) {
+        console.error('Error removing from cart:', error);
+        return { success: false, error: error.message || 'Failed to remove item from cart' };
+      }
+
+      // Reload cart after removing
+      await this.loadCartFromSupabaseNewSchema();
+      return { success: true };
+    } catch (error) {
+      console.error('Error removing from cart:', error);
+      return { success: false, error: 'Failed to remove item from cart' };
+    }
+  }
+
+  async updateCartItemQuantityNewSchema(productId: string, quantity: number): Promise<{ success: boolean; error?: string }> {
+    try {
+      const user = this.supabaseService.getCurrentUser();
+      const storeId = await this.supabaseService.getCurrentStoreId();
+      
+      if (!user || !storeId) {
+        return { success: false, error: 'User not authenticated or store not found' };
+      }
+
+      if (quantity <= 0) {
+        return await this.removeFromCartNewSchema(productId);
+      }
+
+      const { error } = await this.supabaseService.getSupabaseClient()
+        .from('cart_items')
+        .update({ quantity })
+        .eq('user_id', user.id)
+        .eq('product_id', productId)
+        .eq('megha_store_id', storeId);
+
+      if (error) {
+        console.error('Error updating cart item quantity:', error);
+        return { success: false, error: error.message || 'Failed to update item quantity' };
+      }
+
+      // Reload cart after updating
+      await this.loadCartFromSupabaseNewSchema();
+      return { success: true };
+    } catch (error) {
+      console.error('Error updating cart item quantity:', error);
+      return { success: false, error: 'Failed to update item quantity' };
+    }
+  }
+
+  async clearCartNewSchema(): Promise<{ success: boolean; error?: string }> {
+    try {
+      const user = this.supabaseService.getCurrentUser();
+      const storeId = await this.supabaseService.getCurrentStoreId();
+      
+      if (!user || !storeId) {
+        return { success: false, error: 'User not authenticated or store not found' };
+      }
+
+      const { error } = await this.supabaseService.getSupabaseClient()
+        .from('cart_items')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('megha_store_id', storeId);
+
+      if (error) {
+        console.error('Error clearing cart:', error);
+        return { success: false, error: error.message || 'Failed to clear cart' };
+      }
+
+      // Clear local state
+      this._cartState.next({
+        items: [],
+        totalQuantity: 0,
+        totalAmount: 0
+      });
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+      return { success: false, error: 'Failed to clear cart' };
+    }
+  }
+
+  // Create order from cart items
+  async createOrderFromCart(orderData: Partial<Order>): Promise<{ data: Order | null; error?: string }> {
+    try {
+      const cartState = this._cartState.getValue();
+      
+      if (cartState.items.length === 0) {
+        return { data: null, error: 'Cart is empty' };
+      }
+
+      // Create order
+      const { data: order, error: orderError } = await this.supabaseService.createOrder({
+        ...orderData,
+        subtotal: cartState.totalAmount,
+        total_amount: cartState.totalAmount + (orderData.delivery_fee || 0) + (orderData.tax_amount || 0),
+        delivery_fee: orderData.delivery_fee || 0,
+        tax_amount: orderData.tax_amount || 0
+      });
+
+      if (orderError || !order) {
+        return { data: null, error: orderError?.message || 'Failed to create order' };
+      }
+
+      // Create order items
+      const orderItems: Partial<OrderItem>[] = cartState.items.map(item => ({
+        order_id: order.id,
+        product_id: item.id,
+        quantity: item.quantity,
+        unit_price: item.price,
+        total_price: item.price * item.quantity
+      }));
+
+      const { error: itemsError } = await this.supabaseService.getSupabaseClient()
+        .from('order_items')
+        .insert(orderItems);
+
+      if (itemsError) {
+        console.error('Error creating order items:', itemsError);
+        return { data: null, error: 'Failed to create order items' };
+      }
+
+      // Clear cart after successful order creation
+      await this.clearCartNewSchema();
+
+      return { data: order };
+    } catch (error) {
+      console.error('Error creating order:', error);
+      return { data: null, error: 'Failed to create order' };
     }
   }
 }

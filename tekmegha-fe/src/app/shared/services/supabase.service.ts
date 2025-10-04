@@ -3,72 +3,17 @@ import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
-export interface Product {
-  id: string;
-  name: string;
-  price: number;
-  rating: number;
-  review_count: number;
-  serves: number;
-  description: string;
-  image_url: string;
-  customisable: boolean;
-  category: 'Espresso Drinks' | 'Brewed Coffee' | 'Pastries & Snacks' | 'Educational' | 'Action Figures' | 'Board Games' | 'Dolls' | 'Outdoor' | 'Puzzles' | 'Dresses' | 'Men\'s' | 'Accessories' | 'Footwear' | 'Jewelry';
-  discount_percentage?: number;
-  old_price?: number;
-  brand_id: string;
-  created_at?: string;
-  updated_at?: string;
-}
+// Import new interfaces
+import { Product, MeghaStore, StoreLocation, LocationInventory } from '../interfaces/product.interface';
+import { CartItem, Order, OrderItem, UserRole } from '../interfaces/store.interface';
 
-export interface CartItem {
-  id: string;
-  user_id: string;
-  product_id: string;
-  quantity: number;
-  brand_id: string;
-  created_at?: string;
-  updated_at?: string;
-  product?: Product;
-}
+// Re-export interfaces for backward compatibility
+export type { Product, MeghaStore, StoreLocation, LocationInventory } from '../interfaces/product.interface';
+export type { CartItem, Order, OrderItem, UserRole } from '../interfaces/store.interface';
 
-export interface Order {
-  id: string;
-  user_id: string;
-  total_amount: number;
-  delivery_fee: number;
-  status: 'pending' | 'confirmed' | 'preparing' | 'out_for_delivery' | 'delivered' | 'cancelled';
-  payment_id?: string;
-  delivery_address?: string;
-  phone_number?: string;
-  brand_id: string;
-  created_at?: string;
-  updated_at?: string;
-  order_items?: OrderItem[];
-}
+// Export Store alias for backward compatibility
+export type Store = MeghaStore;
 
-export interface OrderItem {
-  id: string;
-  order_id: string;
-  product_id: string;
-  quantity: number;
-  price: number;
-  brand_id: string;
-  product?: Product;
-}
-
-export interface Store {
-  id: string;
-  name: string;
-  address: string;
-  phone: string;
-  hours: string;
-  latitude?: number;
-  longitude?: number;
-  brand_id: string;
-  created_at?: string;
-  updated_at?: string;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -98,15 +43,42 @@ export class SupabaseService {
     }, 100);
   }
 
-  // Get current brand based on URL path
-  getCurrentBrand(): string {
+  // Get current store based on URL path - returns store_code for new schema
+  getCurrentStore(): string {
     const path = window.location.pathname;
     if (path.startsWith('/fashion')) {
       return 'opula';
     } else if (path.startsWith('/toys')) {
       return 'little-ducks';
     } else {
-      return 'brew-buddy'; // Default brand
+      return 'brew-buddy'; // Default store
+    }
+  }
+
+  // Legacy method for backward compatibility
+  getCurrentBrand(): string {
+    return this.getCurrentStore();
+  }
+
+  // Get current store ID from store_code
+  async getCurrentStoreId(): Promise<string | null> {
+    try {
+      const storeCode = this.getCurrentStore();
+      const { data, error } = await this.supabase
+        .from('megha_stores')
+        .select('id')
+        .eq('store_code', storeCode)
+        .eq('is_active', true);
+      
+      if (error) {
+        console.error('Error fetching store ID:', error);
+        return null;
+      }
+      
+      return data?.[0]?.id || null;
+    } catch (error) {
+      console.error('Error getting store ID:', error);
+      return null;
     }
   }
 
@@ -214,31 +186,12 @@ export class SupabaseService {
     return !!this.supabase;
   }
 
-  // Product Methods
-  async getProducts(): Promise<{ data: Product[] | null; error: any }> {
-    try {
-      if (!this.supabase) {
-        throw new Error('Supabase client not initialized');
-      }
-      
-      const currentBrand = this.getCurrentBrand();
-      const { data, error } = await this.supabase
-        .from('products')
-        .select('*')
-        .eq('brand_id', currentBrand)
-        .order('created_at', { ascending: false });
-      return { data, error };
-    } catch (error) {
-      console.error('Network error fetching products:', error);
-      return { 
-        data: null, 
-        error: { 
-          message: 'Network error: Unable to connect to server. Please check your internet connection.',
-          code: 'NETWORK_ERROR'
-        } 
-      };
-    }
+  // Get supabase client for direct access (used by other services)
+  getSupabaseClient(): SupabaseClient {
+    return this.supabase;
   }
+
+  // Product Methods - Updated for new schema
 
   async getProductsByCategory(category: string): Promise<{ data: Product[] | null; error: any }> {
     try {
@@ -246,12 +199,21 @@ export class SupabaseService {
         throw new Error('Supabase client not initialized');
       }
       
-      const currentBrand = this.getCurrentBrand();
+      const storeId = await this.getCurrentStoreId();
+      if (!storeId) {
+        return { data: null, error: { message: 'Store not found' } };
+      }
+
       const { data, error } = await this.supabase
         .from('products')
-        .select('*')
-        .eq('brand_id', currentBrand)
+        .select(`
+          *,
+          megha_stores!inner(store_name, store_code)
+        `)
+        .eq('megha_store_id', storeId)
         .eq('category', category)
+        .eq('is_available', true)
+        .order('sort_order', { ascending: true })
         .order('created_at', { ascending: false });
       return { data, error };
     } catch (error) {
@@ -276,33 +238,49 @@ export class SupabaseService {
   }
 
   async addProduct(product: Partial<Product>): Promise<{ data: Product | null; error: any }> {
+    const storeId = await this.getCurrentStoreId();
+    if (!storeId) {
+      return { data: null, error: 'Store not found' };
+    }
+
     const { data, error } = await this.supabase
       .from('products')
-      .insert([product])
+      .insert([{
+        ...product,
+        megha_store_id: storeId
+      }])
       .select()
       .single();
     return { data, error };
   }
 
   async updateProduct(id: string, updates: Partial<Product>): Promise<{ data: Product | null; error: any }> {
-    const currentBrand = this.getCurrentBrand();
+    const storeId = await this.getCurrentStoreId();
+    if (!storeId) {
+      return { data: null, error: 'Store not found' };
+    }
+
     const { data, error } = await this.supabase
       .from('products')
       .update(updates)
       .eq('id', id)
-      .eq('brand_id', currentBrand)
+      .eq('megha_store_id', storeId)
       .select()
       .single();
     return { data, error };
   }
 
   async deleteProduct(id: string): Promise<{ error: any }> {
-    const currentBrand = this.getCurrentBrand();
+    const storeId = await this.getCurrentStoreId();
+    if (!storeId) {
+      return { error: 'Store not found' };
+    }
+
     const { error } = await this.supabase
       .from('products')
       .delete()
       .eq('id', id)
-      .eq('brand_id', currentBrand);
+      .eq('megha_store_id', storeId);
     return { error };
   }
 
@@ -333,77 +311,24 @@ export class SupabaseService {
     return { data, error };
   }
 
-  // User Role Management
-  async getUserRole(userId: string): Promise<{ data: any; error: any }> {
-    const { data, error } = await this.supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', userId)
-      .single();
-    return { data, error };
-  }
-
-  async createUserRole(userId: string, role: string): Promise<{ data: any; error: any }> {
-    const { data, error } = await this.supabase
-      .from('user_roles')
-      .insert([{ user_id: userId, role }])
-      .select()
-      .single();
-    return { data, error };
-  }
 
   // Cart Methods
-  async getCartItems(): Promise<{ data: CartItem[] | null; error: any }> {
+  async clearCart(): Promise<{ data: any; error: any }> {
     const user = this.getCurrentUser();
     if (!user) return { data: null, error: 'User not authenticated' };
 
-    const currentBrand = this.getCurrentBrand();
+    const storeId = await this.getCurrentStoreId();
+    if (!storeId) {
+      return { data: null, error: 'Store not found' };
+    }
+
     const { data, error } = await this.supabase
       .from('cart_items')
-      .select(`
-        *,
-        product:products(*)
-      `)
+      .delete()
       .eq('user_id', user.id)
-      .eq('brand_id', currentBrand)
-      .order('created_at', { ascending: false });
+      .eq('megha_store_id', storeId)
+      .select();
     return { data, error };
-  }
-
-  async addToCart(productId: string, quantity: number = 1): Promise<{ data: any; error: any }> {
-    const user = this.getCurrentUser();
-    if (!user) return { data: null, error: 'User not authenticated' };
-
-    // Check if item already exists in cart
-    const { data: existingItem } = await this.supabase
-      .from('cart_items')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('product_id', productId)
-      .single();
-
-    if (existingItem) {
-      // Update quantity
-      const { data, error } = await this.supabase
-        .from('cart_items')
-        .update({ quantity: existingItem.quantity + quantity })
-        .eq('id', existingItem.id)
-        .select();
-      return { data, error };
-    } else {
-      // Add new item
-      const currentBrand = this.getCurrentBrand();
-      const { data, error } = await this.supabase
-        .from('cart_items')
-        .insert({
-          user_id: user.id,
-          product_id: productId,
-          quantity,
-          brand_id: currentBrand
-        })
-        .select();
-      return { data, error };
-    }
   }
 
   async updateCartItemQuantity(cartItemId: string, quantity: number): Promise<{ data: any; error: any }> {
@@ -428,51 +353,8 @@ export class SupabaseService {
     return { data, error };
   }
 
-  async clearCart(): Promise<{ data: any; error: any }> {
-    const user = this.getCurrentUser();
-    if (!user) return { data: null, error: 'User not authenticated' };
 
-    const { data, error } = await this.supabase
-      .from('cart_items')
-      .delete()
-      .eq('user_id', user.id)
-      .select();
-    return { data, error };
-  }
 
-  // Order Methods
-  async createOrder(orderData: Partial<Order>): Promise<{ data: Order | null; error: any }> {
-    const user = this.getCurrentUser();
-    if (!user) return { data: null, error: 'User not authenticated' };
-
-    const { data, error } = await this.supabase
-      .from('orders')
-      .insert({
-        ...orderData,
-        user_id: user.id
-      })
-      .select()
-      .single();
-    return { data, error };
-  }
-
-  async getOrders(): Promise<{ data: Order[] | null; error: any }> {
-    const user = this.getCurrentUser();
-    if (!user) return { data: null, error: 'User not authenticated' };
-
-    const { data, error } = await this.supabase
-      .from('orders')
-      .select(`
-        *,
-        order_items (
-          *,
-          product:products(*)
-        )
-      `)
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-    return { data, error };
-  }
 
   async getOrder(id: string): Promise<{ data: Order | null; error: any }> {
     const { data, error } = await this.supabase
@@ -489,25 +371,6 @@ export class SupabaseService {
     return { data, error };
   }
 
-  // Store Methods
-  async getStores(): Promise<{ data: Store[] | null; error: any }> {
-    const currentBrand = this.getCurrentBrand();
-    const { data, error } = await this.supabase
-      .from('stores')
-      .select('*')
-      .eq('brand_id', currentBrand)
-      .order('name', { ascending: true });
-    return { data, error };
-  }
-
-  async getStore(id: string): Promise<{ data: Store | null; error: any }> {
-    const { data, error } = await this.supabase
-      .from('stores')
-      .select('*')
-      .eq('id', id)
-      .single();
-    return { data, error };
-  }
 
   // Real-time subscriptions
   subscribeToCartChanges(callback: (payload: any) => void) {
@@ -539,4 +402,358 @@ export class SupabaseService {
       }, callback)
       .subscribe();
   }
+
+  // ===================================================================
+  // NEW SCHEMA METHODS
+  // ===================================================================
+
+  // Store Management Methods
+  async getMeghaStores(): Promise<{ data: MeghaStore[] | null; error: any }> {
+    try {
+      const { data, error } = await this.supabase
+        .from('megha_stores')
+        .select('*')
+        .eq('is_active', true)
+        .order('store_name');
+      return { data, error };
+    } catch (error) {
+      console.error('Error fetching stores:', error);
+      return { data: null, error };
+    }
+  }
+
+  async getMeghaStore(storeCode: string): Promise<{ data: MeghaStore | null; error: any }> {
+    try {
+      const { data, error } = await this.supabase
+        .from('megha_stores')
+        .select('*')
+        .eq('store_code', storeCode)
+        .eq('is_active', true);
+      
+      if (error) {
+        return { data: null, error };
+      }
+      
+      return { data: data?.[0] || null, error: null };
+    } catch (error) {
+      console.error('Error fetching store:', error);
+      return { data: null, error };
+    }
+  }
+
+  // Store Locations Methods
+  async getStoreLocations(storeId?: string): Promise<{ data: StoreLocation[] | null; error: any }> {
+    try {
+      let query = this.supabase
+        .from('store_locations')
+        .select('*')
+        .eq('is_active', true);
+
+      if (storeId) {
+        query = query.eq('megha_store_id', storeId);
+      }
+
+      const { data, error } = await query.order('name');
+      return { data, error };
+    } catch (error) {
+      console.error('Error fetching store locations:', error);
+      return { data: null, error };
+    }
+  }
+
+  // Product Methods
+  async getProducts(): Promise<{ data: Product[] | null; error: any }> {
+    try {
+      const storeId = await this.getCurrentStoreId();
+      if (!storeId) {
+        return { data: null, error: { message: 'Store not found' } };
+      }
+
+      const { data, error } = await this.supabase
+        .from('products')
+        .select(`
+          *,
+          megha_stores!inner(store_name, store_code)
+        `)
+        .eq('megha_store_id', storeId)
+        .eq('is_available', true)
+        .order('sort_order', { ascending: true })
+        .order('created_at', { ascending: false });
+
+      return { data, error };
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      return { data: null, error };
+    }
+  }
+
+  async getProductsWithInventory(locationId?: string): Promise<{ data: any[] | null; error: any }> {
+    try {
+      const storeId = await this.getCurrentStoreId();
+      if (!storeId) {
+        return { data: null, error: { message: 'Store not found' } };
+      }
+
+      let query = this.supabase
+        .from('products')
+        .select(`
+          *,
+          megha_stores!inner(store_name, store_code),
+          location_inventory!left(
+            stock_quantity,
+            reserved_quantity,
+            low_stock_threshold,
+            store_location_id
+          )
+        `)
+        .eq('megha_store_id', storeId)
+        .eq('is_available', true);
+
+      if (locationId) {
+        query = query.eq('location_inventory.store_location_id', locationId);
+      }
+
+      const { data, error } = await query.order('sort_order');
+      return { data, error };
+    } catch (error) {
+      console.error('Error fetching products with inventory:', error);
+      return { data: null, error };
+    }
+  }
+
+  // Cart Methods
+  async getCartItems(): Promise<{ data: any[] | null; error: any }> {
+    try {
+      const user = this.getCurrentUser();
+      const storeId = await this.getCurrentStoreId();
+      
+      if (!user || !storeId) {
+        return { data: null, error: { message: 'User not authenticated or store not found' } };
+      }
+
+      const { data, error } = await this.supabase
+        .from('cart_items')
+        .select(`
+          *,
+          products!inner(
+            id,
+            name,
+            price,
+            image_url,
+            category,
+            discount_percentage,
+            old_price
+          )
+        `)
+        .eq('user_id', user.id)
+        .eq('megha_store_id', storeId)
+        .order('created_at', { ascending: false });
+
+      return { data, error };
+    } catch (error) {
+      console.error('Error fetching cart items:', error);
+      return { data: null, error };
+    }
+  }
+
+  async addToCart(productId: string, quantity: number = 1, customizations?: any): Promise<{ data: any; error: any }> {
+    try {
+      const user = this.getCurrentUser();
+      const storeId = await this.getCurrentStoreId();
+      
+      if (!user || !storeId) {
+        return { data: null, error: { message: 'User not authenticated or store not found' } };
+      }
+
+      // Get product price
+      const { data: product, error: productError } = await this.supabase
+        .from('products')
+        .select('price')
+        .eq('id', productId)
+        .eq('megha_store_id', storeId)
+        .single();
+
+      if (productError || !product) {
+        return { data: null, error: { message: 'Product not found' } };
+      }
+
+      const { data, error } = await this.supabase
+        .from('cart_items')
+        .upsert({
+          user_id: user.id,
+          product_id: productId,
+          megha_store_id: storeId,
+          quantity: quantity,
+          customizations: customizations,
+          unit_price: product.price
+        }, {
+          onConflict: 'user_id,product_id,megha_store_id'
+        })
+        .select();
+
+      return { data, error };
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      return { data: null, error };
+    }
+  }
+
+  // Order Methods
+  async createOrder(orderData: Partial<Order>): Promise<{ data: Order | null; error: any }> {
+    try {
+      const user = this.getCurrentUser();
+      const storeId = await this.getCurrentStoreId();
+      
+      if (!user || !storeId) {
+        return { data: null, error: { message: 'User not authenticated or store not found' } };
+      }
+
+      const { data, error } = await this.supabase
+        .from('orders')
+        .insert({
+          ...orderData,
+          user_id: user.id,
+          megha_store_id: storeId,
+          order_type: orderData.order_type || 'delivery',
+          status: 'pending',
+          payment_status: 'pending'
+        })
+        .select()
+        .single();
+
+      return { data, error };
+    } catch (error) {
+      console.error('Error creating order:', error);
+      return { data: null, error };
+    }
+  }
+
+  async getOrders(): Promise<{ data: Order[] | null; error: any }> {
+    try {
+      const user = this.getCurrentUser();
+      const storeId = await this.getCurrentStoreId();
+      
+      if (!user || !storeId) {
+        return { data: null, error: { message: 'User not authenticated or store not found' } };
+      }
+
+      const { data, error } = await this.supabase
+        .from('orders')
+        .select(`
+          *,
+          order_items(
+            *,
+            products(
+              id,
+              name,
+              price,
+              image_url
+            )
+          )
+        `)
+        .eq('user_id', user.id)
+        .eq('megha_store_id', storeId)
+        .order('created_at', { ascending: false });
+
+      return { data, error };
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      return { data: null, error };
+    }
+  }
+
+  // User Role Methods
+  async getUserRole(storeId?: string): Promise<{ data: UserRole | null; error: any }> {
+    try {
+      const user = this.getCurrentUser();
+      if (!user) {
+        return { data: null, error: { message: 'User not authenticated' } };
+      }
+
+      const targetStoreId = storeId || await this.getCurrentStoreId();
+      if (!targetStoreId) {
+        return { data: null, error: { message: 'Store not found' } };
+      }
+
+      const { data, error } = await this.supabase
+        .from('user_roles')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('megha_store_id', targetStoreId);
+
+      if (error) {
+        return { data: null, error };
+      }
+
+      return { data: data?.[0] || null, error: null };
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+      return { data: null, error };
+    }
+  }
+
+  async createUserRole(userId: string, storeId: string, role: string, permissions?: any): Promise<{ data: UserRole | null; error: any }> {
+    try {
+      const { data, error } = await this.supabase
+        .from('user_roles')
+        .insert({
+          user_id: userId,
+          megha_store_id: storeId,
+          role: role,
+          permissions: permissions
+        })
+        .select()
+        .single();
+
+      return { data, error };
+    } catch (error) {
+      console.error('Error creating user role:', error);
+      return { data: null, error };
+    }
+  }
+
+  // Inventory Management Methods
+  async getLocationInventory(locationId: string): Promise<{ data: LocationInventory[] | null; error: any }> {
+    try {
+      const { data, error } = await this.supabase
+        .from('location_inventory')
+        .select(`
+          *,
+          products(
+            id,
+            name,
+            sku,
+            category
+          )
+        `)
+        .eq('store_location_id', locationId)
+        .order('products.name');
+
+      return { data, error };
+    } catch (error) {
+      console.error('Error fetching location inventory:', error);
+      return { data: null, error };
+    }
+  }
+
+  async updateInventory(locationId: string, productId: string, stockQuantity: number): Promise<{ data: any; error: any }> {
+    try {
+      const { data, error } = await this.supabase
+        .from('location_inventory')
+        .upsert({
+          store_location_id: locationId,
+          product_id: productId,
+          stock_quantity: stockQuantity
+        }, {
+          onConflict: 'store_location_id,product_id'
+        })
+        .select();
+
+      return { data, error };
+    } catch (error) {
+      console.error('Error updating inventory:', error);
+      return { data: null, error };
+    }
+  }
 }
+ 

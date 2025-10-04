@@ -89,7 +89,7 @@ export class InventoryLogin implements OnInit {
 
       // Check if user has inventory access (admin, manager, or inventory_staff role)
       const allowedRoles = ['admin', 'manager', 'inventory_staff', 'store_manager'];
-      return data?.role && allowedRoles.includes(data.role.toLowerCase());
+      return !!(data?.role && allowedRoles.includes(data.role.toLowerCase()));
     } catch (error) {
       console.error('Error checking inventory access:', error);
       return false;

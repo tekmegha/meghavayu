@@ -4,8 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader';
 import { ProductTileComponent } from '../shared/product-tile/product-tile';
 import { Product } from '../shared/interfaces/product.interface';
-import { SupabaseService, Product as SupabaseProduct } from '../shared/services/supabase.service';
+import { SupabaseService } from '../shared/services/supabase.service';
 import { FallbackDataService } from '../shared/services/fallback-data.service';
+import { ProductTransformService } from '../shared/services/product-transform.service';
 
 @Component({
   selector: 'app-menu',
@@ -29,7 +30,8 @@ export class Menu implements OnInit {
 
   constructor(
     private supabaseService: SupabaseService,
-    private fallbackDataService: FallbackDataService
+    private fallbackDataService: FallbackDataService,
+    private productTransformService: ProductTransformService
   ) {}
 
   async ngOnInit() {
@@ -49,7 +51,7 @@ export class Menu implements OnInit {
       }
       
       // Transform Supabase products to local Product interface
-      this.products = (data || []).map(this.transformSupabaseProduct);
+      this.products = this.productTransformService.transformSupabaseProducts(data || []);
       this.filteredProducts = this.products;
       this.isLoading = false;
     } catch (error) {
@@ -61,23 +63,6 @@ export class Menu implements OnInit {
     }
   }
 
-  private transformSupabaseProduct(supabaseProduct: SupabaseProduct): Product {
-    return {
-      id: supabaseProduct.id,
-      name: supabaseProduct.name,
-      price: supabaseProduct.price,
-      rating: supabaseProduct.rating,
-      reviewCount: supabaseProduct.review_count,
-      serves: supabaseProduct.serves,
-      description: supabaseProduct.description,
-      imageUrl: supabaseProduct.image_url,
-      customisable: supabaseProduct.customisable,
-      category: supabaseProduct.category,
-      discountPercentage: supabaseProduct.discount_percentage,
-      oldPrice: supabaseProduct.old_price,
-      brand_id: supabaseProduct.brand_id
-    };
-  }
 
   onCategoryChange(category: string) {
     this.selectedCategory = category;
@@ -136,7 +121,6 @@ export class Menu implements OnInit {
         description: 'Baked fries seasoned with peri peri',
         imageUrl: 'assets/images/brew-buddy/fries.jpg',
         customisable: false,
-        initialQuantity: 1, // Example of an item already in cart
         category: 'Pastries & Snacks', // Assign category
         brand_id: 'brew-buddy'
       },

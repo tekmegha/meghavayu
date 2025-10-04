@@ -82,7 +82,7 @@ export class Cart implements OnInit, OnDestroy {
     const cartState = this.cartService.getCartState();
     const item = cartState.items.find(item => item.id === itemId);
     if (item) {
-      this.cartService.updateCartItemQuantity(item, item.quantity + 1);
+      this.cartService.updateCartItemQuantityById(itemId, item.quantity + 1);
     }
   }
 
@@ -91,7 +91,7 @@ export class Cart implements OnInit, OnDestroy {
     const item = cartState.items.find(item => item.id === itemId);
     if (item) {
       if (item.quantity > 1) {
-        this.cartService.updateCartItemQuantity(item, item.quantity - 1);
+        this.cartService.updateCartItemQuantityById(itemId, item.quantity - 1);
       } else {
         this.cartService.removeFromCart(itemId);
       }

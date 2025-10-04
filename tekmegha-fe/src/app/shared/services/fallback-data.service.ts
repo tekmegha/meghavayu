@@ -24,15 +24,24 @@ export class FallbackDataService {
         name: 'Espresso Blend',
         price: 4.50,
         rating: 4.8,
+        review_count: 120,
         reviewCount: 120,
         serves: 1,
         description: 'A rich and intense coffee experience.',
+        image_url: 'assets/images/brew-buddy/espresso.jpg',
         imageUrl: 'assets/images/brew-buddy/espresso.jpg',
         customisable: false,
         category: 'Brewed Coffee',
+        discount_percentage: 15,
         discountPercentage: 15,
+        old_price: 5.29,
         oldPrice: 5.29,
-        brand_id: 'brew-buddy'
+        brand_id: 'brew-buddy',
+        megha_store_id: 'brew-buddy',
+        is_available: true,
+        is_featured: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       },
       {
         id: 'fallback-2',
@@ -47,7 +56,12 @@ export class FallbackDataService {
         category: 'Espresso Drinks',
         discountPercentage: 10,
         oldPrice: 5.85,
-        brand_id: 'brew-buddy'
+        brand_id: 'brew-buddy',
+        megha_store_id: 'brew-buddy',
+        is_available: true,
+        is_featured: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       },
       {
         id: 'fallback-3',
@@ -60,7 +74,12 @@ export class FallbackDataService {
         imageUrl: 'assets/images/brew-buddy/muffin.jpg',
         customisable: false,
         category: 'Pastries & Snacks',
-        brand_id: 'brew-buddy'
+        brand_id: 'brew-buddy',
+        megha_store_id: 'brew-buddy',
+        is_available: true,
+        is_featured: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       },
       {
         id: 'fallback-4',
@@ -75,7 +94,12 @@ export class FallbackDataService {
         category: 'Espresso Drinks',
         discountPercentage: 12,
         oldPrice: 5.40,
-        brand_id: 'brew-buddy'
+        brand_id: 'brew-buddy',
+        megha_store_id: 'brew-buddy',
+        is_available: true,
+        is_featured: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       },
       {
         id: 'fallback-5',
@@ -90,7 +114,12 @@ export class FallbackDataService {
         category: 'Brewed Coffee',
         discountPercentage: 8,
         oldPrice: 4.62,
-        brand_id: 'brew-buddy'
+        brand_id: 'brew-buddy',
+        megha_store_id: 'brew-buddy',
+        is_available: true,
+        is_featured: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       },
       {
         id: 'fallback-6',
@@ -103,9 +132,15 @@ export class FallbackDataService {
         imageUrl: 'assets/images/brew-buddy/macchiato.jpg',
         customisable: true,
         category: 'Espresso Drinks',
+        discount_percentage: 15,
         discountPercentage: 15,
         oldPrice: 6.47,
-        brand_id: 'brew-buddy'
+        brand_id: 'brew-buddy',
+        megha_store_id: 'brew-buddy',
+        is_available: true,
+        is_featured: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       },
       {
         id: 'fallback-7',
@@ -118,7 +153,12 @@ export class FallbackDataService {
         imageUrl: 'assets/images/brew-buddy/blueberry-muffin.jpg',
         customisable: false,
         category: 'Pastries & Snacks',
-        brand_id: 'brew-buddy'
+        brand_id: 'brew-buddy',
+        megha_store_id: 'brew-buddy',
+        is_available: true,
+        is_featured: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       },
       {
         id: 'fallback-8',
@@ -131,7 +171,12 @@ export class FallbackDataService {
         imageUrl: 'assets/images/brew-buddy/americano.jpg',
         customisable: false,
         category: 'Espresso Drinks',
-        brand_id: 'brew-buddy'
+        brand_id: 'brew-buddy',
+        megha_store_id: 'brew-buddy',
+        is_available: true,
+        is_featured: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       }
     ];
   }
@@ -154,7 +199,12 @@ export class FallbackDataService {
         address: 'Plot No. 1, Hitech City Main Rd, Gachibowli, Hyderabad, Telangana 500032',
         phone: '+91 40 1111 2222',
         hours: 'Mon-Fri: 8 AM - 9 PM, Sat-Sun: 9 AM - 8 PM',
-        brand_id: 'brew-buddy'
+        brand_id: 'brew-buddy',
+        megha_store_id: 'brew-buddy',
+        is_available: true,
+        is_featured: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       },
       {
         id: 'fallback-store-2',
@@ -162,7 +212,12 @@ export class FallbackDataService {
         address: 'Road No. 36, Jubilee Hills, Hyderabad, Telangana 500033',
         phone: '+91 40 3333 4444',
         hours: 'Mon-Sun: 7 AM - 10 PM',
-        brand_id: 'brew-buddy'
+        brand_id: 'brew-buddy',
+        megha_store_id: 'brew-buddy',
+        is_available: true,
+        is_featured: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       },
       {
         id: 'fallback-store-3',
@@ -170,7 +225,12 @@ export class FallbackDataService {
         address: 'Road No. 1, Banjara Hills, Hyderabad, Telangana 500034',
         phone: '+91 40 5555 6666',
         hours: 'Mon-Fri: 7:30 AM - 9:30 PM, Sat-Sun: 8 AM - 9 PM',
-        brand_id: 'brew-buddy'
+        brand_id: 'brew-buddy',
+        megha_store_id: 'brew-buddy',
+        is_available: true,
+        is_featured: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       }
     ];
   }
@@ -188,6 +248,7 @@ export class FallbackDataService {
         imageUrl: 'assets/images/little-ducks/lego-classic.jpg',
         customisable: false,
         category: 'Educational',
+        discount_percentage: 15,
         discountPercentage: 15,
         oldPrice: 29.50,
         brand_id: 'little-ducks'
@@ -236,6 +297,7 @@ export class FallbackDataService {
         imageUrl: 'assets/images/opula/luxury-watch.jpg',
         customisable: false,
         category: 'Accessories',
+        discount_percentage: 15,
         discountPercentage: 15,
         oldPrice: 100.00,
         brand_id: 'opula'

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader';
 import { HttpClient } from '@angular/common/http';
 import { Store } from '../shared/interfaces/store.interface';
-import { SupabaseService, Store as SupabaseStore } from '../shared/services/supabase.service';
+import { SupabaseService, StoreLocation } from '../shared/services/supabase.service';
 import { FallbackDataService } from '../shared/services/fallback-data.service';
 
 interface BrewBuddyContent {
@@ -34,7 +34,7 @@ export class Stores implements OnInit {
 
   async loadStores() {
     try {
-      const { data, error } = await this.supabaseService.getStores();
+      const { data, error } = await this.supabaseService.getStoreLocations();
       if (error) {
         console.warn('Supabase error, using fallback data:', error.message);
         // Use fallback data when Supabase fails
@@ -54,14 +54,14 @@ export class Stores implements OnInit {
     }
   }
 
-  private transformSupabaseStore(supabaseStore: SupabaseStore): Store {
+  private transformSupabaseStore(storeLocation: StoreLocation): Store {
     return {
-      id: supabaseStore.id,
-      name: supabaseStore.name,
-      address: supabaseStore.address,
-      phone: supabaseStore.phone,
-      hours: supabaseStore.hours,
-      brand_id: supabaseStore.brand_id
+      id: storeLocation.id,
+      name: storeLocation.name,
+      address: storeLocation.address,
+      phone: storeLocation.phone || '',
+      hours: storeLocation.hours || '',
+      brand_id: this.supabaseService.getCurrentBrand()
     };
   }
 
