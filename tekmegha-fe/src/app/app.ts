@@ -1,10 +1,9 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { DynamicLayoutComponent } from './shared/dynamic-layout/dynamic-layout';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, DynamicLayoutComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

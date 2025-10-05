@@ -19,7 +19,7 @@ import { Subscription } from 'rxjs';
   ],
   template: `
     <!-- Default Layout (Brew Buddy) -->
-    <app-layout *ngIf="!selectedStore || selectedStore.storeCode === 'brew-buddy'">
+    <app-layout *ngIf="!selectedStore || selectedStore.storeCode === 'brew-buddy' || selectedStore.storeCode === 'tekmegha-clients'">
       <router-outlet></router-outlet>
     </app-layout>
 
@@ -32,11 +32,6 @@ import { Subscription } from 'rxjs';
     <app-layout-toys *ngIf="selectedStore?.storeCode === 'little-ducks'">
       <router-outlet></router-outlet>
     </app-layout-toys>
-
-    <!-- TekMegha Clients Layout (Internal) -->
-    <app-layout *ngIf="selectedStore?.storeCode === 'tekmegha-clients'">
-      <router-outlet></router-outlet>
-    </app-layout>
   `,
   styleUrls: ['./dynamic-layout.scss']
 })

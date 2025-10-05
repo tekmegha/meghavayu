@@ -14,16 +14,32 @@ import { DynamicLayoutComponent } from './shared/dynamic-layout/dynamic-layout';
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   
-  // Default routes with main layout (Brew Buddy)
-  { path: 'home', component: Home },
-  { path: 'menu', component: Menu },
-  { path: 'cart', component: Cart },
-  { path: 'stores', component: Stores },
-  { path: 'profile', component: Profile },
-  { path: 'login', component: Login },
+  // Default routes with dynamic layout (Brew Buddy as default)
+  { path: 'home', component: DynamicLayoutComponent, children: [
+    { path: '', component: Home }
+  ]},
+  { path: 'menu', component: DynamicLayoutComponent, children: [
+    { path: '', component: Menu }
+  ]},
+  { path: 'cart', component: DynamicLayoutComponent, children: [
+    { path: '', component: Cart }
+  ]},
+  { path: 'stores', component: DynamicLayoutComponent, children: [
+    { path: '', component: Stores }
+  ]},
+  { path: 'profile', component: DynamicLayoutComponent, children: [
+    { path: '', component: Profile }
+  ]},
+  { path: 'login', component: DynamicLayoutComponent, children: [
+    { path: '', component: Login }
+  ]},
   { path: 'inventory-login', component: InventoryLogin },
-  { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] },
-  { path: 'tekmegha-clients', component: TekMeghaClientsComponent },
+  { path: 'inventory', component: DynamicLayoutComponent, children: [
+    { path: '', component: Inventory }
+  ], canActivate: [InventoryAuthGuard] },
+  { path: 'tekmegha-clients', component: DynamicLayoutComponent, children: [
+    { path: '', component: TekMeghaClientsComponent }
+  ]},
   
   // Store-specific routes with dynamic layout
   { path: 'brew-buddy', component: DynamicLayoutComponent, children: [
