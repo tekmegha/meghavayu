@@ -20,6 +20,7 @@ export class TopNavbar implements OnInit, OnDestroy {
   @Output() searchOpen = new EventEmitter<void>();
   @Output() loginOpen = new EventEmitter<void>();
   @Output() cartOpen = new EventEmitter<void>();
+  @Output() exitApp = new EventEmitter<void>();
 
   cartState$: Observable<CartState>;
   selectedStore: StoreSession | null = null;
@@ -55,7 +56,7 @@ export class TopNavbar implements OnInit, OnDestroy {
 
   getDisplayTitle(): string {
     if (this.selectedStore) {
-      return `${this.appTitle}/${this.selectedStore.storeName}`;
+      return `${this.appTitle} App: ${this.selectedStore.storeName}`;
     }
     return this.appTitle;
   }
@@ -69,7 +70,13 @@ export class TopNavbar implements OnInit, OnDestroy {
       this.loginOpen.emit();
     } else if (item.action === 'openCart') {
       this.cartOpen.emit();
+    } else if (item.action === 'exitApp') {
+      this.exitApp.emit();
     }
     // Handle route navigation if item.route exists and no action is specified
+  }
+
+  onExitClick() {
+    this.exitApp.emit();
   }
 }

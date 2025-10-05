@@ -1,0 +1,402 @@
+.layout-digitalsecurity {
+  min-height: 100vh;
+  background: var(--background-color);
+  position: relative;
+  overflow-x: hidden;
+
+  .main-content-wrapper {
+    padding-bottom: 100px; // Space for bottom navbar and checkout banner
+    min-height: calc(100vh - 60px); // Adjust for top navbar height
+  }
+
+  // Digital Security-specific styling
+  app-location-bar {
+    position: sticky;
+    top: 60px; // Below top navbar
+    z-index: 999;
+    background: var(--navbar-gradient);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+  }
+
+  // Modern CCTV/Security theme colors - Professional, light theme
+  --primary-color: #0ea5e9;        // Sky blue (tech/security)
+  --secondary-color: #3b82f6;       // Blue
+  --accent-color: #10b981;         // Emerald green (secure/online)
+  --warning-color: #f59e0b;        // Amber (alerts)
+  --danger-color: #ef4444;         // Red (threats/offline)
+  --background-color: #f8fafc;     // Light gray background
+  --surface-color: #ffffff;        // White card background
+  --surface-elevated: #f1f5f9;     // Light elevated surface
+  --text-primary: #1e293b;         // Dark text
+  --text-secondary: #64748b;       // Gray text
+  --text-muted: #94a3b8;           // Muted text
+  --border-color: rgba(14, 165, 233, 0.2);
+  --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 50%, #1e40af 100%);
+  --navbar-gradient: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+  --security-gradient: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+  --tech-gradient: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 50%, #1e40af 100%);
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(14, 165, 233, 0.3);
+
+  // Product tile specific colors for CCTV light theme
+  --product-card-bg: var(--surface-color);
+  --product-card-shadow: 0 8px 25px rgba(14, 165, 233, 0.15);
+  --product-card-border: var(--border-color);
+  --product-card-hover-shadow: 0 12px 35px rgba(14, 165, 233, 0.25);
+  
+  --product-discount-bg: var(--tech-gradient);
+  --product-discount-text: #fff;
+  --product-discount-shadow: 0 2px 8px rgba(14, 165, 233, 0.4);
+  
+  --product-favorite-bg: rgba(255, 255, 255, 0.9);
+  --product-favorite-color: var(--primary-color);
+  --product-favorite-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  --product-name-color: var(--text-primary);
+  --product-description-color: var(--text-secondary);
+  
+  --product-price-color: var(--primary-color);
+  --product-old-price-color: var(--text-muted);
+  
+  --product-button-bg: var(--tech-gradient);
+  --product-button-text: #fff;
+  --product-button-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+  --product-button-hover-shadow: 0 4px 15px rgba(14, 165, 233, 0.4);
+  
+  --product-quantity-bg: var(--surface-color);
+  --product-quantity-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+  --product-quantity-border: var(--border-color);
+  --product-quantity-btn-bg: var(--tech-gradient);
+  --product-quantity-btn-text: #fff;
+  --product-quantity-btn-hover-shadow: 0 2px 8px rgba(14, 165, 233, 0.4);
+  --product-quantity-minus-bg: var(--security-gradient);
+  --product-quantity-plus-bg: var(--tech-gradient);
+  --product-quantity-text: var(--text-primary);
+
+  // Modern security animations
+  .main-content-wrapper {
+    animation: techFadeIn 1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes techFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.98);
+      filter: blur(2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+  }
+
+  // Modern tech background effects for light theme
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 25% 25%, rgba(14, 165, 233, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(16, 185, 129, 0.06) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: -1;
+    animation: backgroundShift 20s ease-in-out infinite;
+  }
+
+  @keyframes backgroundShift {
+    0%, 100% {
+      transform: translateX(0) translateY(0);
+    }
+    25% {
+      transform: translateX(-10px) translateY(-5px);
+    }
+    50% {
+      transform: translateX(5px) translateY(-10px);
+    }
+    75% {
+      transform: translateX(-5px) translateY(5px);
+    }
+  }
+
+  // Tech grid overlay for light theme
+  &::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      linear-gradient(rgba(14, 165, 233, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(14, 165, 233, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.5;
+  }
+
+  // Security status indicators
+  .security-status {
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 8px;
+      height: 8px;
+      background: var(--accent-color);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 0.7;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  // Digital Security-specific responsive design
+  @media (max-width: 768px) {
+    .main-content-wrapper {
+      padding-bottom: 80px;
+    }
+  }
+
+  @media (max-width: 375px) {
+    .main-content-wrapper {
+      padding-bottom: 70px;
+    }
+  }
+
+  // Modern light theme cards
+  .card, .product-card, .category-card {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: 
+      0 8px 25px rgba(14, 165, 233, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    &:hover {
+      border-color: var(--primary-color);
+      box-shadow: 
+        0 12px 35px rgba(14, 165, 233, 0.25),
+        0 4px 20px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      transform: translateY(-4px) scale(1.02);
+    }
+  }
+
+  // Modern tech buttons
+  .btn-primary {
+    background: var(--tech-gradient);
+    border: 1px solid var(--primary-color);
+    color: var(--text-primary);
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    &:hover {
+      background: var(--security-gradient);
+      transform: translateY(-2px);
+      box-shadow: 
+        0 8px 25px rgba(0, 212, 255, 0.4),
+        0 4px 15px rgba(16, 185, 129, 0.3);
+      
+      &::before {
+        left: 100%;
+      }
+    }
+  }
+
+  .btn-security {
+    background: var(--security-gradient);
+    border: 1px solid var(--accent-color);
+    color: var(--text-primary);
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    &:hover {
+      background: var(--accent-color);
+      color: var(--background-color);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    }
+  }
+
+  // Light theme input fields
+  input, textarea, select {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    
+    &:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+      outline: none;
+    }
+    
+    &::placeholder {
+      color: var(--text-muted);
+    }
+  }
+
+  // Modern status indicators
+  .status-online {
+    color: var(--accent-color);
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 8px;
+      height: 8px;
+      background: var(--accent-color);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+  }
+
+  .status-warning {
+    color: var(--warning-color);
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 8px;
+      height: 8px;
+      background: var(--warning-color);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+  }
+
+  .status-danger {
+    color: var(--danger-color);
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 8px;
+      height: 8px;
+      background: var(--danger-color);
+      border-radius: 50%;
+      animation: pulse 1s infinite;
+    }
+  }
+
+  // Tech loading animations
+  .loading-tech {
+    position: relative;
+    overflow: hidden;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.3), transparent);
+      animation: loadingShimmer 2s infinite;
+    }
+  }
+
+  @keyframes loadingShimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+
+  // Holographic effect for premium items
+  .holographic {
+    background: linear-gradient(45deg, 
+      var(--primary-color) 0%, 
+      var(--accent-color) 25%, 
+      var(--secondary-color) 50%, 
+      var(--accent-color) 75%, 
+      var(--primary-color) 100%);
+    background-size: 400% 400%;
+    animation: holographicShift 3s ease-in-out infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  @keyframes holographicShift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  // Cyber grid pattern for headers
+  .cyber-header {
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        linear-gradient(90deg, var(--primary-color) 1px, transparent 1px),
+        linear-gradient(var(--primary-color) 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.1;
+      pointer-events: none;
+    }
+  }
+}

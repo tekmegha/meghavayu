@@ -66,6 +66,12 @@ export class LayoutToys implements OnInit, OnDestroy {
     this.router.navigate(['/cart']);
   }
 
+  onExitApp() {
+    console.log('Exit App clicked!');
+    // Navigate to home page to show app selector
+    this.router.navigate(['/home']);
+  }
+
   private updateActiveNavItem(url: string) {
     // Update active state for bottom navbar items
     if (this.currentBrand?.navigation.bottomNavbar) {

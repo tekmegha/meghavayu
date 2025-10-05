@@ -2,6 +2,54 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh; /* Ensure the host takes full viewport height */
+  
+  // Brew Buddy theme colors
+  --primary-color: #8b5cf6;
+  --secondary-color: #a855f7;
+  --accent-color: #ec4899;
+  --background-color: #f8fafc;
+  --surface-color: #ffffff;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border-color: #e5e7eb;
+  --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  --gradient-accent: linear-gradient(135deg, #ec4899 0%, #f97316 100%);
+  
+  // Product tile specific colors for Brew Buddy theme
+  --product-card-bg: var(--surface-color);
+  --product-card-shadow: 0 8px 25px rgba(139, 92, 246, 0.15);
+  --product-card-border: var(--border-color);
+  --product-card-hover-shadow: 0 12px 35px rgba(139, 92, 246, 0.25);
+  
+  --product-discount-bg: var(--gradient-accent);
+  --product-discount-text: #fff;
+  --product-discount-shadow: 0 2px 8px rgba(236, 72, 153, 0.4);
+  
+  --product-favorite-bg: rgba(255, 255, 255, 0.9);
+  --product-favorite-color: var(--accent-color);
+  --product-favorite-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  --product-name-color: #333;
+  --product-description-color: #777;
+  
+  --product-price-color: var(--primary-color);
+  --product-old-price-color: var(--text-secondary);
+  
+  --product-button-bg: var(--gradient-primary);
+  --product-button-text: #fff;
+  --product-button-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+  --product-button-hover-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+  
+  --product-quantity-bg: var(--surface-color);
+  --product-quantity-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+  --product-quantity-border: var(--border-color);
+  --product-quantity-btn-bg: var(--gradient-primary);
+  --product-quantity-btn-text: white;
+  --product-quantity-btn-hover-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+  --product-quantity-minus-bg: var(--gradient-accent);
+  --product-quantity-plus-bg: var(--gradient-primary);
+  --product-quantity-text: var(--text-primary);
 }
 
 .main-content-wrapper {

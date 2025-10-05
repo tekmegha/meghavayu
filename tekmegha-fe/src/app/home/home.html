@@ -17,10 +17,6 @@
           <h2>Welcome to {{ selectedStore.storeName }}</h2>
           <p>{{ getStoreDescription(selectedStore.storeCode) }}</p>
         </div>
-        <button class="change-store-btn" (click)="showStoreSelector = true">
-          <span class="material-icons">store</span>
-          Change Store
-        </button>
       </div>
     }
         <section class="hero-section">
@@ -54,7 +50,7 @@
       </div>
     </section>
 
-    <section class="about-us">
+    <section class="about-us" style="display: none;">
       <h2>Our Story</h2>
       <p>BrewBuddy started with a simple idea: to bring exceptional coffee experiences to everyone. We source the finest beans and craft them into your favorite beverages, all with a touch of warmth and passion.</p>
       <img src="assets/images/brew-buddy/our-story.jpeg" alt="About Us" class="about-image" (error)="onImageError($event)">

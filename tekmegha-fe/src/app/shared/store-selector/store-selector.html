@@ -2,7 +2,7 @@
   <div class="modal-overlay" (click)="closeModal()">
     <div class="store-selector-modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
-        <h2>Select Store for Delivery</h2>
+        <h2>Select App</h2>
         <button class="close-btn" (click)="closeModal()">
           <span class="material-icons">close</span>
         </button>
@@ -12,7 +12,7 @@
         @if (isLoading) {
           <div class="loading-state">
             <div class="spinner"></div>
-            <p>Loading available stores...</p>
+            <p>Loading available apps...</p>
           </div>
         } @else {
           <div class="stores-grid">
@@ -53,11 +53,11 @@
 
                 @if (store.isAvailable) {
                   <button class="select-btn" (click)="selectStore(store)">
-                    Select Store
+                    Select App
                   </button>
                 } @else {
                   <button class="select-btn unavailable" disabled>
-                    Store Closed
+                    App Unavailable
                   </button>
                 }
               </div>
@@ -67,7 +67,7 @@
           @if (deliveryOptions.length === 0) {
             <div class="no-stores">
               <span class="material-icons">store</span>
-              <h3>No stores available</h3>
+              <h3>No apps available</h3>
               <p>Please try again later or contact support.</p>
             </div>
           }

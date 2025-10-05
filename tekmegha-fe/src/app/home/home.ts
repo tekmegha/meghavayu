@@ -202,7 +202,59 @@ export class Home implements OnInit, OnDestroy {
       'Necklaces': 'diamond',
       'Earrings': 'diamond',
       'Rings': 'diamond',
-      'Bracelets': 'diamond'
+      'Bracelets': 'diamond',
+      
+      // Education/Exam categories
+      'Mathematics': 'calculate',
+      'Physics': 'science',
+      'Chemistry': 'biotech',
+      'Biology': 'eco',
+      'English': 'menu_book',
+      'History': 'history_edu',
+      'Geography': 'public',
+      'Economics': 'trending_up',
+      'Computer Science': 'computer',
+      'General Knowledge': 'psychology',
+      'Reasoning': 'psychology',
+      'Current Affairs': 'newspaper',
+      'Mock Tests': 'quiz',
+      'Previous Year Papers': 'assignment',
+      'Study Materials': 'library_books',
+      'Video Lectures': 'play_circle',
+      'Live Classes': 'live_tv',
+      'Doubt Clearing': 'help',
+      'UPSC': 'school',
+      'SSC': 'school',
+      'Banking': 'account_balance',
+      'Railway': 'train',
+      'Defense': 'security',
+      'Teaching': 'school',
+      'Engineering': 'engineering',
+      'Medical': 'medical_services',
+      'Law': 'gavel',
+      'Arts': 'palette',
+      
+      // Digital Security categories
+      'CCTV Cameras': 'videocam',
+      'Security Systems': 'security',
+      'Access Control': 'lock',
+      'Alarm Systems': 'warning',
+      'Surveillance': 'visibility',
+      'Network Security': 'router',
+      'Fire Safety': 'local_fire_department',
+      'Emergency Systems': 'emergency',
+      'Smart Security': 'smart_toy',
+      'Monitoring': 'monitor',
+      'Recording': 'fiber_smart_record',
+      'Analytics': 'analytics',
+      'Cloud Storage': 'cloud',
+      'Mobile Apps': 'phone_android',
+      'Integration': 'integration_instructions',
+      'Maintenance': 'build',
+      'Installation': 'handyman',
+      'Consultation': 'support_agent',
+      'Training': 'school',
+      'Support': 'support'
     };
     
     return categoryIcons[category] || 'category';
@@ -230,8 +282,12 @@ export class Home implements OnInit, OnDestroy {
         return 'Educational toys and games';
       case 'opula':
         return 'Fashion and accessories';
+      case 'sarc-academy':
+        return 'Competitive exam preparation courses';
+      case 'cctv-device':
+        return 'Digital security and surveillance solutions';
       default:
-        return 'General store';
+        return 'Business application';
     }
   }
 

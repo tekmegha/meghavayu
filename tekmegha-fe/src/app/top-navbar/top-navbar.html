@@ -34,5 +34,13 @@
         </a>
       }
     }
+    
+    <!-- Exit App Button -->
+    @if (selectedStore) {
+      <a class="nav-item exit-btn" (click)="onExitClick()" title="Exit App">
+        <span class="material-icons">exit_to_app</span>
+        <span class="label">Exit</span>
+      </a>
+    }
   </div>
 </nav>

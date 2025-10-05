@@ -21,8 +21,50 @@
   --primary-color: #f59e0b;
   --secondary-color: #ec4899;
   --accent-color: #10b981;
+  --background-color: #fef3c7;
+  --surface-color: #ffffff;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border-color: #fde68a;
   --gradient-primary: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  --gradient-accent: linear-gradient(135deg, #10b981 0%, #059669 100%);
   --navbar-gradient: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  
+  // Product tile specific colors for Toys theme
+  --product-card-bg: var(--surface-color);
+  --product-card-shadow: 0 8px 25px rgba(251, 191, 36, 0.15);
+  --product-card-border: var(--border-color);
+  --product-card-hover-shadow: 0 12px 35px rgba(251, 191, 36, 0.25);
+  
+  --product-discount-bg: var(--gradient-accent);
+  --product-discount-text: #fff;
+  --product-discount-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+  
+  --product-favorite-bg: rgba(255, 255, 255, 0.9);
+  --product-favorite-color: var(--accent-color);
+  --product-favorite-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  --product-name-color: #333;
+  --product-description-color: #777;
+  
+  --product-price-color: var(--primary-color);
+  --product-old-price-color: var(--text-secondary);
+  
+  --product-button-bg: var(--gradient-primary);
+  --product-button-text: #fff;
+  --product-button-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+  --product-button-hover-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+  
+  --product-quantity-bg: var(--surface-color);
+  --product-quantity-shadow: 0 2px 8px rgba(251, 191, 36, 0.2);
+  --product-quantity-border: var(--border-color);
+  --product-quantity-btn-bg: var(--gradient-primary);
+  --product-quantity-btn-text: white;
+  --product-quantity-btn-hover-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+  --product-quantity-minus-bg: var(--gradient-accent);
+  --product-quantity-plus-bg: var(--gradient-primary);
+  --product-quantity-text: var(--text-primary);
 
   // Toys-specific animations with playful bounce
   .main-content-wrapper {

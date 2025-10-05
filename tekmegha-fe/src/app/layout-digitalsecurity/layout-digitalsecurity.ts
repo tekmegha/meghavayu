@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-layout-fashion',
+  selector: 'app-layout-digitalsecurity',
   imports: [
     CommonModule,
     RouterOutlet,
@@ -21,10 +21,10 @@ import { filter } from 'rxjs/operators';
     NetworkStatusComponent,
     LocationBarComponent
   ],
-  templateUrl: './layout-fashion.html',
-  styleUrl: './layout-fashion.scss'
+  templateUrl: './layout-digitalsecurity.html',
+  styleUrl: './layout-digitalsecurity.scss'
 })
-export class LayoutFashion implements OnInit, OnDestroy {
+export class LayoutDigitalSecurity implements OnInit, OnDestroy {
   currentBrand: BrandConfig | null = null;
   private subscription: Subscription = new Subscription();
 

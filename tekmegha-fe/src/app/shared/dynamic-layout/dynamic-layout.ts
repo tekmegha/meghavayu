@@ -5,6 +5,7 @@ import { StoreSessionService, StoreSession } from '../services/store-session.ser
 import { Layout } from '../../layout/layout';
 import { LayoutFashion } from '../../layout-fashion/layout-fashion';
 import { LayoutToys } from '../../layout-toys/layout-toys';
+import { LayoutDigitalSecurity } from '../../layout-digitalsecurity/layout-digitalsecurity';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -15,7 +16,8 @@ import { Subscription } from 'rxjs';
     RouterOutlet,
     Layout,
     LayoutFashion,
-    LayoutToys
+    LayoutToys,
+    LayoutDigitalSecurity
   ],
   template: `
     <!-- Default Layout (Brew Buddy) -->
@@ -32,6 +34,11 @@ import { Subscription } from 'rxjs';
     <app-layout-toys *ngIf="selectedStore?.storeCode === 'little-ducks'">
       <router-outlet></router-outlet>
     </app-layout-toys>
+
+    <!-- Digital Security Layout (CCTV Device) -->
+    <app-layout-digitalsecurity *ngIf="selectedStore?.storeCode === 'cctv-device'">
+      <router-outlet></router-outlet>
+    </app-layout-digitalsecurity>
   `,
   styleUrls: ['./dynamic-layout.scss']
 })
@@ -63,6 +70,8 @@ export class DynamicLayoutComponent implements OnInit, OnDestroy {
       storeCode = 'little-ducks';
     } else if (path.startsWith('/opula')) {
       storeCode = 'opula';
+    } else if (path.startsWith('/cctv-device')) {
+      storeCode = 'cctv-device';
     } else if (path.startsWith('/fashion')) {
       storeCode = 'opula';
     } else if (path.startsWith('/toys')) {

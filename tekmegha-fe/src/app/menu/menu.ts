@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader';
 import { ProductTileComponent } from '../shared/product-tile/product-tile';
 import { Product } from '../shared/interfaces/product.interface';
+import { Category } from '../shared/interfaces/category.interface';
 import { SupabaseService } from '../shared/services/supabase.service';
 import { FallbackDataService } from '../shared/services/fallback-data.service';
 import { ProductTransformService } from '../shared/services/product-transform.service';
@@ -21,11 +22,8 @@ export class Menu implements OnInit {
   selectedCategory: string = 'all';
   searchQuery: string = '';
 
-  categories = [
-    { id: 'all', name: 'All Products' },
-    { id: 'Espresso Drinks', name: 'Espresso Drinks' },
-    { id: 'Brewed Coffee', name: 'Brewed Coffee' },
-    { id: 'Pastries & Snacks', name: 'Pastries & Snacks' }
+  categories: { id: string; name: string }[] = [
+    { id: 'all', name: 'All Products' }
   ];
 
   constructor(
@@ -36,6 +34,7 @@ export class Menu implements OnInit {
 
   async ngOnInit() {
     await this.loadProducts();
+    await this.loadCategories();
   }
 
   async loadProducts() {
@@ -60,6 +59,44 @@ export class Menu implements OnInit {
       this.products = this.fallbackDataService.getFallbackProducts();
       this.filteredProducts = this.products;
       this.isLoading = false;
+    }
+  }
+
+  async loadCategories() {
+    try {
+      console.log('🔄 Loading categories for menu...');
+      
+      const { data, error } = await this.supabaseService.getMainCategories();
+      
+      console.log('📊 Categories API Response:', { data, error });
+      
+      if (error) {
+        console.error('❌ Error loading categories:', error);
+        // Keep default "All Products" category
+        return;
+      }
+      
+      if (data && data.length > 0) {
+        console.log('✅ Loaded categories from backend:', data.length, 'categories');
+        console.log('📋 Categories data:', data);
+        
+        // Add "All Products" at the beginning and map backend categories
+        this.categories = [
+          { id: 'all', name: 'All Products' },
+          ...data.map(category => ({
+            id: category.name,
+            name: category.name
+          }))
+        ];
+        
+        console.log('🎨 Mapped categories for menu:', this.categories);
+      } else {
+        console.log('⚠️ No categories found for store');
+        // Keep default "All Products" category
+      }
+    } catch (error) {
+      console.error('💥 Error in loadCategories:', error);
+      // Keep default "All Products" category
     }
   }
 
