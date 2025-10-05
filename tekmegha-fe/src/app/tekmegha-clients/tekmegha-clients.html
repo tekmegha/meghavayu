@@ -54,6 +54,9 @@
               <span class="product-type">{{ client.Product_Type }}</span>
             </div>
             <div class="client-actions">
+              <a [href]="client.website" class="action-btn website">
+                <span class="material-icons">website</span>
+              </a>
               <a [href]="'mailto:' + client.email" class="action-btn email">
                 <span class="material-icons">email</span>
               </a>

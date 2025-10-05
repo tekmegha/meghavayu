@@ -77,8 +77,9 @@ export interface UserRole {
   id: string;
   user_id: string;
   megha_store_id: string;
-  role: 'super_admin' | 'store_admin' | 'manager' | 'inventory_staff' | 'store_manager' | 'customer' | 'delivery_partner';
+  role_name: 'super_admin' | 'store_admin' | 'manager' | 'inventory_staff' | 'store_manager' | 'customer' | 'delivery_partner' | 'inventory_manager';
   permissions?: any; // JSONB
+  is_active?: boolean;
   created_at: string;
   updated_at: string;
 }

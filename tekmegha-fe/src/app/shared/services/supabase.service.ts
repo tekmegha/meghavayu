@@ -7,6 +7,7 @@ import { StoreContextService } from './store-context.service';
 // Import new interfaces
 import { Product, MeghaStore, StoreLocation, LocationInventory } from '../interfaces/product.interface';
 import { CartItem, Order, OrderItem, UserRole } from '../interfaces/store.interface';
+import { Category } from '../interfaces/category.interface';
 
 // Re-export interfaces for backward compatibility
 export type { Product, MeghaStore, StoreLocation, LocationInventory } from '../interfaces/product.interface';
@@ -208,10 +209,94 @@ export class SupabaseService {
 
   // Product Methods - Updated for new schema
 
+  async getCategories(): Promise<{ data: Category[] | null; error: any }> {
+    try {
+      // Check if Supabase is ready
+      if (!this.isSupabaseReady()) {
+        console.log('Supabase not ready, waiting...');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        if (!this.isSupabaseReady()) {
+          return { data: null, error: { message: 'Supabase client not ready' } };
+        }
+      }
+
+      const storeId = await this.getCurrentStoreId();
+      if (!storeId) {
+        return { data: null, error: { message: 'Store not found' } };
+      }
+
+      console.log('Fetching categories for store:', storeId);
+
+      const { data, error } = await this.supabase
+        .from('categories')
+        .select('*')
+        .eq('megha_store_id', storeId)
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true })
+        .order('name', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching categories:', error);
+        return { data: null, error };
+      }
+
+      console.log('Found categories:', data?.length || 0);
+      return { data: data || [], error: null };
+    } catch (error) {
+      console.error('Error in getCategories:', error);
+      return { data: null, error };
+    }
+  }
+
+  async getMainCategories(): Promise<{ data: Category[] | null; error: any }> {
+    try {
+      // Check if Supabase is ready
+      if (!this.isSupabaseReady()) {
+        console.log('Supabase not ready, waiting...');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        if (!this.isSupabaseReady()) {
+          return { data: null, error: { message: 'Supabase client not ready' } };
+        }
+      }
+
+      const storeId = await this.getCurrentStoreId();
+      if (!storeId) {
+        return { data: null, error: { message: 'Store not found' } };
+      }
+
+      console.log('Fetching main categories for store:', storeId);
+
+      const { data, error } = await this.supabase
+        .from('categories')
+        .select('*')
+        .eq('megha_store_id', storeId)
+        .eq('is_active', true)
+        .is('parent_id', null)
+        .order('sort_order', { ascending: true })
+        .order('name', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching main categories:', error);
+        return { data: null, error };
+      }
+
+      console.log('Found main categories:', data?.length || 0);
+      return { data: data || [], error: null };
+    } catch (error) {
+      console.error('Error in getMainCategories:', error);
+      return { data: null, error };
+    }
+  }
+
   async getProductsByCategory(category: string): Promise<{ data: Product[] | null; error: any }> {
     try {
-      if (!this.supabase) {
-        throw new Error('Supabase client not initialized');
+      // Check if Supabase is ready
+      if (!this.isSupabaseReady()) {
+        console.log('Supabase not ready, waiting...');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        if (!this.isSupabaseReady()) {
+          return { data: null, error: { message: 'Supabase client not ready' } };
+        }
       }
       
       const storeId = await this.getCurrentStoreId();
@@ -244,59 +329,191 @@ export class SupabaseService {
   }
 
   async getProduct(id: string): Promise<{ data: Product | null; error: any }> {
-    const { data, error } = await this.supabase
-      .from('products')
-      .select('*')
-      .eq('id', id)
-      .single();
-    return { data, error };
+    try {
+      // Check if Supabase is ready
+      if (!this.isSupabaseReady()) {
+        console.log('Supabase not ready, waiting...');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        if (!this.isSupabaseReady()) {
+          return { data: null, error: { message: 'Supabase client not ready' } };
+        }
+      }
+
+      const { data, error } = await this.supabase
+        .from('products')
+        .select('*')
+        .eq('id', id)
+        .single();
+      return { data, error };
+    } catch (error) {
+      console.error('Error fetching product:', error);
+      return { data: null, error };
+    }
   }
 
   async addProduct(product: Partial<Product>): Promise<{ data: Product | null; error: any }> {
-    const storeId = await this.getCurrentStoreId();
-    if (!storeId) {
-      return { data: null, error: 'Store not found' };
-    }
+    try {
+      // Check if Supabase is ready
+      if (!this.isSupabaseReady()) {
+        console.log('Supabase not ready, waiting...');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        if (!this.isSupabaseReady()) {
+          return { data: null, error: { message: 'Supabase client not ready' } };
+        }
+      }
 
-    const { data, error } = await this.supabase
-      .from('products')
-      .insert([{
-        ...product,
-        megha_store_id: storeId
-      }])
-      .select()
-      .single();
-    return { data, error };
+      const storeId = await this.getCurrentStoreId();
+      if (!storeId) {
+        return { data: null, error: { message: 'Store not found' } };
+      }
+
+      // Map component fields to database schema
+      const productData = {
+        megha_store_id: storeId,
+        sku: product.sku || null,
+        name: product.name,
+        price: product.price,
+        rating: product.rating || 0.0,
+        review_count: product.review_count || 0,
+        serves: product.serves || 1,
+        description: product.description || null,
+        image_url: product.image_url || null,
+        gallery_images: product.gallery_images || null,
+        customisable: product.customisable || false,
+        customization_options: product.customization_options || null,
+        category: product.category || null,
+        tags: product.tags || null,
+        discount_percentage: product.discount_percentage || 0,
+        old_price: product.old_price || null,
+        nutritional_info: product.nutritional_info || null,
+        allergen_info: product.allergen_info || null,
+        preparation_time: product.preparation_time || null,
+        is_available: product.is_available !== false,
+        is_featured: product.is_featured || false,
+        sort_order: product.sort_order || 0
+      };
+
+      console.log('Adding product with data:', productData);
+
+      const { data, error } = await this.supabase
+        .from('products')
+        .insert([productData])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error adding product:', error);
+        return { data: null, error };
+      }
+
+      console.log('Product added successfully:', data);
+      return { data, error: null };
+    } catch (error) {
+      console.error('Error in addProduct:', error);
+      return { data: null, error };
+    }
   }
 
   async updateProduct(id: string, updates: Partial<Product>): Promise<{ data: Product | null; error: any }> {
-    const storeId = await this.getCurrentStoreId();
-    if (!storeId) {
-      return { data: null, error: 'Store not found' };
-    }
+    try {
+      // Check if Supabase is ready
+      if (!this.isSupabaseReady()) {
+        console.log('Supabase not ready, waiting...');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        if (!this.isSupabaseReady()) {
+          return { data: null, error: { message: 'Supabase client not ready' } };
+        }
+      }
 
-    const { data, error } = await this.supabase
-      .from('products')
-      .update(updates)
-      .eq('id', id)
-      .eq('megha_store_id', storeId)
-      .select()
-      .single();
-    return { data, error };
+      const storeId = await this.getCurrentStoreId();
+      if (!storeId) {
+        return { data: null, error: { message: 'Store not found' } };
+      }
+
+      // Map component fields to database schema for updates
+      const updateData: any = {};
+      
+      // Only include fields that are being updated
+      if (updates.sku !== undefined) updateData.sku = updates.sku;
+      if (updates.name !== undefined) updateData.name = updates.name;
+      if (updates.price !== undefined) updateData.price = updates.price;
+      if (updates.rating !== undefined) updateData.rating = updates.rating;
+      if (updates.review_count !== undefined) updateData.review_count = updates.review_count;
+      if (updates.serves !== undefined) updateData.serves = updates.serves;
+      if (updates.description !== undefined) updateData.description = updates.description;
+      if (updates.image_url !== undefined) updateData.image_url = updates.image_url;
+      if (updates.gallery_images !== undefined) updateData.gallery_images = updates.gallery_images;
+      if (updates.customisable !== undefined) updateData.customisable = updates.customisable;
+      if (updates.customization_options !== undefined) updateData.customization_options = updates.customization_options;
+      if (updates.category !== undefined) updateData.category = updates.category;
+      if (updates.tags !== undefined) updateData.tags = updates.tags;
+      if (updates.discount_percentage !== undefined) updateData.discount_percentage = updates.discount_percentage;
+      if (updates.old_price !== undefined) updateData.old_price = updates.old_price;
+      if (updates.nutritional_info !== undefined) updateData.nutritional_info = updates.nutritional_info;
+      if (updates.allergen_info !== undefined) updateData.allergen_info = updates.allergen_info;
+      if (updates.preparation_time !== undefined) updateData.preparation_time = updates.preparation_time;
+      if (updates.is_available !== undefined) updateData.is_available = updates.is_available;
+      if (updates.is_featured !== undefined) updateData.is_featured = updates.is_featured;
+      if (updates.sort_order !== undefined) updateData.sort_order = updates.sort_order;
+
+      console.log('Updating product with data:', updateData);
+
+      const { data, error } = await this.supabase
+        .from('products')
+        .update(updateData)
+        .eq('id', id)
+        .eq('megha_store_id', storeId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating product:', error);
+        return { data: null, error };
+      }
+
+      console.log('Product updated successfully:', data);
+      return { data, error: null };
+    } catch (error) {
+      console.error('Error in updateProduct:', error);
+      return { data: null, error };
+    }
   }
 
   async deleteProduct(id: string): Promise<{ error: any }> {
-    const storeId = await this.getCurrentStoreId();
-    if (!storeId) {
-      return { error: 'Store not found' };
-    }
+    try {
+      // Check if Supabase is ready
+      if (!this.isSupabaseReady()) {
+        console.log('Supabase not ready, waiting...');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        if (!this.isSupabaseReady()) {
+          return { error: { message: 'Supabase client not ready' } };
+        }
+      }
 
-    const { error } = await this.supabase
-      .from('products')
-      .delete()
-      .eq('id', id)
-      .eq('megha_store_id', storeId);
-    return { error };
+      const storeId = await this.getCurrentStoreId();
+      if (!storeId) {
+        return { error: { message: 'Store not found' } };
+      }
+
+      console.log('Deleting product:', id);
+
+      const { error } = await this.supabase
+        .from('products')
+        .delete()
+        .eq('id', id)
+        .eq('megha_store_id', storeId);
+
+      if (error) {
+        console.error('Error deleting product:', error);
+        return { error };
+      }
+
+      console.log('Product deleted successfully');
+      return { error: null };
+    } catch (error) {
+      console.error('Error in deleteProduct:', error);
+      return { error };
+    }
   }
 
   // Delivery Methods
@@ -480,6 +697,15 @@ export class SupabaseService {
   // Product Methods
   async getProducts(): Promise<{ data: Product[] | null; error: any }> {
     try {
+      // Check if Supabase is ready
+      if (!this.isSupabaseReady()) {
+        console.log('Supabase not ready, waiting...');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        if (!this.isSupabaseReady()) {
+          return { data: null, error: { message: 'Supabase client not ready' } };
+        }
+      }
+
       const storeId = await this.getCurrentStoreId();
       if (!storeId) {
         return { data: null, error: { message: 'Store not found' } };

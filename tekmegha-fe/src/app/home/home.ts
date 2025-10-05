@@ -5,9 +5,11 @@ import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-load
 import { ProductTileComponent } from '../shared/product-tile/product-tile';
 import { StoreSelectorComponent } from '../shared/store-selector/store-selector';
 import { Product } from '../shared/interfaces/product.interface';
+import { Category } from '../shared/interfaces/category.interface';
 import { NetworkStatusService } from '../shared/services/network-status.service';
 import { StoreSessionService, StoreSession } from '../shared/services/store-session.service';
 import { BrandService } from '../shared/services/brand.service';
+import { SupabaseService } from '../shared/services/supabase.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -24,19 +26,13 @@ export class Home implements OnInit, OnDestroy {
   showStoreSelector = false;
   private subscription = new Subscription();
   
-  coffeeCategories = [
-    { name: 'Espresso', icon: 'local_cafe', route: '/menu' },
-    { name: 'Latte', icon: 'coffee', route: '/menu' },
-    { name: 'Cappuccino', icon: 'local_drink', route: '/menu' },
-    { name: 'Cold Brew', icon: 'ac_unit', route: '/menu' },
-    { name: 'Pastries', icon: 'bakery_dining', route: '/menu' },
-    { name: 'Tea', icon: 'emoji_food_beverage', route: '/menu' }
-  ];
+  coffeeCategories: { name: string; icon: string; route: string; slug: string }[] = [];
 
   constructor(
     private networkStatus: NetworkStatusService,
     private storeSessionService: StoreSessionService,
     private brandService: BrandService,
+    private supabaseService: SupabaseService,
     private router: Router
   ) {}
 
@@ -73,127 +69,140 @@ export class Home implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  private loadProductsForStore(store: StoreSession) {
-    // Simulate data loading
-    setTimeout(() => {
+  private async loadProductsForStore(store: StoreSession) {
+    try {
+      this.isLoading = true;
+      console.log('Loading products for store:', store.storeName);
+      
+      const { data, error } = await this.supabaseService.getProducts();
+      
+      if (error) {
+        console.error('Error loading products:', error);
+        this.products = [];
+        this.isLoading = false;
+        return;
+      }
+      
+      if (data && data.length > 0) {
+        console.log('Loaded products:', data.length);
+        console.log('First product data:', data[0]);
+        
+        // Map database fields to component interface
+        this.products = data.map(product => ({
+          ...product,
+          // Map snake_case to camelCase for component compatibility
+          imageUrl: product.image_url,
+          reviewCount: product.review_count,
+          discountPercentage: product.discount_percentage,
+          oldPrice: product.old_price,
+          // Ensure required fields have defaults
+          rating: product.rating || 0,
+          serves: product.serves || 1,
+          customisable: product.customisable || false,
+          is_available: product.is_available !== false,
+          is_featured: product.is_featured || false
+        }));
+        
+        console.log('Mapped products:', this.products.length);
+        console.log('First mapped product:', this.products[0]);
+        
+        // Load store-specific categories
+        await this.loadStoreCategories();
+      } else {
+        console.log('No products found for store:', store.storeName);
+        this.products = [];
+        this.coffeeCategories = [];
+      }
+      
       this.isLoading = false;
-      this.products = [
-          {
-            id: 'home-product1',
-            name: 'Espresso Blend',
-            price: 4.50,
-            rating: 4.8,
-            reviewCount: 120,
-            serves: 1,
-            description: 'A rich and intense coffee experience.',
-            imageUrl: 'assets/images/brew-buddy/espresso.jpg',
-            customisable: false,
-            category: 'Brewed Coffee',
-            discountPercentage: 15,
-            oldPrice: 5.29,
-            brand_id: 'brew-buddy'
-          },
-          {
-            id: 'home-product2',
-            name: 'Vanilla Latte',
-            price: 5.25,
-            rating: 4.7,
-            reviewCount: 95,
-            serves: 1,
-            description: 'Smooth latte with a hint of sweet vanilla.',
-            imageUrl: 'assets/images/brew-buddy/latte.jpg',
-            customisable: true,
-            category: 'Espresso Drinks',
-            discountPercentage: 10,
-            oldPrice: 5.85,
-            brand_id: 'brew-buddy'
-          },
-          {
-            id: 'home-product3',
-            name: 'Chocolate Croissant',
-            price: 3.00,
-            rating: 4.6,
-            reviewCount: 80,
-            serves: 1,
-            description: 'Flaky pastry with a rich chocolate filling.',
-            imageUrl: 'assets/images/brew-buddy/muffin.jpg',
-            customisable: false,
-            category: 'Pastries & Snacks',
-            brand_id: 'brew-buddy'
-          },
-          {
-            id: 'home-product4',
-            name: 'Cappuccino',
-            price: 4.75,
-            rating: 4.9,
-            reviewCount: 150,
-            serves: 1,
-            description: 'Perfect balance of espresso, steamed milk, and foam.',
-            imageUrl: 'assets/images/brew-buddy/cappuccino.jpg',
-            customisable: true,
-            category: 'Espresso Drinks',
-            discountPercentage: 12,
-            oldPrice: 5.40,
-            brand_id: 'brew-buddy'
-          },
-          {
-            id: 'home-product5',
-            name: 'Cold Brew',
-            price: 4.25,
-            rating: 4.5,
-            reviewCount: 75,
-            serves: 1,
-            description: 'Smooth and refreshing cold-brewed coffee.',
-            imageUrl: 'assets/images/brew-buddy/cold-brew.jpg',
-            customisable: false,
-            category: 'Brewed Coffee',
-            discountPercentage: 8,
-            oldPrice: 4.62,
-            brand_id: 'brew-buddy'
-          },
-          {
-            id: 'home-product6',
-            name: 'Caramel Macchiato',
-            price: 5.50,
-            rating: 4.8,
-            reviewCount: 110,
-            serves: 1,
-            description: 'Rich espresso with vanilla and caramel drizzle.',
-            imageUrl: 'assets/images/brew-buddy/macchiato.jpg',
-            customisable: true,
-            category: 'Espresso Drinks',
-            discountPercentage: 15,
-            oldPrice: 6.47,
-            brand_id: 'brew-buddy'
-          },
-          {
-            id: 'home-product7',
-            name: 'Blueberry Muffin',
-            price: 3.25,
-            rating: 4.4,
-            reviewCount: 65,
-            serves: 1,
-            description: 'Fresh baked muffin with juicy blueberries.',
-            imageUrl: 'assets/images/brew-buddy/blueberry-muffin.jpg',
-            customisable: false,
-            category: 'Pastries & Snacks',
-            brand_id: 'brew-buddy'
-          },
-          {
-            id: 'home-product8',
-            name: 'Americano',
-            price: 3.75,
-            rating: 4.6,
-            reviewCount: 85,
-            serves: 1,
-            description: 'Classic espresso with hot water for a clean taste.',
-            imageUrl: 'assets/images/brew-buddy/americano.jpg',
-            customisable: false,
-            category: 'Espresso Drinks',
-            brand_id: 'brew-buddy'
-          }
-        ];
-    }, 2000); // Show skeleton for 2 seconds
+    } catch (error) {
+      console.error('Error in loadProductsForStore:', error);
+      this.products = [];
+      this.isLoading = false;
+    }
+  }
+
+  private async loadStoreCategories() {
+    try {
+      console.log('Loading categories for store');
+      
+      const { data, error } = await this.supabaseService.getMainCategories();
+      
+      if (error) {
+        console.error('Error loading categories:', error);
+        this.coffeeCategories = [];
+        return;
+      }
+      
+      if (data && data.length > 0) {
+        console.log('Loaded categories:', data);
+        
+        // Map categories to display format with appropriate icons
+        this.coffeeCategories = data.map(category => ({
+          name: category.name,
+          icon: this.getCategoryIcon(category.name),
+          route: '/menu',
+          slug: category.slug
+        }));
+        
+        console.log('Mapped categories:', this.coffeeCategories);
+      } else {
+        console.log('No categories found for store');
+        this.coffeeCategories = [];
+      }
+    } catch (error) {
+      console.error('Error in loadStoreCategories:', error);
+      this.coffeeCategories = [];
+    }
+  }
+
+  private getCategoryIcon(category: string): string {
+    const categoryIcons: { [key: string]: string } = {
+      // Coffee/Food categories
+      'Coffee': 'local_cafe',
+      'Espresso': 'local_cafe',
+      'Latte': 'coffee',
+      'Cappuccino': 'local_drink',
+      'Cold Brew': 'ac_unit',
+      'Tea': 'emoji_food_beverage',
+      'Pastries': 'bakery_dining',
+      'Food': 'restaurant',
+      'Beverages': 'local_drink',
+      'Snacks': 'cookie',
+      'Desserts': 'cake',
+      'Breakfast': 'breakfast_dining',
+      'Lunch': 'lunch_dining',
+      'Dinner': 'dinner_dining',
+      
+      // Fashion categories
+      'Women\'s Clothing': 'woman',
+      'Men\'s Clothing': 'man',
+      'Accessories': 'style',
+      'Shoes': 'directions_walk',
+      'Jewelry': 'diamond',
+      'Dresses': 'checkroom',
+      'Tops & Blouses': 'checkroom',
+      'Bottoms': 'checkroom',
+      'Outerwear': 'checkroom',
+      'Shirts': 'checkroom',
+      'T-Shirts': 'checkroom',
+      'Pants': 'checkroom',
+      'Suits': 'checkroom',
+      'Bags': 'shopping_bag',
+      'Belts': 'style',
+      'Watches': 'schedule',
+      'Sunglasses': 'visibility',
+      'Heels': 'directions_walk',
+      'Sneakers': 'directions_walk',
+      'Boots': 'directions_walk',
+      'Flats': 'directions_walk',
+      'Necklaces': 'diamond',
+      'Earrings': 'diamond',
+      'Rings': 'diamond',
+      'Bracelets': 'diamond'
+    };
+    
+    return categoryIcons[category] || 'category';
   }
 
   onImageError(event: Event) {

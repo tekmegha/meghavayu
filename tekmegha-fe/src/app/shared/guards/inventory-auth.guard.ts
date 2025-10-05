@@ -49,8 +49,17 @@ export class InventoryAuthGuard implements CanActivate {
       }
 
       // Check if user has inventory access role
-      const allowedRoles = ['admin', 'manager', 'inventory_staff', 'store_manager'];
-      return !!(data?.role && allowedRoles.includes(data.role.toLowerCase()));
+      const allowedRoles = ['admin', 'manager', 'inventory_staff', 'store_manager', 'inventory_manager'];
+      const hasAccess = !!(data?.role_name && allowedRoles.includes(data.role_name.toLowerCase()));
+      
+      console.log('Inventory auth guard check:', {
+        userRole: data?.role_name,
+        allowedRoles: allowedRoles,
+        hasAccess: hasAccess,
+        roleData: data
+      });
+      
+      return hasAccess;
     } catch (error) {
       console.error('Error checking inventory access:', error);
       return false;

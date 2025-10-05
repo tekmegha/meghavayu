@@ -1,216 +1,85 @@
--- Create Categories Table for Multi-Store Setup
--- This table will store product categories for each store
-
--- Create categories table
-CREATE TABLE IF NOT EXISTS categories (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    slug VARCHAR(100) NOT NULL,
-    megha_store_id UUID NOT NULL REFERENCES megha_stores(id) ON DELETE CASCADE,
-    parent_id UUID REFERENCES categories(id) ON DELETE SET NULL,
-    sort_order INTEGER DEFAULT 0,
-    is_active BOOLEAN DEFAULT true,
-    image_url TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    
-    -- Ensure unique category names per store
-    UNIQUE(name, megha_store_id),
-    UNIQUE(slug, megha_store_id)
-);
+-- Create categories table with proper schema
+CREATE TABLE public.categories (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  name character varying(100) NOT NULL,
+  description text NULL,
+  slug character varying(100) NOT NULL,
+  megha_store_id uuid NOT NULL,
+  parent_id uuid NULL,
+  sort_order integer NULL DEFAULT 0,
+  is_active boolean NULL DEFAULT true,
+  image_url text NULL,
+  created_at timestamp with time zone NULL DEFAULT now(),
+  updated_at timestamp with time zone NULL DEFAULT now(),
+  CONSTRAINT categories_pkey PRIMARY KEY (id),
+  CONSTRAINT categories_name_megha_store_id_key UNIQUE (name, megha_store_id),
+  CONSTRAINT categories_slug_megha_store_id_key UNIQUE (slug, megha_store_id),
+  CONSTRAINT categories_megha_store_id_fkey FOREIGN KEY (megha_store_id) REFERENCES megha_stores (id) ON DELETE CASCADE,
+  CONSTRAINT categories_parent_id_fkey FOREIGN KEY (parent_id) REFERENCES categories (id) ON DELETE SET NULL
+) TABLESPACE pg_default;
 
 -- Create indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_categories_store ON categories(megha_store_id);
-CREATE INDEX IF NOT EXISTS idx_categories_parent ON categories(parent_id);
-CREATE INDEX IF NOT EXISTS idx_categories_active ON categories(is_active);
-CREATE INDEX IF NOT EXISTS idx_categories_slug ON categories(slug);
+CREATE INDEX IF NOT EXISTS idx_categories_store ON public.categories USING btree (megha_store_id) TABLESPACE pg_default;
 
--- Create updated_at trigger
-CREATE OR REPLACE FUNCTION update_categories_updated_at()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+CREATE INDEX IF NOT EXISTS idx_categories_parent ON public.categories USING btree (parent_id) TABLESPACE pg_default;
 
-CREATE TRIGGER trigger_update_categories_updated_at
-    BEFORE UPDATE ON categories
-    FOR EACH ROW
-    EXECUTE FUNCTION update_categories_updated_at();
+CREATE INDEX IF NOT EXISTS idx_categories_active ON public.categories USING btree (is_active) TABLESPACE pg_default;
 
--- Enable RLS
-ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+CREATE INDEX IF NOT EXISTS idx_categories_slug ON public.categories USING btree (slug) TABLESPACE pg_default;
 
--- RLS Policies for categories
--- Public can read active categories
-CREATE POLICY "Public can read active categories"
-ON categories
-FOR SELECT
-TO anon, authenticated
-USING (is_active = true);
+-- Create trigger for updating updated_at column
+CREATE TRIGGER trigger_update_categories_updated_at 
+  BEFORE UPDATE ON categories 
+  FOR EACH ROW 
+  EXECUTE FUNCTION update_categories_updated_at();
 
--- Authenticated users can read all categories for their stores
-CREATE POLICY "Users can read categories for their stores"
-ON categories
-FOR SELECT
-TO authenticated
-USING (
-    EXISTS (
-        SELECT 1 
-        FROM user_roles ur 
-        WHERE ur.user_id = auth.uid() 
-        AND ur.megha_store_id = categories.megha_store_id
-        AND ur.is_active = true
+-- Enable Row Level Security
+ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
+
+-- Create RLS policies
+CREATE POLICY "Users can view categories for their store" ON public.categories
+  FOR SELECT USING (
+    megha_store_id IN (
+      SELECT ur.megha_store_id 
+      FROM user_roles ur 
+      WHERE ur.user_id = auth.uid() 
+      AND ur.is_active = true
     )
-);
+  );
 
--- Store admins and managers can manage categories
-CREATE POLICY "Store admins can manage categories"
-ON categories
-FOR ALL
-TO authenticated
-USING (
-    EXISTS (
-        SELECT 1 
-        FROM user_roles ur 
-        WHERE ur.user_id = auth.uid() 
-        AND ur.megha_store_id = categories.megha_store_id
-        AND ur.role IN ('store_admin', 'store_manager', 'inventory_manager', 'super_admin')
-        AND ur.is_active = true
+CREATE POLICY "Users can insert categories for their store" ON public.categories
+  FOR INSERT WITH CHECK (
+    megha_store_id IN (
+      SELECT ur.megha_store_id 
+      FROM user_roles ur 
+      WHERE ur.user_id = auth.uid() 
+      AND ur.is_active = true
+      AND ur.permissions->>'categories'->>'create' = 'true'
     )
-);
+  );
 
--- Insert default categories for each store
-INSERT INTO categories (name, description, slug, megha_store_id, sort_order, is_active)
-SELECT 
-    'Coffee & Beverages',
-    'Hot and cold coffee drinks, teas, and other beverages',
-    'coffee-beverages',
-    ms.id,
-    1,
-    true
-FROM megha_stores ms
-WHERE ms.store_code = 'brew-buddy'
-ON CONFLICT (name, megha_store_id) DO NOTHING;
+CREATE POLICY "Users can update categories for their store" ON public.categories
+  FOR UPDATE USING (
+    megha_store_id IN (
+      SELECT ur.megha_store_id 
+      FROM user_roles ur 
+      WHERE ur.user_id = auth.uid() 
+      AND ur.is_active = true
+      AND ur.permissions->>'categories'->>'update' = 'true'
+    )
+  );
 
-INSERT INTO categories (name, description, slug, megha_store_id, sort_order, is_active)
-SELECT 
-    'Food & Snacks',
-    'Pastries, sandwiches, and light meals',
-    'food-snacks',
-    ms.id,
-    2,
-    true
-FROM megha_stores ms
-WHERE ms.store_code = 'brew-buddy'
-ON CONFLICT (name, megha_store_id) DO NOTHING;
+CREATE POLICY "Users can delete categories for their store" ON public.categories
+  FOR DELETE USING (
+    megha_store_id IN (
+      SELECT ur.megha_store_id 
+      FROM user_roles ur 
+      WHERE ur.user_id = auth.uid() 
+      AND ur.is_active = true
+      AND ur.permissions->>'categories'->>'delete' = 'true'
+    )
+  );
 
-INSERT INTO categories (name, description, slug, megha_store_id, sort_order, is_active)
-SELECT 
-    'Toys & Games',
-    'Educational toys, action figures, and board games',
-    'toys-games',
-    ms.id,
-    1,
-    true
-FROM megha_stores ms
-WHERE ms.store_code = 'little-ducks'
-ON CONFLICT (name, megha_store_id) DO NOTHING;
-
-INSERT INTO categories (name, description, slug, megha_store_id, sort_order, is_active)
-SELECT 
-    'Educational',
-    'Learning toys and educational materials',
-    'educational',
-    ms.id,
-    2,
-    true
-FROM megha_stores ms
-WHERE ms.store_code = 'little-ducks'
-ON CONFLICT (name, megha_store_id) DO NOTHING;
-
-INSERT INTO categories (name, description, slug, megha_store_id, sort_order, is_active)
-SELECT 
-    'Clothing',
-    'Fashion clothing and accessories',
-    'clothing',
-    ms.id,
-    1,
-    true
-FROM megha_stores ms
-WHERE ms.store_code = 'opula'
-ON CONFLICT (name, megha_store_id) DO NOTHING;
-
-INSERT INTO categories (name, description, slug, megha_store_id, sort_order, is_active)
-SELECT 
-    'Accessories',
-    'Fashion accessories and jewelry',
-    'accessories',
-    ms.id,
-    2,
-    true
-FROM megha_stores ms
-WHERE ms.store_code = 'opula'
-ON CONFLICT (name, megha_store_id) DO NOTHING;
-
--- Note: Views in Supabase need to be accessed through the API
--- The categories_with_store view is created but may not be directly accessible via Supabase client
--- Use the categories table with joins instead
-
--- Alternative: Create a function to get categories with store info
-CREATE OR REPLACE FUNCTION get_categories_with_store(p_store_code TEXT DEFAULT NULL)
-RETURNS TABLE (
-    id UUID,
-    name VARCHAR(100),
-    description TEXT,
-    slug VARCHAR(100),
-    parent_id UUID,
-    sort_order INTEGER,
-    is_active BOOLEAN,
-    image_url TEXT,
-    created_at TIMESTAMP WITH TIME ZONE,
-    updated_at TIMESTAMP WITH TIME ZONE,
-    store_name VARCHAR(100),
-    store_code VARCHAR(50),
-    store_type VARCHAR(50)
-)
-LANGUAGE plpgsql
-SECURITY DEFINER
-AS $$
-BEGIN
-    RETURN QUERY
-    SELECT 
-        c.id,
-        c.name,
-        c.description,
-        c.slug,
-        c.parent_id,
-        c.sort_order,
-        c.is_active,
-        c.image_url,
-        c.created_at,
-        c.updated_at,
-        ms.store_name,
-        ms.store_code,
-        ms.store_type
-    FROM categories c
-    JOIN megha_stores ms ON c.megha_store_id = ms.id
-    WHERE c.is_active = true
-    AND (p_store_code IS NULL OR ms.store_code = p_store_code)
-    ORDER BY ms.store_code, c.sort_order, c.name;
-END;
-$$;
-
--- Verification query
-SELECT 
-    c.name as category_name,
-    c.slug,
-    ms.store_name,
-    ms.store_code,
-    c.sort_order,
-    c.is_active
-FROM categories c
-JOIN megha_stores ms ON c.megha_store_id = ms.id
-ORDER BY ms.store_code, c.sort_order, c.name;
+-- Grant permissions
+GRANT ALL ON public.categories TO authenticated;
+GRANT ALL ON public.categories TO service_role;
