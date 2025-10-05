@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FilterByPositionPipe } from '../filter-by-position-pipe';
 import { NavbarItem } from '../shared/interfaces/navbar-item.interface';
 import { CartService, CartState } from '../shared/services/cart-service';
+import { StoreSessionService, StoreSession } from '../shared/services/store-session.service';
 import { Observable, Subscription } from 'rxjs';
 
 @Component({
@@ -21,9 +22,14 @@ export class TopNavbar implements OnInit, OnDestroy {
   @Output() cartOpen = new EventEmitter<void>();
 
   cartState$: Observable<CartState>;
+  selectedStore: StoreSession | null = null;
+  appTitle = 'TekMegha';
   private subscription: Subscription = new Subscription();
 
-  constructor(private cartService: CartService) {
+  constructor(
+    private cartService: CartService,
+    private storeSessionService: StoreSessionService
+  ) {
     this.cartState$ = this.cartService.cartState$;
   }
 
@@ -34,10 +40,24 @@ export class TopNavbar implements OnInit, OnDestroy {
         // Cart state is now available for template binding
       })
     );
+
+    // Subscribe to store session changes
+    this.subscription.add(
+      this.storeSessionService.selectedStore$.subscribe(store => {
+        this.selectedStore = store;
+      })
+    );
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  getDisplayTitle(): string {
+    if (this.selectedStore) {
+      return `${this.appTitle}/${this.selectedStore.storeName}`;
+    }
+    return this.appTitle;
   }
 
   onItemClick(item: NavbarItem) {

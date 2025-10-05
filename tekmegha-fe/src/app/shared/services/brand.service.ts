@@ -79,7 +79,6 @@ export class BrandService {
       navigation: {
         topNavbar: [
           { icon: 'menu_book', position: 'left', action: 'toggleMenu' },
-          { label: 'BrewBuddy', position: 'center' },
           { icon: 'account_circle', position: 'right', action: 'openLogin', route: '/login' },
           { icon: 'shopping_cart', position: 'right', action: 'openCart', route: '/cart' }
         ],
@@ -126,7 +125,6 @@ export class BrandService {
       navigation: {
         topNavbar: [
           { icon: 'menu', position: 'left', action: 'toggleMenu' },
-          { label: 'Little Ducks', position: 'center' },
           { icon: 'account_circle', position: 'right', action: 'openLogin', route: '/login' },
           { icon: 'shopping_cart', position: 'right', action: 'openCart', route: '/cart' }
         ],
@@ -172,7 +170,6 @@ export class BrandService {
       navigation: {
         topNavbar: [
           { icon: 'menu', position: 'left', action: 'toggleMenu' },
-          { label: 'Opula', position: 'center' },
           { icon: 'account_circle', position: 'right', action: 'openLogin', route: '/login' },
           { icon: 'shopping_cart', position: 'right', action: 'openCart', route: '/cart' }
         ],

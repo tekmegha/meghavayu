@@ -79,8 +79,8 @@ export class InventoryLogin implements OnInit {
 
   private async checkInventoryAccess(userId: string): Promise<boolean> {
     try {
-      // Check if user has inventory access role
-      const { data, error } = await this.supabaseService.getUserRole(userId);
+      // Check if user has inventory access role for current store
+      const { data, error } = await this.supabaseService.getUserRole();
       
       if (error) {
         console.error('Error checking user role:', error);

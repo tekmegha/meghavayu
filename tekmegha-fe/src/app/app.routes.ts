@@ -14,7 +14,7 @@ import { DynamicLayoutComponent } from './shared/dynamic-layout/dynamic-layout';
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   
-  // Default routes (Brew Buddy)
+  // Default routes with main layout (Brew Buddy)
   { path: 'home', component: Home },
   { path: 'menu', component: Menu },
   { path: 'cart', component: Cart },
@@ -58,5 +58,7 @@ export const routes: Routes = [
     { path: 'login', component: Login },
     { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] },
     { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
-  ]}
+  ]},
+  { path: 'fashion', redirectTo: '/opula', pathMatch: 'full' },
+  { path: 'toys', redirectTo: '/little-ducks', pathMatch: 'full' }
 ];

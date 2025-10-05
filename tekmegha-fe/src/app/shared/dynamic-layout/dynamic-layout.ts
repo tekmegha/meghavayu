@@ -32,6 +32,11 @@ import { Subscription } from 'rxjs';
     <app-layout-toys *ngIf="selectedStore?.storeCode === 'little-ducks'">
       <router-outlet></router-outlet>
     </app-layout-toys>
+
+    <!-- TekMegha Clients Layout (Internal) -->
+    <app-layout *ngIf="selectedStore?.storeCode === 'tekmegha-clients'">
+      <router-outlet></router-outlet>
+    </app-layout>
   `,
   styleUrls: ['./dynamic-layout.scss']
 })
@@ -48,6 +53,30 @@ export class DynamicLayoutComponent implements OnInit, OnDestroy {
         this.selectedStore = store;
       })
     );
+
+    // Auto-select store based on URL path
+    this.detectStoreFromUrl();
+  }
+
+  private detectStoreFromUrl() {
+    const path = window.location.pathname;
+    let storeCode = '';
+
+    if (path.startsWith('/brew-buddy')) {
+      storeCode = 'brew-buddy';
+    } else if (path.startsWith('/little-ducks')) {
+      storeCode = 'little-ducks';
+    } else if (path.startsWith('/opula')) {
+      storeCode = 'opula';
+    } else if (path.startsWith('/fashion')) {
+      storeCode = 'opula';
+    } else if (path.startsWith('/toys')) {
+      storeCode = 'little-ducks';
+    }
+
+    if (storeCode) {
+      this.storeSessionService.loadStoreByCode(storeCode);
+    }
   }
 
   ngOnDestroy() {

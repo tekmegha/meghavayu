@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SupabaseService } from './supabase.service';
+import { StoreContextService } from './store-context.service';
 
 export interface StoreSession {
   storeId: string;
@@ -17,7 +18,10 @@ export class StoreSessionService {
   private selectedStoreSubject = new BehaviorSubject<StoreSession | null>(null);
   public selectedStore$ = this.selectedStoreSubject.asObservable();
 
-  constructor(private supabaseService: SupabaseService) {
+  constructor(
+    private supabaseService: SupabaseService,
+    private storeContextService: StoreContextService
+  ) {
     // Initialize with stored session or default
     this.initializeStoreSession();
   }
@@ -29,6 +33,8 @@ export class StoreSessionService {
       try {
         const storeSession = JSON.parse(storedStore);
         this.selectedStoreSubject.next(storeSession);
+        // Update store context
+        this.storeContextService.setCurrentStore(storeSession);
         return;
       } catch (error) {
         console.error('Error parsing stored store session:', error);
@@ -36,14 +42,33 @@ export class StoreSessionService {
       }
     }
 
-    // If no stored session, try to get current store from URL or default
+    // Check if URL indicates a specific store
     const currentStore = this.supabaseService.getCurrentStore();
-    await this.loadStoreByCode(currentStore);
+    if (currentStore) {
+      await this.loadStoreByCode(currentStore);
+    } else {
+      // Don't set a default store - let user choose from all available stores
+      // The store selector will display all megha stores for selection
+      console.log('No default store set - user will choose from available stores');
+    }
   }
 
   async loadStoreByCode(storeCode: string): Promise<StoreSession | null> {
     try {
-      const { data, error } = await this.supabaseService.getSupabaseClient()
+      // Check if Supabase is ready
+      if (!this.supabaseService.isSupabaseReady()) {
+        console.log('Supabase not ready, retrying in 100ms...');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return this.loadStoreByCode(storeCode);
+      }
+
+      const supabaseClient = this.supabaseService.getSupabaseClient();
+      if (!supabaseClient) {
+        console.error('Supabase client is not available');
+        return null;
+      }
+
+      const { data, error } = await supabaseClient
         .from('megha_stores')
         .select('*')
         .eq('store_code', storeCode)
@@ -73,7 +98,20 @@ export class StoreSessionService {
 
   async loadStoreById(storeId: string): Promise<StoreSession | null> {
     try {
-      const { data, error } = await this.supabaseService.getSupabaseClient()
+      // Check if Supabase is ready
+      if (!this.supabaseService.isSupabaseReady()) {
+        console.log('Supabase not ready, retrying in 100ms...');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return this.loadStoreById(storeId);
+      }
+
+      const supabaseClient = this.supabaseService.getSupabaseClient();
+      if (!supabaseClient) {
+        console.error('Supabase client is not available');
+        return null;
+      }
+
+      const { data, error } = await supabaseClient
         .from('megha_stores')
         .select('*')
         .eq('id', storeId)
@@ -103,6 +141,8 @@ export class StoreSessionService {
 
   setSelectedStore(store: StoreSession): void {
     this.selectedStoreSubject.next(store);
+    // Update store context for other services
+    this.storeContextService.setCurrentStore(store);
     // Store in localStorage for persistence
     localStorage.setItem('selected-store', JSON.stringify(store));
   }
@@ -121,13 +161,28 @@ export class StoreSessionService {
 
   clearSelectedStore(): void {
     this.selectedStoreSubject.next(null);
+    // Clear store context
+    this.storeContextService.setCurrentStore(null);
     localStorage.removeItem('selected-store');
   }
 
   // Get all available stores for selection
   async getAvailableStores(): Promise<StoreSession[]> {
     try {
-      const { data, error } = await this.supabaseService.getSupabaseClient()
+      // Check if Supabase is ready
+      if (!this.supabaseService.isSupabaseReady()) {
+        console.log('Supabase not ready, retrying in 100ms...');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return this.getAvailableStores();
+      }
+
+      const supabaseClient = this.supabaseService.getSupabaseClient();
+      if (!supabaseClient) {
+        console.error('Supabase client is not available');
+        return [];
+      }
+
+      const { data, error } = await supabaseClient
         .from('megha_stores')
         .select('*')
         .eq('is_active', true)

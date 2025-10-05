@@ -13,13 +13,9 @@
   </div>
 
   <div class="center-item">
-    @for (item of navbarItems | filterByPosition:'center'; track item.label || item.icon) {
-      @if (item.label) {
-        <a class="nav-item title-link" [routerLink]="item.route || []">
-          <span class="label">{{ item.label }}</span>
-        </a>
-      }
-    }
+    <a class="nav-item title-link" [routerLink]="['/home']">
+      <span class="label">{{ getDisplayTitle() }}</span>
+    </a>
   </div>
 
   <div class="right-items">

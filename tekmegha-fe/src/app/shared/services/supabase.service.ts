@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { StoreContextService } from './store-context.service';
 
 // Import new interfaces
 import { Product, MeghaStore, StoreLocation, LocationInventory } from '../interfaces/product.interface';
@@ -23,7 +24,7 @@ export class SupabaseService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor() {
+  constructor(private storeContextService: StoreContextService) {
     // Add a small delay to prevent lock conflicts
     setTimeout(() => {
       this.supabase = createClient(environment.supabase.url, environment.supabase.anonKey, {
@@ -46,12 +47,16 @@ export class SupabaseService {
   // Get current store based on URL path - returns store_code for new schema
   getCurrentStore(): string {
     const path = window.location.pathname;
-    if (path.startsWith('/fashion')) {
+    if (path.startsWith('/fashion') || path.startsWith('/opula')) {
       return 'opula';
-    } else if (path.startsWith('/toys')) {
+    } else if (path.startsWith('/toys') || path.startsWith('/little-ducks')) {
       return 'little-ducks';
+    } else if (path.startsWith('/clients') || path.startsWith('/tekmegha-clients')) {
+      return 'tekmegha-clients';
+    } else if (path.startsWith('/brew-buddy')) {
+      return 'brew-buddy';
     } else {
-      return 'brew-buddy'; // Default store
+      return ''; // No default store - let user choose
     }
   }
 
@@ -60,22 +65,32 @@ export class SupabaseService {
     return this.getCurrentStore();
   }
 
-  // Get current store ID from store_code
+  // Get current store ID from store context service
   async getCurrentStoreId(): Promise<string | null> {
     try {
-      const storeCode = this.getCurrentStore();
-      const { data, error } = await this.supabase
-        .from('megha_stores')
-        .select('id')
-        .eq('store_code', storeCode)
-        .eq('is_active', true);
-      
-      if (error) {
-        console.error('Error fetching store ID:', error);
-        return null;
+      const currentStoreId = this.storeContextService.getCurrentStoreId();
+      if (currentStoreId) {
+        return currentStoreId;
       }
       
-      return data?.[0]?.id || null;
+      // Fallback to URL-based detection if no store context
+      const storeCode = this.getCurrentStore();
+      if (storeCode) {
+        const { data, error } = await this.supabase
+          .from('megha_stores')
+          .select('id')
+          .eq('store_code', storeCode)
+          .eq('is_active', true);
+        
+        if (error) {
+          console.error('Error fetching store ID:', error);
+          return null;
+        }
+        
+        return data?.[0]?.id || null;
+      }
+      
+      return null;
     } catch (error) {
       console.error('Error getting store ID:', error);
       return null;
@@ -442,8 +457,9 @@ export class SupabaseService {
   }
 
   // Store Locations Methods
-  async getStoreLocations(storeId?: string): Promise<{ data: StoreLocation[] | null; error: any }> {
+  async getStoreLocations(storeIdInput?: string): Promise<{ data: StoreLocation[] | null; error: any }> {
     try {
+      let storeId = storeIdInput || await this.getCurrentStoreId();
       let query = this.supabase
         .from('store_locations')
         .select('*')
@@ -667,24 +683,31 @@ export class SupabaseService {
     try {
       const user = this.getCurrentUser();
       if (!user) {
+        console.log('getUserRole: User not authenticated');
         return { data: null, error: { message: 'User not authenticated' } };
       }
 
       const targetStoreId = storeId || await this.getCurrentStoreId();
       if (!targetStoreId) {
+        console.log('getUserRole: Store not found, storeId:', storeId, 'targetStoreId:', targetStoreId);
         return { data: null, error: { message: 'Store not found' } };
       }
+
+      console.log('getUserRole: Fetching role for user:', user.id, 'store:', targetStoreId);
 
       const { data, error } = await this.supabase
         .from('user_roles')
         .select('*')
         .eq('user_id', user.id)
-        .eq('megha_store_id', targetStoreId);
+        .eq('megha_store_id', targetStoreId)
+        .eq('is_active', true);
 
       if (error) {
+        console.error('getUserRole: Database error:', error);
         return { data: null, error };
       }
 
+      console.log('getUserRole: Found roles:', data);
       return { data: data?.[0] || null, error: null };
     } catch (error) {
       console.error('Error fetching user role:', error);

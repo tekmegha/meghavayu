@@ -40,7 +40,8 @@ export class InventoryAuthGuard implements CanActivate {
 
   private async checkInventoryAccess(userId: string): Promise<boolean> {
     try {
-      const { data, error } = await this.supabaseService.getUserRole(userId);
+      // Check user role for current store
+      const { data, error } = await this.supabaseService.getUserRole();
       
       if (error) {
         console.error('Error checking user role:', error);
