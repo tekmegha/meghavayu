@@ -105,14 +105,13 @@ export class Home implements OnInit, OnDestroy {
         
         console.log('Mapped products:', this.products.length);
         console.log('First mapped product:', this.products[0]);
-        
-        // Load store-specific categories
-        await this.loadStoreCategories();
       } else {
         console.log('No products found for store:', store.storeName);
         this.products = [];
-        this.coffeeCategories = [];
       }
+      
+      // Load store-specific categories regardless of products
+      await this.loadStoreCategories();
       
       this.isLoading = false;
     } catch (error) {
@@ -124,18 +123,22 @@ export class Home implements OnInit, OnDestroy {
 
   private async loadStoreCategories() {
     try {
-      console.log('Loading categories for store');
+      console.log('🔄 Loading categories for store...');
+      console.log('Current store:', this.selectedStore);
       
       const { data, error } = await this.supabaseService.getMainCategories();
       
+      console.log('📊 Categories API Response:', { data, error });
+      
       if (error) {
-        console.error('Error loading categories:', error);
+        console.error('❌ Error loading categories:', error);
         this.coffeeCategories = [];
         return;
       }
       
       if (data && data.length > 0) {
-        console.log('Loaded categories:', data);
+        console.log('✅ Loaded categories from backend:', data.length, 'categories');
+        console.log('📋 Categories data:', data);
         
         // Map categories to display format with appropriate icons
         this.coffeeCategories = data.map(category => ({
@@ -145,13 +148,13 @@ export class Home implements OnInit, OnDestroy {
           slug: category.slug
         }));
         
-        console.log('Mapped categories:', this.coffeeCategories);
+        console.log('🎨 Mapped categories for display:', this.coffeeCategories);
       } else {
-        console.log('No categories found for store');
+        console.log('⚠️ No categories found for store');
         this.coffeeCategories = [];
       }
     } catch (error) {
-      console.error('Error in loadStoreCategories:', error);
+      console.error('💥 Error in loadStoreCategories:', error);
       this.coffeeCategories = [];
     }
   }
@@ -203,6 +206,16 @@ export class Home implements OnInit, OnDestroy {
     };
     
     return categoryIcons[category] || 'category';
+  }
+
+  // Method to load categories independently (useful for inventory management)
+  async loadCategoriesOnly() {
+    try {
+      console.log('🔄 Loading categories only (independent of products)...');
+      await this.loadStoreCategories();
+    } catch (error) {
+      console.error('💥 Error loading categories only:', error);
+    }
   }
 
   onImageError(event: Event) {

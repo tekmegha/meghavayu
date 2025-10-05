@@ -34,6 +34,7 @@ export class Inventory implements OnInit {
   // Form Data
   newProduct: Partial<InventoryProduct> = {
     name: '',
+    sku: '',
     price: 0,
     description: '',
     image_url: '',
@@ -46,11 +47,7 @@ export class Inventory implements OnInit {
     margin_percentage: 40
   };
 
-  categories = [
-    'Espresso Drinks',
-    'Brewed Coffee',
-    'Pastries & Snacks'
-  ];
+  categories: string[] = [];
 
   currentUser: any = null;
 
@@ -78,10 +75,39 @@ export class Inventory implements OnInit {
       this.inventoryService.stats$.subscribe(stats => {
         this.stats = stats;
       });
+
+      // Load categories for inventory management
+      await this.loadCategories();
     } catch (error) {
       console.error('Error loading inventory data:', error);
     } finally {
       this.isLoading = false;
+    }
+  }
+
+  async loadCategories() {
+    try {
+      console.log('🔄 Loading categories for inventory management...');
+      
+      const { data, error } = await this.supabaseService.getCategoriesForInventory();
+      
+      if (error) {
+        console.error('❌ Error loading categories for inventory:', error);
+        this.categories = [];
+        return;
+      }
+      
+      if (data && data.length > 0) {
+        console.log('✅ Loaded categories for inventory:', data.length, 'categories');
+        this.categories = data.map(category => category.name);
+        console.log('📋 Available categories:', this.categories);
+      } else {
+        console.log('⚠️ No categories found for inventory');
+        this.categories = [];
+      }
+    } catch (error) {
+      console.error('💥 Error loading categories for inventory:', error);
+      this.categories = [];
     }
   }
 

@@ -264,7 +264,8 @@ export class SupabaseService {
         return { data: null, error: { message: 'Store not found' } };
       }
 
-      console.log('Fetching main categories for store:', storeId);
+      console.log('🔍 Fetching main categories for store:', storeId);
+      console.log('🔗 Supabase client ready:', this.isSupabaseReady());
 
       const { data, error } = await this.supabase
         .from('categories')
@@ -275,15 +276,61 @@ export class SupabaseService {
         .order('sort_order', { ascending: true })
         .order('name', { ascending: true });
 
+      console.log('📡 Supabase query result:', { data, error });
+
       if (error) {
-        console.error('Error fetching main categories:', error);
+        console.error('❌ Error fetching main categories:', error);
         return { data: null, error };
       }
 
-      console.log('Found main categories:', data?.length || 0);
+      console.log('✅ Found main categories:', data?.length || 0);
+      console.log('📋 Categories data:', data);
       return { data: data || [], error: null };
     } catch (error) {
       console.error('Error in getMainCategories:', error);
+      return { data: null, error };
+    }
+  }
+
+  // Method specifically for inventory management - gets all categories (main and sub)
+  async getCategoriesForInventory(): Promise<{ data: Category[] | null; error: any }> {
+    try {
+      // Check if Supabase is ready
+      if (!this.isSupabaseReady()) {
+        console.log('Supabase not ready, waiting...');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        if (!this.isSupabaseReady()) {
+          return { data: null, error: { message: 'Supabase client not ready' } };
+        }
+      }
+
+      const storeId = await this.getCurrentStoreId();
+      if (!storeId) {
+        return { data: null, error: { message: 'Store not found' } };
+      }
+
+      console.log('🔍 Fetching all categories for inventory management, store:', storeId);
+
+      const { data, error } = await this.supabase
+        .from('categories')
+        .select('*')
+        .eq('megha_store_id', storeId)
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true })
+        .order('name', { ascending: true });
+
+      console.log('📡 Inventory categories query result:', { data, error });
+
+      if (error) {
+        console.error('❌ Error fetching categories for inventory:', error);
+        return { data: null, error };
+      }
+
+      console.log('✅ Found categories for inventory:', data?.length || 0);
+      console.log('📋 Inventory categories data:', data);
+      return { data: data || [], error: null };
+    } catch (error) {
+      console.error('Error in getCategoriesForInventory:', error);
       return { data: null, error };
     }
   }

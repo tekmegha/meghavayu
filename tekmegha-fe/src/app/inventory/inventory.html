@@ -94,6 +94,7 @@
       <thead>
         <tr>
           <th>Product</th>
+          <th>SKU</th>
           <th>Category</th>
           <th>Price</th>
           <th>Stock</th>
@@ -110,6 +111,9 @@
                 <h4>{{ product.name }}</h4>
                 <p>{{ product.description }}</p>
               </div>
+            </td>
+            <td class="sku-cell">
+              <span class="sku-text">{{ product.sku || 'N/A' }}</span>
             </td>
             <td>{{ product.category }}</td>
             <td>{{ formatCurrency(product.price) }}</td>
@@ -173,6 +177,12 @@
           <div class="form-group">
             <label>Product Name</label>
             <input type="text" [(ngModel)]="newProduct.name" placeholder="Enter product name">
+          </div>
+
+          <div class="form-group">
+            <label>SKU (Stock Keeping Unit)</label>
+            <input type="text" [(ngModel)]="newProduct.sku" placeholder="e.g., BB-ESP-001" maxlength="100">
+            <small class="form-hint">Unique identifier for this product (e.g., BB-ESP-001)</small>
           </div>
 
           <div class="form-group">
@@ -246,6 +256,12 @@
           <div class="form-group">
             <label>Product Name</label>
             <input type="text" [(ngModel)]="selectedProduct.name" placeholder="Enter product name">
+          </div>
+
+          <div class="form-group">
+            <label>SKU (Stock Keeping Unit)</label>
+            <input type="text" [(ngModel)]="selectedProduct.sku" placeholder="e.g., BB-ESP-001" maxlength="100">
+            <small class="form-hint">Unique identifier for this product (e.g., BB-ESP-001)</small>
           </div>
 
           <div class="form-group">
