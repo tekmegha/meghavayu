@@ -271,7 +271,28 @@ export class Home implements OnInit, OnDestroy {
   }
 
   onImageError(event: Event) {
-    (event.target as HTMLImageElement).src = 'assets/images/brew-buddy/default.png';
+    const defaultImage = this.getBrandSpecificDefaultImage();
+    (event.target as HTMLImageElement).src = defaultImage;
+  }
+
+  private getBrandSpecificDefaultImage(): string {
+    if (!this.brandService.getCurrentBrand()) {
+      return 'assets/images/brew-buddy/default.png'; // Default fallback
+    }
+    
+    const brandId = this.brandService.getCurrentBrand()?.id;
+    switch (brandId) {
+      case 'brewbuddy':
+        return 'assets/images/brew-buddy/default.png';
+      case 'littleducks':
+        return 'assets/images/little-ducks/default.png';
+      case 'opula':
+        return 'assets/images/opula/default.png';
+      case 'cctv-device':
+        return 'assets/images/cctv-device/default.png';
+      default:
+        return 'assets/images/brew-buddy/default.png'; // Default fallback
+    }
   }
 
   getStoreDescription(storeCode: string): string {
@@ -292,8 +313,12 @@ export class Home implements OnInit, OnDestroy {
   }
 
   private initializeBrandForStore(store: StoreSession) {
-    // Set the brand based on the selected store
-    this.brandService.setCurrentBrand(store.storeCode);
+    // Map store code to brand ID
+    const brandId = this.mapStoreCodeToBrandId(store.storeCode);
+    console.log('Home component setting brand:', { storeCode: store.storeCode, brandId });
+    
+    // Set the brand based on the mapped brand ID
+    this.brandService.setCurrentBrand(brandId);
     
     // Apply store-specific theme to body
     document.body.className = document.body.className.replace(/-\w+-theme/g, '');
@@ -304,6 +329,23 @@ export class Home implements OnInit, OnDestroy {
     if (!currentPath.includes(`/${store.storeCode}`)) {
       const newPath = `/${store.storeCode}${currentPath}`;
       this.router.navigateByUrl(newPath, { replaceUrl: true });
+    }
+  }
+
+  private mapStoreCodeToBrandId(storeCode: string): string {
+    // Map store codes to brand service IDs
+    switch (storeCode) {
+      case 'brew-buddy':
+        return 'brewbuddy';
+      case 'little-ducks':
+        return 'littleducks';
+      case 'opula':
+        return 'opula';
+      case 'cctv-device':
+        return 'cctv-device';
+      default:
+        console.warn(`Unknown store code: ${storeCode}, using default brand`);
+        return 'brewbuddy'; // Default fallback
     }
   }
 }

@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product } from '../interfaces/product.interface';
 import { CartService } from '../services/cart-service'; // Import CartService
+import { BrandService } from '../services/brand.service';
 
 @Component({
   selector: 'app-product-tile',
@@ -15,7 +16,10 @@ export class ProductTileComponent implements OnInit {
   // Removed @Output() addProduct and @Output() updateQuantity as CartService will handle this
   quantity: number = 0;
 
-  constructor(private cartService: CartService) { } // Inject CartService
+  constructor(
+    private cartService: CartService,
+    private brandService: BrandService
+  ) { } // Inject CartService and BrandService
 
   ngOnInit() {
     if (this.product) {
@@ -44,6 +48,27 @@ export class ProductTileComponent implements OnInit {
   }
 
   onImageError(event: Event) {
-    (event.target as HTMLImageElement).src = 'assets/images/brew-buddy/default.png';
+    const defaultImage = this.getBrandSpecificDefaultImage();
+    (event.target as HTMLImageElement).src = defaultImage;
+  }
+
+  private getBrandSpecificDefaultImage(): string {
+    if (!this.brandService.getCurrentBrand()) {
+      return 'assets/images/brew-buddy/default.png'; // Default fallback
+    }
+    
+    const brandId = this.brandService.getCurrentBrand()?.id;
+    switch (brandId) {
+      case 'brewbuddy':
+        return 'assets/images/brew-buddy/default.png';
+      case 'littleducks':
+        return 'assets/images/little-ducks/default.png';
+      case 'opula':
+        return 'assets/images/opula/default.png';
+      case 'cctv-device':
+        return 'assets/images/cctv-device/default.png';
+      default:
+        return 'assets/images/brew-buddy/default.png'; // Default fallback
+    }
   }
 }

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader';
 import { SupabaseService } from '../shared/services/supabase.service';
 import { NetworkStatusService } from '../shared/services/network-status.service';
+import { BrandService } from '../shared/services/brand.service';
 
 @Component({
   selector: 'app-profile',
@@ -20,7 +21,8 @@ export class Profile implements OnInit {
   constructor(
     private supabaseService: SupabaseService,
     private networkStatus: NetworkStatusService,
-    private router: Router
+    private router: Router,
+    private brandService: BrandService
   ) {}
 
   async ngOnInit() {
@@ -59,7 +61,28 @@ export class Profile implements OnInit {
   }
 
   onImageError(event: Event) {
-    (event.target as HTMLImageElement).src = 'assets/images/brew-buddy/default.png';
+    const defaultImage = this.getBrandSpecificDefaultImage();
+    (event.target as HTMLImageElement).src = defaultImage;
+  }
+
+  private getBrandSpecificDefaultImage(): string {
+    if (!this.brandService.getCurrentBrand()) {
+      return 'assets/images/brew-buddy/default.png'; // Default fallback
+    }
+    
+    const brandId = this.brandService.getCurrentBrand()?.id;
+    switch (brandId) {
+      case 'brewbuddy':
+        return 'assets/images/brew-buddy/default.png';
+      case 'littleducks':
+        return 'assets/images/little-ducks/default.png';
+      case 'opula':
+        return 'assets/images/opula/default.png';
+      case 'cctv-device':
+        return 'assets/images/cctv-device/default.png';
+      default:
+        return 'assets/images/brew-buddy/default.png'; // Default fallback
+    }
   }
 
   getDisplayName(): string {

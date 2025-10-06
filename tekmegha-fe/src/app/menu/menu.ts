@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader';
@@ -8,6 +8,8 @@ import { Category } from '../shared/interfaces/category.interface';
 import { SupabaseService } from '../shared/services/supabase.service';
 import { FallbackDataService } from '../shared/services/fallback-data.service';
 import { ProductTransformService } from '../shared/services/product-transform.service';
+import { BrandService, BrandConfig } from '../shared/services/brand.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-menu',
@@ -15,12 +17,14 @@ import { ProductTransformService } from '../shared/services/product-transform.se
   templateUrl: './menu.html',
   styleUrl: './menu.scss'
 })
-export class Menu implements OnInit {
+export class Menu implements OnInit, OnDestroy {
   isLoading = true;
   products: Product[] = [];
   filteredProducts: Product[] = [];
   selectedCategory: string = 'all';
   searchQuery: string = '';
+  currentBrand: BrandConfig | null = null;
+  private subscription = new Subscription();
 
   categories: { id: string; name: string }[] = [
     { id: 'all', name: 'All Products' }
@@ -29,12 +33,25 @@ export class Menu implements OnInit {
   constructor(
     private supabaseService: SupabaseService,
     private fallbackDataService: FallbackDataService,
-    private productTransformService: ProductTransformService
+    private productTransformService: ProductTransformService,
+    private brandService: BrandService
   ) {}
 
   async ngOnInit() {
+    // Subscribe to brand changes
+    this.subscription.add(
+      this.brandService.currentBrand$.subscribe(brand => {
+        console.log('Menu component received brand change:', brand);
+        this.currentBrand = brand;
+      })
+    );
+
     await this.loadProducts();
     await this.loadCategories();
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   async loadProducts() {
@@ -213,5 +230,39 @@ export class Menu implements OnInit {
   onUpdateQuantity(event: { product: Product; quantity: number }) {
     console.log(`Updated ${event.product.name} quantity to ${event.quantity}`);
     // Implement actual update cart quantity logic here
+  }
+
+  getMenuTitle(): string {
+    if (!this.currentBrand) return 'Our Menu';
+    
+    switch (this.currentBrand.id) {
+      case 'brewbuddy':
+        return 'Our Coffee Menu';
+      case 'littleducks':
+        return 'Our Toys Collection';
+      case 'opula':
+        return 'Our Fashion Collection';
+      case 'cctv-device':
+        return 'Our Security Products';
+      default:
+        return 'Our Menu';
+    }
+  }
+
+  getSearchPlaceholder(): string {
+    if (!this.currentBrand) return 'Search products...';
+    
+    switch (this.currentBrand.id) {
+      case 'brewbuddy':
+        return 'Search coffee, drinks, pastries...';
+      case 'littleducks':
+        return 'Search toys, games, educational...';
+      case 'opula':
+        return 'Search fashion, clothing, accessories...';
+      case 'cctv-device':
+        return 'Search security, cameras, systems...';
+      default:
+        return 'Search products...';
+    }
   }
 }

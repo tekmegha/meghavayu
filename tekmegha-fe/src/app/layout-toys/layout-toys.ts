@@ -43,8 +43,7 @@ export class LayoutToys implements OnInit, OnDestroy {
       })
     );
 
-    // Initialize brand
-    this.brandService.initializeBrand();
+    // Brand will be initialized by home component based on store selection
 
     // Handle route changes
     this.subscription.add(

@@ -61,7 +61,6 @@
                   {{ sortBy === 'website' ? (sortOrder === 'asc' ? 'keyboard_arrow_up' : 'keyboard_arrow_down') : 'unfold_more' }}
                 </span>
               </th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -80,25 +79,17 @@
               
               <td class="website-cell">
                 <div class="website-info">
-                  <span *ngIf="website.website && website.website.trim()" class="website-url">
-                    {{ website.website }}
-                  </span>
-                  <span *ngIf="!website.website || !website.website.trim()" class="no-website">
-                    No website
-                  </span>
-                </div>
-              </td>
-              
-              <td class="actions">
-                <div class="action-buttons">
                   <a *ngIf="website.website && website.website.trim()" 
                      [href]="'https://' + website.website" 
                      target="_blank" 
-                     class="action-btn website-btn"
-                     title="Visit Website">
-                    <span class="material-icons">open_in_new</span>
+                     class="website-url-link"
+                     title="Visit {{ website.website }}">
+                    <span class="website-url">{{ website.website }}</span>
+                    <span class="material-icons external-link-icon">open_in_new</span>
                   </a>
-                  
+                  <span *ngIf="!website.website || !website.website.trim()" class="no-website">
+                    No website
+                  </span>
                 </div>
               </td>
             </tr>

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-loader';
 import { CartService, CartState } from '../shared/services/cart-service';
 import { SupabaseService } from '../shared/services/supabase.service';
+import { BrandService } from '../shared/services/brand.service';
 import { Observable, Subscription } from 'rxjs';
 
 @Component({
@@ -22,7 +23,8 @@ export class Cart implements OnInit, OnDestroy {
   constructor(
     private cartService: CartService,
     private supabaseService: SupabaseService,
-    public router: Router
+    public router: Router,
+    private brandService: BrandService
   ) {
     this.cartState$ = this.cartService.cartState$;
   }
@@ -67,7 +69,28 @@ export class Cart implements OnInit, OnDestroy {
   }
 
   onImageError(event: Event) {
-    (event.target as HTMLImageElement).src = 'assets/images/brew-buddy/default.png';
+    const defaultImage = this.getBrandSpecificDefaultImage();
+    (event.target as HTMLImageElement).src = defaultImage;
+  }
+
+  private getBrandSpecificDefaultImage(): string {
+    if (!this.brandService.getCurrentBrand()) {
+      return 'assets/images/brew-buddy/default.png'; // Default fallback
+    }
+    
+    const brandId = this.brandService.getCurrentBrand()?.id;
+    switch (brandId) {
+      case 'brewbuddy':
+        return 'assets/images/brew-buddy/default.png';
+      case 'littleducks':
+        return 'assets/images/little-ducks/default.png';
+      case 'opula':
+        return 'assets/images/opula/default.png';
+      case 'cctv-device':
+        return 'assets/images/cctv-device/default.png';
+      default:
+        return 'assets/images/brew-buddy/default.png'; // Default fallback
+    }
   }
 
   async onRemoveItem(productId: string) {

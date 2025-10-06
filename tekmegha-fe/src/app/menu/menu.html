@@ -2,7 +2,7 @@
   <app-skeleton-loader></app-skeleton-loader>
 } @else {
   <div class="menu-container">
-    <h1>Our Coffee Menu</h1>
+    <h1>{{ getMenuTitle() }}</h1>
 
     <!-- Search Bar -->
     <div class="search-container">
@@ -11,7 +11,7 @@
         <input 
           type="text" 
           class="search-input"
-          placeholder="Search coffee, drinks, pastries..."
+          [placeholder]="getSearchPlaceholder()"
           [(ngModel)]="searchQuery"
           (input)="onSearchChange()"
         >

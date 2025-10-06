@@ -960,15 +960,37 @@
   
   .website-cell {
     .website-info {
-      .website-url {
+      .website-url-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
         color: #667eea;
         font-weight: 500;
         font-size: 0.95rem;
-        word-break: break-all;
+        padding: 4px 8px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
         
         &:hover {
+          background: #f0f4ff;
           color: #5a6fd8;
-          text-decoration: underline;
+          transform: translateY(-1px);
+        }
+        
+        .website-url {
+          word-break: break-all;
+          color: inherit;
+        }
+        
+        .external-link-icon {
+          font-size: 16px;
+          opacity: 0.7;
+          transition: opacity 0.2s ease;
+        }
+        
+        &:hover .external-link-icon {
+          opacity: 1;
         }
       }
       
@@ -976,66 +998,11 @@
         color: #6c757d;
         font-style: italic;
         font-size: 0.9rem;
+        padding: 4px 8px;
       }
     }
   }
   
-  
-  .actions {
-    .action-buttons {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      
-      .action-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        
-        &.website-btn {
-          background: #e3f2fd;
-          color: #1976d2;
-          
-          &:hover {
-            background: #1976d2;
-            color: white;
-            transform: scale(1.1);
-          }
-        }
-        
-        &.email-btn {
-          background: #f3e5f5;
-          color: #7b1fa2;
-          
-          &:hover {
-            background: #7b1fa2;
-            color: white;
-            transform: scale(1.1);
-          }
-        }
-        
-        &.phone-btn {
-          background: #e8f5e8;
-          color: #4caf50;
-          
-          &:hover {
-            background: #4caf50;
-            color: white;
-            transform: scale(1.1);
-          }
-        }
-        
-        .material-icons {
-          font-size: 16px;
-        }
-      }
-    }
-  }
 }
 
 // Websites View Responsive
@@ -1054,21 +1021,6 @@
         padding: 12px 8px;
       }
       
-      .actions {
-        .action-buttons {
-          flex-direction: column;
-          gap: 4px;
-          
-          .action-btn {
-            width: 28px;
-            height: 28px;
-            
-            .material-icons {
-              font-size: 14px;
-            }
-          }
-        }
-      }
     }
   }
 }

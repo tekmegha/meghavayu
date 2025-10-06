@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Store } from '../shared/interfaces/store.interface';
 import { SupabaseService, StoreLocation } from '../shared/services/supabase.service';
 import { FallbackDataService } from '../shared/services/fallback-data.service';
+import { BrandService } from '../shared/services/brand.service';
 
 interface BrewBuddyContent {
   topNavbar: any[];
@@ -25,7 +26,8 @@ export class Stores implements OnInit {
   constructor(
     private http: HttpClient,
     private supabaseService: SupabaseService,
-    private fallbackDataService: FallbackDataService
+    private fallbackDataService: FallbackDataService,
+    private brandService: BrandService
   ) {}
 
   async ngOnInit() {
@@ -76,6 +78,27 @@ export class Stores implements OnInit {
   }
 
   onImageError(event: Event) {
-    (event.target as HTMLImageElement).src = 'assets/images/brew-buddy/default.png';
+    const defaultImage = this.getBrandSpecificDefaultImage();
+    (event.target as HTMLImageElement).src = defaultImage;
+  }
+
+  private getBrandSpecificDefaultImage(): string {
+    if (!this.brandService.getCurrentBrand()) {
+      return 'assets/images/brew-buddy/default.png'; // Default fallback
+    }
+    
+    const brandId = this.brandService.getCurrentBrand()?.id;
+    switch (brandId) {
+      case 'brewbuddy':
+        return 'assets/images/brew-buddy/default.png';
+      case 'littleducks':
+        return 'assets/images/little-ducks/default.png';
+      case 'opula':
+        return 'assets/images/opula/default.png';
+      case 'cctv-device':
+        return 'assets/images/cctv-device/default.png';
+      default:
+        return 'assets/images/brew-buddy/default.png'; // Default fallback
+    }
   }
 }

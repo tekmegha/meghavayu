@@ -12,7 +12,7 @@ export interface BrandConfig {
   accentColor: string;
   backgroundGradient: string;
   navbarGradient: string;
-  theme: 'coffee' | 'toys' | 'fashion';
+      theme: 'coffee' | 'toys' | 'fashion' | 'digitalsecurity';
   domain: string;
   features: {
     inventory: boolean;
@@ -191,6 +191,51 @@ export class BrandService {
           { name: 'Accessories', icon: 'watch', route: '/menu?category=accessories' }
         ]
       }
+    },
+    {
+      id: 'cctv-device',
+      name: 'cctv-device',
+      displayName: 'CCTV Device',
+      description: 'Digital Security Solutions',
+      logo: 'assets/images/cctv-device/logo.png',
+      primaryColor: '#0ea5e9',
+      secondaryColor: '#3b82f6',
+      accentColor: '#10b981',
+      backgroundGradient: 'linear-gradient(135deg, #0ea5e9 0%, #3b82f6 50%, #1e40af 100%)',
+      navbarGradient: 'linear-gradient(135deg, #0ea5e9 0%, #3b82f6 50%, #1e40af 100%)',
+      theme: 'digitalsecurity',
+      domain: 'cctvdevice.com',
+      features: {
+        inventory: true,
+        delivery: true,
+        multiStore: false,
+        userRoles: true,
+        payment: true
+      },
+      navigation: {
+        topNavbar: [
+          { icon: 'menu', position: 'left', action: 'toggleMenu' },
+          { icon: 'account_circle', position: 'right', action: 'openLogin', route: '/login' },
+          { icon: 'shopping_cart', position: 'right', action: 'openCart', route: '/cart' }
+        ],
+        bottomNavbar: [
+          { icon: 'home', label: 'Home', route: '/home', active: true },
+          { icon: 'security', label: 'Products', route: '/menu' },
+          { icon: 'shopping_cart', label: 'Cart', route: '/cart' },
+          { icon: 'inventory', label: 'Inventory', route: '/inventory' },
+          { icon: 'person', label: 'Profile', route: '/profile' }
+        ]
+      },
+      content: {
+        heroTitle: 'Digital Security Solutions',
+        heroSubtitle: 'Professional CCTV and security systems',
+        heroImage: 'assets/images/cctv-device/hero-security.jpg',
+        categories: [
+          { name: 'CCTV Cameras', icon: 'videocam', route: '/menu?category=cctv-cameras' },
+          { name: 'Security Systems', icon: 'security', route: '/menu?category=security-systems' },
+          { name: 'Access Control', icon: 'lock', route: '/menu?category=access-control' }
+        ]
+      }
     }
   ];
 
@@ -208,10 +253,15 @@ export class BrandService {
   }
 
   setCurrentBrand(brandId: string): void {
+    console.log('BrandService.setCurrentBrand called with:', brandId);
     const brand = this.getBrand(brandId);
+    console.log('Found brand:', brand);
     if (brand) {
       this.currentBrandSubject.next(brand);
       this.updateCSSVariables(brand);
+      console.log('Brand updated successfully:', brand.displayName);
+    } else {
+      console.warn('Brand not found for ID:', brandId);
     }
   }
 
