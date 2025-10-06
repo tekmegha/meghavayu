@@ -226,6 +226,12 @@ export class BrandService {
     root.style.setProperty('--accent-color', brand.accentColor);
     root.style.setProperty('--gradient-primary', brand.backgroundGradient);
     root.style.setProperty('--navbar-gradient', brand.navbarGradient);
+    
+    // Also set on body to ensure higher specificity
+    document.body.style.setProperty('--navbar-gradient', brand.navbarGradient);
+    document.body.style.setProperty('--primary-color', brand.primaryColor);
+    document.body.style.setProperty('--secondary-color', brand.secondaryColor);
+    document.body.style.setProperty('--accent-color', brand.accentColor);
   }
 
   detectBrandFromDomain(): string {

@@ -17,7 +17,7 @@
     backdrop-filter: blur(10px);
   }
 
-  // Fashion theme colors
+  // Fashion theme colors - these will be overridden by brand service
   --primary-color: #ec4899;
   --secondary-color: #8b5cf6;
   --accent-color: #f59e0b;
@@ -29,7 +29,7 @@
   --border-color: #f3e8ff;
   --gradient-primary: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
   --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-  --navbar-gradient: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+  // Note: --navbar-gradient is set by brand service, not here
   
   // Product tile specific colors for Fashion theme
   --product-card-bg: var(--surface-color);

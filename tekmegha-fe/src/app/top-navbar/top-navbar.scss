@@ -8,7 +8,7 @@
   background: var(--navbar-gradient);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   padding: 12px 15px;
-  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 20px var(--primary-color, rgba(99, 102, 241, 0.3));
   z-index: 1000;
   backdrop-filter: blur(10px);
 }
@@ -74,7 +74,7 @@
     justify-content: center;
     font-size: 0.7rem;
     font-weight: bold;
-    box-shadow: 0 2px 8px rgba(236, 72, 153, 0.4);
+    box-shadow: 0 2px 8px var(--accent-color, rgba(236, 72, 153, 0.4));
     animation: pulse 2s infinite;
   }
 

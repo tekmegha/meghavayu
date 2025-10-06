@@ -46,6 +46,7 @@ export interface BillingMonth {
 }
 
 export interface GroupedBillingClient {
+website: any;
   client_name: string;
   contact_person: string;
   email: string;
@@ -60,6 +61,22 @@ export interface GroupedBillingClient {
   client_count: number; // Number of individual client records
 }
 
+export interface UniqueWebsite {
+  client_name: string;
+  website: string;
+  contact_person: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  status: 'active' | 'inactive' | 'pending';
+  products: string[]; // All products for this client
+  product_count: number; // Number of products
+  tekmegha_client_id: number;
+}
+
 @Component({
   selector: 'app-tekmegha-clients',
   standalone: true,
@@ -70,6 +87,8 @@ export interface GroupedBillingClient {
 export class TekMeghaClientsComponent implements OnInit, OnDestroy {
   clients: TekMeghaClient[] = [];
   filteredClients: TekMeghaClient[] = [];
+  uniqueWebsites: UniqueWebsite[] = [];
+  filteredUniqueWebsites: UniqueWebsite[] = [];
   stats: ClientStats = {
     total_clients: 0,
     active_clients: 0,
@@ -77,14 +96,14 @@ export class TekMeghaClientsComponent implements OnInit, OnDestroy {
     expiring_this_month: 0,
     expiring_next_month: 0
   };
-  showBillingView = true; // Default to billing calendar view
+  currentView: 'table' | 'websites' | 'billing' = 'billing'; // Default to billing calendar view
   billingMonths: BillingMonth[] = [];
    
   isLoading = true;
   searchTerm = '';
   statusFilter = 'all';
   renewalFilter = 'all';
-  sortBy = 'client_name';
+  sortBy = 'tekmegha_client_id';
   sortOrder: 'asc' | 'desc' = 'asc';
   
   private subscription = new Subscription();
@@ -95,7 +114,7 @@ export class TekMeghaClientsComponent implements OnInit, OnDestroy {
     this.waitForSupabaseAndLoad();
     
     // Generate billing months on component initialization
-    if (this.showBillingView) {
+    if (this.currentView === 'billing') {
       this.generateBillingMonths();
     }
   }
@@ -151,10 +170,12 @@ export class TekMeghaClientsComponent implements OnInit, OnDestroy {
 
       this.clients = data || [];
       this.filteredClients = [...this.clients];
+      this.generateUniqueWebsites();
+      this.filteredUniqueWebsites = [...this.uniqueWebsites];
       this.calculateStats();
       
       // Regenerate billing months with new data
-      if (this.showBillingView) {
+      if (this.currentView === 'billing') {
         this.generateBillingMonths();
       }
     } catch (error) {
@@ -258,14 +279,21 @@ export class TekMeghaClientsComponent implements OnInit, OnDestroy {
 
   onSearchChange() {
     this.filterClients();
+    if (this.currentView === 'websites') {
+      this.filterUniqueWebsites();
+    }
   }
 
   onStatusFilterChange() {
     this.filterClients();
+    if (this.currentView === 'websites') {
+      this.filterUniqueWebsites();
+    }
   }
 
   onRenewalFilterChange() {
     this.filterClients();
+    // Note: Renewal filter doesn't apply to websites view since it's about unique clients
   }
 
   onSort(column: string) {
@@ -275,7 +303,12 @@ export class TekMeghaClientsComponent implements OnInit, OnDestroy {
       this.sortBy = column;
       this.sortOrder = 'asc';
     }
-    this.sortClients();
+    
+    if (this.currentView === 'websites') {
+      this.sortUniqueWebsites();
+    } else {
+      this.sortClients();
+    }
   }
 
   getStatusClass(status: string): string {
@@ -314,6 +347,10 @@ export class TekMeghaClientsComponent implements OnInit, OnDestroy {
 
   trackByClientId(index: number, client: TekMeghaClient): string {
     return client.id;
+  }
+
+  trackByUniqueWebsite(index: number, website: UniqueWebsite): string {
+    return website.client_name.toLowerCase();
   }
 
   trackByBillingMonth(index: number, billingMonth: BillingMonth): string {
@@ -797,18 +834,22 @@ export class TekMeghaClientsComponent implements OnInit, OnDestroy {
     ];
     
     this.filteredClients = [...this.clients];
+    this.generateUniqueWebsites();
+    this.filteredUniqueWebsites = [...this.uniqueWebsites];
     this.calculateStats();
     
     // Regenerate billing months with sample data
-    if (this.showBillingView) {
+    if (this.currentView === 'billing') {
       this.generateBillingMonths();
     }
   }
 
-  toggleBillingView() {
-    this.showBillingView = !this.showBillingView;
-    if (this.showBillingView) {
+  setView(view: 'table' | 'websites' | 'billing') {
+    this.currentView = view;
+    if (view === 'billing') {
       this.generateBillingMonths();
+    } else if (view === 'websites') {
+      this.filterUniqueWebsites();
     }
   }
 
@@ -888,6 +929,7 @@ export class TekMeghaClientsComponent implements OnInit, OnDestroy {
         existing.client_count++;
       } else {
         groupedMap.set(key, {
+          website: client.website,
           client_name: client.client_name,
           contact_person: client.contact_person,
           email: client.email,
@@ -913,5 +955,85 @@ export class TekMeghaClientsComponent implements OnInit, OnDestroy {
 
   getProductsList(products: string[]): string {
     return Array.isArray(products) ? products.join(', ') : products || 'N/A';
+  }
+
+  generateUniqueWebsites() {
+    const uniqueMap = new Map<string, UniqueWebsite>();
+    
+    this.clients.forEach(client => {
+      const key = client.client_name.toLowerCase();
+      
+      if (uniqueMap.has(key)) {
+        const existing = uniqueMap.get(key)!;
+        // Add product if not already included
+        if (!existing.products.includes(client.Product_Type)) {
+          existing.products.push(client.Product_Type);
+        }
+        existing.product_count++;
+        
+        // Update website if this client has one and the existing one doesn't
+        if (client.website && client.website.trim() && (!existing.website || !existing.website.trim())) {
+          existing.website = client.website;
+        }
+      } else {
+        uniqueMap.set(key, {
+          client_name: client.client_name,
+          website: client.website || '',
+          contact_person: client.contact_person,
+          email: client.email,
+          phone: client.phone,
+          address: client.address,
+          city: client.city,
+          state: client.state,
+          pincode: client.pincode,
+          status: client.status,
+          products: [client.Product_Type],
+          product_count: 1,
+          tekmegha_client_id: client.tekmegha_client_id
+        });
+      }
+    });
+    
+    this.uniqueWebsites = Array.from(uniqueMap.values());
+  }
+
+  filterUniqueWebsites() {
+    this.filteredUniqueWebsites = this.uniqueWebsites.filter(website => {
+      // Search filter
+      const matchesSearch = !this.searchTerm || 
+        website.client_name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        website.contact_person.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        website.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        website.phone.includes(this.searchTerm) ||
+        (website.website && website.website.toLowerCase().includes(this.searchTerm.toLowerCase()));
+
+      // Status filter
+      const matchesStatus = this.statusFilter === 'all' || website.status === this.statusFilter;
+
+      return matchesSearch && matchesStatus;
+    });
+
+    this.sortUniqueWebsites();
+  }
+
+  sortUniqueWebsites() {
+    this.filteredUniqueWebsites.sort((a, b) => {
+      let aValue: any = a[this.sortBy as keyof UniqueWebsite];
+      let bValue: any = b[this.sortBy as keyof UniqueWebsite];
+
+      // Default sort by tekmegha_client_id if no specific sort is applied
+      if (!this.sortBy || this.sortBy === 'tekmegha_client_id') {
+        return a.tekmegha_client_id - b.tekmegha_client_id;
+      }
+
+      if (typeof aValue === 'string') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
+
+      if (aValue < bValue) return this.sortOrder === 'asc' ? -1 : 1;
+      if (aValue > bValue) return this.sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
   }
 }

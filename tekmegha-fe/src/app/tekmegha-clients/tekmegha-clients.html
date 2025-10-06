@@ -6,15 +6,22 @@
   <div class="view-toggle" *ngIf="!isLoading">
     <button 
       class="toggle-btn" 
-      [class.active]="!showBillingView"
-      (click)="showBillingView = false">
+      [class.active]="currentView === 'table'"
+      (click)="setView('table')">
       <span class="material-icons">table_view</span>
       Table View
     </button>
     <button 
       class="toggle-btn" 
-      [class.active]="showBillingView"
-      (click)="toggleBillingView()">
+      [class.active]="currentView === 'websites'"
+      (click)="setView('websites')">
+      <span class="material-icons">web</span>
+      Websites
+    </button>
+    <button 
+      class="toggle-btn" 
+      [class.active]="currentView === 'billing'"
+      (click)="setView('billing')">
       <span class="material-icons">calendar_month</span>
       Billing Calendar
     </button>
@@ -22,8 +29,94 @@
 
   
 
+  <!-- Websites View -->
+  <div class="websites-view" *ngIf="currentView === 'websites' && !isLoading">
+      
+    
+    <div class="websites-table-container">
+      <div class="table-header">
+        <h3>Websites ({{ filteredUniqueWebsites.length }})</h3>
+         
+      </div>
+
+      <div class="table-wrapper">
+        <table class="websites-table">
+          <thead>
+            <tr>
+              <th (click)="onSort('tekmegha_client_id')" class="sortable">
+                ID
+                <span class="material-icons sort-icon">
+                  {{ sortBy === 'tekmegha_client_id' ? (sortOrder === 'asc' ? 'keyboard_arrow_up' : 'keyboard_arrow_down') : 'unfold_more' }}
+                </span>
+              </th>
+              <th (click)="onSort('client_name')" class="sortable">
+                Client Name
+                <span class="material-icons sort-icon">
+                  {{ sortBy === 'client_name' ? (sortOrder === 'asc' ? 'keyboard_arrow_up' : 'keyboard_arrow_down') : 'unfold_more' }}
+                </span>
+              </th>
+              <th (click)="onSort('website')" class="sortable">
+                Website
+                <span class="material-icons sort-icon">
+                  {{ sortBy === 'website' ? (sortOrder === 'asc' ? 'keyboard_arrow_up' : 'keyboard_arrow_down') : 'unfold_more' }}
+                </span>
+              </th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let website of filteredUniqueWebsites; trackBy: trackByUniqueWebsite" class="client-row">
+              <td class="client-id">
+                <span class="id-badge">{{ website.tekmegha_client_id }}</span>
+              </td>
+              <td class="client-name">
+                <div class="client-info">
+                  <strong>{{ website.client_name }}</strong>
+                  <small class="product-count" *ngIf="website.product_count > 1">
+                    ({{ website.product_count }} products)
+                  </small>
+                </div>
+              </td>
+              
+              <td class="website-cell">
+                <div class="website-info">
+                  <span *ngIf="website.website && website.website.trim()" class="website-url">
+                    {{ website.website }}
+                  </span>
+                  <span *ngIf="!website.website || !website.website.trim()" class="no-website">
+                    No website
+                  </span>
+                </div>
+              </td>
+              
+              <td class="actions">
+                <div class="action-buttons">
+                  <a *ngIf="website.website && website.website.trim()" 
+                     [href]="'https://' + website.website" 
+                     target="_blank" 
+                     class="action-btn website-btn"
+                     title="Visit Website">
+                    <span class="material-icons">open_in_new</span>
+                  </a>
+                  
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- No Results -->
+      <div class="no-results" *ngIf="filteredUniqueWebsites.length === 0">
+        <span class="material-icons">web_off</span>
+        <h3>No clients found</h3>
+        <p>Try adjusting your search or filter criteria</p>
+      </div>
+    </div>
+  </div>
+
   <!-- Billing Calendar View -->
-  <div class="billing-calendar" *ngIf="showBillingView && !isLoading">
+  <div class="billing-calendar" *ngIf="currentView === 'billing' && !isLoading">
     
     
     <div class="billing-months-grid">
@@ -88,10 +181,13 @@
               <span class="product-type">{{ getProductsList(client.products) }}</span>
             </div>
             <div class="client-actions">
-              <a [href]="'mailto:' + client.email" class="action-btn email">
+              <a [href]="client.website" class="action-btn website">
+                <span class="underline">website</span>
+              </a>
+              <a style="display: none;" [href]="'mailto:' + client.email" class="action-btn email">
                 <span class="material-icons">email</span>
               </a>
-              <a [href]="'tel:' + client.phone" class="action-btn phone">
+              <a style="display: none;"  [href]="'tel:' + client.phone" class="action-btn phone">
                 <span class="material-icons">phone</span>
               </a>
             </div>
@@ -107,7 +203,7 @@
   </div>
 
   <!-- Filters and Search -->
-  <div class="filters-section" *ngIf="!isLoading && !showBillingView">
+  <div class="filters-section" *ngIf="!isLoading && (currentView === 'table' || currentView === 'websites')">
     <div class="filters-row">
       <div class="search-box">
         <span class="material-icons">search</span>
@@ -202,7 +298,7 @@
   </div>
 
   <!-- Clients Table -->
-  <div class="clients-table-container" *ngIf="!isLoading && !showBillingView">
+  <div class="clients-table-container" *ngIf="!isLoading && currentView === 'table'">
     <div class="table-header">
       <h3>Clients ({{ filteredClients.length }})</h3>
       <button class="refresh-btn" (click)="loadClients()">

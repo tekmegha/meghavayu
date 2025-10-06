@@ -37,9 +37,7 @@ export const routes: Routes = [
   { path: 'inventory', component: DynamicLayoutComponent, children: [
     { path: '', component: Inventory }
   ], canActivate: [InventoryAuthGuard] },
-  { path: 'tekmegha-clients', component: DynamicLayoutComponent, children: [
-    { path: '', component: TekMeghaClientsComponent }
-  ]},
+  { path: 'tekmegha-clients', component: TekMeghaClientsComponent},
   
   // Store-specific routes with dynamic layout
   { path: 'brew-buddy', component: DynamicLayoutComponent, children: [

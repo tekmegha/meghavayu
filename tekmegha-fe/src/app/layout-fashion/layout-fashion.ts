@@ -7,6 +7,7 @@ import { CheckoutBannerComponent } from '../shared/checkout-banner/checkout-bann
 import { NetworkStatusComponent } from '../shared/network-status/network-status';
 import { LocationBarComponent } from '../shared/location-bar/location-bar';
 import { BrandService, BrandConfig } from '../shared/services/brand.service';
+import { StoreSessionService } from '../shared/services/store-session.service';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
@@ -30,7 +31,8 @@ export class LayoutFashion implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private brandService: BrandService
+    private brandService: BrandService,
+    private storeSessionService: StoreSessionService
   ) {}
 
   ngOnInit() {
@@ -68,6 +70,8 @@ export class LayoutFashion implements OnInit, OnDestroy {
 
   onExitApp() {
     console.log('Exit App clicked!');
+    // Clear store session to show app selector
+    this.storeSessionService.clearSelectedStore();
     // Navigate to home page to show app selector
     this.router.navigate(['/home']);
   }

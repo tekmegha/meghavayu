@@ -22,9 +22,21 @@
     @for (item of navbarItems | filterByPosition:'right'; track item.label || item.icon) {
       @if (item.icon) {
         <a class="nav-item" (click)="onItemClick(item)" [routerLink]="item.route || []">
-          <span class="material-icons">{{ item.icon }}</span>
-          @if (item.label) {
-            <span class="label">{{ item.label }}</span>
+          @if (item.action === 'openLogin') {
+            <!-- Account menu - show different icon/label based on login state -->
+            @if (currentUser) {
+              <span class="material-icons">person</span>
+              <span class="label">Profile</span>
+            } @else {
+              <span class="material-icons">account_circle</span>
+              <span class="label">Login</span>
+            }
+          } @else {
+            <!-- Other menu items -->
+            <span class="material-icons">{{ item.icon }}</span>
+            @if (item.label) {
+              <span class="label">{{ item.label }}</span>
+            }
           }
           @if (item.icon === 'shopping_cart') {
             @if ((cartState$ | async)?.totalQuantity && (cartState$ | async)!.totalQuantity > 0) {

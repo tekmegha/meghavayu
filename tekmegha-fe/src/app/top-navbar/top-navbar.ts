@@ -1,11 +1,13 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { FilterByPositionPipe } from '../filter-by-position-pipe';
 import { NavbarItem } from '../shared/interfaces/navbar-item.interface';
 import { CartService, CartState } from '../shared/services/cart-service';
 import { StoreSessionService, StoreSession } from '../shared/services/store-session.service';
+import { SupabaseService } from '../shared/services/supabase.service';
 import { Observable, Subscription } from 'rxjs';
+import { User } from '@supabase/supabase-js';
 
 @Component({
   selector: 'app-top-navbar',
@@ -25,11 +27,14 @@ export class TopNavbar implements OnInit, OnDestroy {
   cartState$: Observable<CartState>;
   selectedStore: StoreSession | null = null;
   appTitle = 'TekMegha';
+  currentUser: User | null = null;
   private subscription: Subscription = new Subscription();
 
   constructor(
     private cartService: CartService,
-    private storeSessionService: StoreSessionService
+    private storeSessionService: StoreSessionService,
+    private supabaseService: SupabaseService,
+    private router: Router
   ) {
     this.cartState$ = this.cartService.cartState$;
   }
@@ -46,6 +51,13 @@ export class TopNavbar implements OnInit, OnDestroy {
     this.subscription.add(
       this.storeSessionService.selectedStore$.subscribe(store => {
         this.selectedStore = store;
+      })
+    );
+
+    // Subscribe to authentication state changes
+    this.subscription.add(
+      this.supabaseService.currentUser$.subscribe(user => {
+        this.currentUser = user;
       })
     );
   }
@@ -67,7 +79,14 @@ export class TopNavbar implements OnInit, OnDestroy {
     } else if (item.action === 'openSearch') {
       this.searchOpen.emit();
     } else if (item.action === 'openLogin') {
-      this.loginOpen.emit();
+      // Check if user is logged in to determine action
+      if (this.currentUser) {
+        // User is logged in, navigate to profile
+        this.router.navigate(['/profile']);
+      } else {
+        // User is not logged in, navigate to login
+        this.loginOpen.emit();
+      }
     } else if (item.action === 'openCart') {
       this.cartOpen.emit();
     } else if (item.action === 'exitApp') {
