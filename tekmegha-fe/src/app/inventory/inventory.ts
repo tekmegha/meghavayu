@@ -180,7 +180,10 @@ export class Inventory implements OnInit {
     // Get the highest product number from existing products and add 1
     if (this.products.length === 0) return 1;
     
-    const numbers = this.products.map(p => this.extractProductNumber(p));
+    const numbers = this.products.map(p => {
+      // Try to extract from image URL first, then SKU
+      return this.extractProductNumberFromImageUrl(p.image_url) || this.extractProductNumberFromSKU(p.sku);
+    });
     const maxNumber = Math.max(...numbers);
     return maxNumber + 1;
   }
