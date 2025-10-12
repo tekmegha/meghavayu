@@ -1,0 +1,249 @@
+<div class="insurances-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <h1 class="page-title">Insurance Policies</h1>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="exportToExcel()">
+        <span class="material-icons">download</span>
+        Export
+      </button>
+      <button class="btn btn-secondary" (click)="printList()">
+        <span class="material-icons">print</span>
+        Print
+      </button>
+      <button class="btn btn-primary" (click)="router.navigate(['/dkassociates/cart'])">
+        <span class="material-icons">add</span>
+        New Policy
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #0891b2;">
+        <span class="material-icons">description</span>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.totalPolicies }}</div>
+        <div class="stat-label">Total Policies</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #10b981;">
+        <span class="material-icons">check_circle</span>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.activePolicies }}</div>
+        <div class="stat-label">Active Policies</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #f59e0b;">
+        <span class="material-icons">warning</span>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.expiringSoon }}</div>
+        <div class="stat-label">Expiring Soon</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #ef4444;">
+        <span class="material-icons">cancel</span>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ stats.expiredPolicies }}</div>
+        <div class="stat-label">Expired</div>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-wide">
+      <div class="stat-icon" style="background: #8b5cf6;">
+        <span class="material-icons">payments</span>
+      </div>
+      <div class="stat-content">
+        <div class="stat-value">{{ formatCurrency(stats.totalPremium) }}</div>
+        <div class="stat-label">Total Premium</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="filter-row">
+      <!-- Search -->
+      <div class="filter-group">
+        <label>Search</label>
+        <div class="search-input">
+          <span class="material-icons">search</span>
+          <input 
+            type="text" 
+            [(ngModel)]="searchTerm" 
+            (ngModelChange)="applyFilters()"
+            placeholder="Search by name, policy no, vehicle no..."
+          />
+        </div>
+      </div>
+
+      <!-- Company Filter -->
+      <div class="filter-group">
+        <label>Company</label>
+        <select [(ngModel)]="selectedCompany" (ngModelChange)="applyFilters()">
+          <option value="all">All Companies</option>
+          <option *ngFor="let company of companies" [value]="company">{{ company }}</option>
+        </select>
+      </div>
+
+      <!-- Policy Type Filter -->
+      <div class="filter-group">
+        <label>Policy Type</label>
+        <select [(ngModel)]="selectedPolicyType" (ngModelChange)="applyFilters()">
+          <option value="all">All Types</option>
+          <option *ngFor="let type of policyTypes" [value]="type">{{ type }}</option>
+        </select>
+      </div>
+
+      <!-- Agent Filter -->
+      <div class="filter-group">
+        <label>Issued By</label>
+        <select [(ngModel)]="selectedAgent" (ngModelChange)="applyFilters()">
+          <option value="all">All Agents</option>
+          <option *ngFor="let agent of agents" [value]="agent">{{ agent }}</option>
+        </select>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="filter-group">
+        <label>Status</label>
+        <select [(ngModel)]="selectedStatus" (ngModelChange)="applyFilters()">
+          <option value="all">All Status</option>
+          <option value="active">Active</option>
+          <option value="expiring-soon">Expiring Soon</option>
+          <option value="expired">Expired</option>
+        </select>
+      </div>
+
+      <!-- Clear Filters -->
+      <div class="filter-group">
+        <label>&nbsp;</label>
+        <button class="btn btn-secondary" (click)="clearFilters()">
+          <span class="material-icons">clear</span>
+          Clear
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading insurance policies...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <span class="material-icons">error</span>
+    <p>{{ error }}</p>
+    <button class="btn btn-primary" (click)="loadPolicies()">Retry</button>
+  </div>
+
+  <!-- Policies Table -->
+  <div *ngIf="!loading && !error" class="table-container">
+    <div class="results-info">
+      <p>Showing {{ getPaginatedPolicies().length }} of {{ filteredPolicies.length }} policies</p>
+    </div>
+
+    <div class="table-responsive">
+      <table class="policies-table">
+        <thead>
+          <tr>
+            <th (click)="onSort('policy_no')" class="sortable">
+              Policy No
+              <span class="material-icons sort-icon">{{ sortColumn === 'policy_no' ? (sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward') : 'unfold_more' }}</span>
+            </th>
+            <th (click)="onSort('name')" class="sortable">
+              Customer Name
+              <span class="material-icons sort-icon">{{ sortColumn === 'name' ? (sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward') : 'unfold_more' }}</span>
+            </th>
+            <th>Vehicle Type</th>
+            <th>Vehicle No</th>
+            <th>Type</th>
+            <th (click)="onSort('company')" class="sortable">
+              Company
+              <span class="material-icons sort-icon">{{ sortColumn === 'company' ? (sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward') : 'unfold_more' }}</span>
+            </th>
+            <th (click)="onSort('policy_issue_date')" class="sortable">
+              Issue Date
+              <span class="material-icons sort-icon">{{ sortColumn === 'policy_issue_date' ? (sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward') : 'unfold_more' }}</span>
+            </th>
+            <th (click)="onSort('exp_date')" class="sortable">
+              Expiry Date
+              <span class="material-icons sort-icon">{{ sortColumn === 'exp_date' ? (sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward') : 'unfold_more' }}</span>
+            </th>
+            <th class="text-right" (click)="onSort('gross')" class="sortable">
+              Premium
+              <span class="material-icons sort-icon">{{ sortColumn === 'gross' ? (sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward') : 'unfold_more' }}</span>
+            </th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let policy of getPaginatedPolicies()" class="policy-row">
+            <td class="policy-no">{{ policy.policy_no }}</td>
+            <td class="customer-name">{{ policy.name }}</td>
+            <td>{{ policy.vehicle_type }}</td>
+            <td class="vehicle-no">{{ policy.vehicle_no }}</td>
+            <td><span class="badge badge-type">{{ policy.type }}</span></td>
+            <td>{{ policy.company }}</td>
+            <td>{{ policy.policy_issue_date }}</td>
+            <td>{{ policy.exp_date }}</td>
+            <td class="text-right premium">{{ formatCurrency(policy.gross) }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatusClass(policy)">
+                {{ getStatusText(policy) }}
+              </span>
+            </td>
+            <td>
+              <button class="btn-icon" (click)="viewPolicyDetails(policy)" title="View Details">
+                <span class="material-icons">visibility</span>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="getPaginatedPolicies().length === 0">
+            <td colspan="11" class="no-data">
+              <span class="material-icons">inbox</span>
+              <p>No policies found</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button class="btn-page" (click)="previousPage()" [disabled]="currentPage === 1">
+        <span class="material-icons">chevron_left</span>
+      </button>
+
+      <div class="page-numbers">
+        <button 
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          class="btn-page"
+          [class.active]="currentPage === i + 1"
+          (click)="goToPage(i + 1)"
+        >
+          {{ i + 1 }}
+        </button>
+      </div>
+
+      <button class="btn-page" (click)="nextPage()" [disabled]="currentPage === totalPages">
+        <span class="material-icons">chevron_right</span>
+      </button>
+    </div>
+  </div>
+</div>
+

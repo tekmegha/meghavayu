@@ -107,13 +107,13 @@ INSERT INTO insurance_policies (
 -- ============================================
 -- DATE CONVERSION REFERENCE
 -- ============================================
--- Excel Date Format: DD/MM/YYYY (e.g., 5/1/2022)
--- SQL Date Format: YYYY-MM-DD (e.g., 2022-05-01)
+-- Excel Date Format: DD/MM/YYYY (e.g., 5/1/2022 = 5th January 2022)
+-- SQL Date Format: YYYY-MM-DD (e.g., 2022-01-05)
 --
 -- Common conversions:
--- 5/1/2022 → '2022-05-01'
--- 15/3/2023 → '2023-03-15'
--- 1/12/2024 → '2024-12-01'
+-- 5/1/2022 (5th Jan) → '2022-01-05'
+-- 15/3/2023 (15th Mar) → '2023-03-15'
+-- 1/12/2024 (1st Dec) → '2024-12-01'
 
 -- ============================================
 -- POLICY TYPE CODES

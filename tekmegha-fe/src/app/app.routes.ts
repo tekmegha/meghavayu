@@ -9,7 +9,9 @@ import { Inventory } from './inventory/inventory';
 import { InventoryLogin } from './inventory-login/inventory-login';
 import { TekMeghaClientsComponent } from './tekmegha-clients/tekmegha-clients';
 import { InventoryAuthGuard } from './shared/guards/inventory-auth.guard';
+import { CustomerAuthGuard } from './shared/guards/customer-auth.guard';
 import { DynamicLayoutComponent } from './shared/dynamic-layout/dynamic-layout';
+import { InsurancesComponent } from './insurances/insurances';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -98,7 +100,8 @@ export const routes: Routes = [
   { path: 'automobile-insurance', component: DynamicLayoutComponent, children: [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: 'home', component: Home },
-    { path: 'menu', component: Menu },
+    { path: 'menu', component: InsurancesComponent, canActivate: [CustomerAuthGuard] },
+    { path: 'insurances', component: InsurancesComponent, canActivate: [CustomerAuthGuard] },
     { path: 'cart', component: Cart },
     { path: 'stores', component: Stores },
     { path: 'profile', component: Profile },
@@ -109,7 +112,8 @@ export const routes: Routes = [
   { path: 'dkassociates', component: DynamicLayoutComponent, children: [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: 'home', component: Home },
-    { path: 'menu', component: Menu },
+    { path: 'menu', component: InsurancesComponent, canActivate: [CustomerAuthGuard] },
+    { path: 'insurances', component: InsurancesComponent, canActivate: [CustomerAuthGuard] },
     { path: 'cart', component: Cart },
     { path: 'stores', component: Stores },
     { path: 'profile', component: Profile },
