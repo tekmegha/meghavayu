@@ -13,7 +13,7 @@ import { BrandService } from '../shared/services/brand.service';
   styleUrl: './inventory.scss'
 })
 export class Inventory implements OnInit {
-  products: InventoryProduct[] = [];
+  products: InventoryProduct[] = []; 
   filteredProducts: InventoryProduct[] = [];
   stats: InventoryStats = {
     totalProducts: 0,
@@ -197,16 +197,43 @@ export class Inventory implements OnInit {
 
   generateImageUrl(productNumber: number): string {
     const brandId = this.brandService.getCurrentBrand()?.id || 'brewbuddy';
-    return `assets/images/${brandId}/products/${productNumber}.png`;
+    const folderName = this.mapBrandIdToFolder(brandId);
+    return `assets/images/${folderName}/products/${productNumber}.png`;
   }
 
   getBrandId(): string {
-    return this.brandService.getCurrentBrand()?.id || 'brewbuddy';
+    const brandId = this.brandService.getCurrentBrand()?.id || 'brewbuddy';
+    return this.mapBrandIdToFolder(brandId);
+  }
+
+  private mapBrandIdToFolder(brandId: string): string {
+    // Map brand IDs to their actual folder names
+    switch (brandId) {
+      case 'brewbuddy':
+        return 'brew-buddy';
+      case 'littleducks':
+        return 'little-ducks';
+      case 'majili':
+        return 'majili';
+      case 'cctv-device':
+        return 'cctv-device';
+      case 'royalfoods':
+        return 'royalfoods';
+      default:
+        return 'brew-buddy';
+    }
   }
 
   onPreviewImageError(event: Event): void {
-    // Show default image in preview if image fails to load
-    (event.target as HTMLImageElement).src = this.getBrandSpecificDefaultImage();
+    const imgElement = event.target as HTMLImageElement;
+    const defaultImage = this.getBrandSpecificDefaultImage();
+    
+    // Prevent infinite loop
+    if (!imgElement.src.includes('default.png')) {
+      imgElement.src = defaultImage;
+    } else {
+      imgElement.onerror = null; // Remove error handler to stop retry
+    }
   }
 
   openEditModal(product: InventoryProduct) {
@@ -217,9 +244,9 @@ export class Inventory implements OnInit {
   }
 
   private extractProductNumberFromImageUrl(imageUrl: string | undefined): number | null {
-    // Extract number from image URL like "assets/images/brewbuddy/products/5.png"
+    // Extract number from image URL like "assets/images/brew-buddy/products/5.png"
     if (!imageUrl) return null;
-    const match = imageUrl.match(/products\/(\d+)\.png/);
+    const match = imageUrl.match(/products\/(\d+)\.(png|jpg|jpeg)/);
     return match ? parseInt(match[1], 10) : null;
   }
 
@@ -350,22 +377,25 @@ export class Inventory implements OnInit {
   }
 
   onImageError(event: Event, product: InventoryProduct): void {
-    // Fallback to brand-specific default image
+    const imgElement = event.target as HTMLImageElement;
     const defaultImage = this.getBrandSpecificDefaultImage();
-    (event.target as HTMLImageElement).src = defaultImage;
+    
+    // Prevent infinite loop - only set if not already the default
+    if (imgElement.src !== defaultImage && !imgElement.src.includes('default.png')) {
+      imgElement.src = defaultImage;
+    } else if (!imgElement.src.includes('brew-buddy/default.png')) {
+      // Final fallback to brew-buddy default
+      imgElement.src = 'assets/images/brew-buddy/default.png';
+    } else {
+      // Remove the error handler to prevent further calls
+      imgElement.onerror = null;
+    }
   }
 
   private getBrandSpecificDefaultImage(): string {
     const brandId = this.brandService.getCurrentBrand()?.id || 'brewbuddy';
-    
-    // Try different fallback images
-    const fallbacks = [
-      `assets/images/${brandId}/default.png`,
-      `assets/images/brew-buddy/default.png`,
-      'assets/images/default-product.png'
-    ];
-    
-    return fallbacks[0];
+    const folderName = this.mapBrandIdToFolder(brandId);
+    return `assets/images/${folderName}/default.png`;
   }
 
   async onLogout() {

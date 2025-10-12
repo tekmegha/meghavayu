@@ -12,7 +12,7 @@ export interface BrandConfig {
   accentColor: string;
   backgroundGradient: string;
   navbarGradient: string;
-      theme: 'coffee' | 'toys' | 'fashion' | 'digitalsecurity';
+      theme: 'coffee' | 'toys' | 'fashion' | 'digitalsecurity' | 'food' | 'insurance';
   domain: string;
   features: {
     inventory: boolean;
@@ -236,6 +236,99 @@ export class BrandService {
           { name: 'Access Control', icon: 'lock', route: '/menu?category=access-control' }
         ]
       }
+    },
+    {
+      id: 'royalfoods',
+      name: 'royalfoods',
+      displayName: 'Royal Foods',
+      description: 'Fresh Indian Breads Specialist',
+      logo: 'assets/images/royalfoods/logo.png',
+      primaryColor: '#d97706',
+      secondaryColor: '#f59e0b',
+      accentColor: '#ef4444',
+      backgroundGradient: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)',
+      navbarGradient: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)',
+      theme: 'food',
+      domain: 'royalfoods.com',
+      features: {
+        inventory: true,
+        delivery: true,
+        multiStore: true,
+        userRoles: true,
+        payment: true
+      },
+      navigation: {
+        topNavbar: [
+          { icon: 'restaurant_menu', position: 'left', action: 'toggleMenu' },
+          { icon: 'account_circle', position: 'right', action: 'openLogin', route: '/login' },
+          { icon: 'shopping_cart', position: 'right', action: 'openCart', route: '/cart' }
+        ],
+        bottomNavbar: [
+          { icon: 'home', label: 'Home', route: '/home', active: true },
+          { icon: 'restaurant', label: 'Menu', route: '/menu' },
+          { icon: 'shopping_cart', label: 'Cart', route: '/cart' },
+          { icon: 'inventory', label: 'Inventory', route: '/inventory' },
+          { icon: 'location_on', label: 'Stores', route: '/stores' },
+          { icon: 'person', label: 'Profile', route: '/profile' }
+        ]
+      },
+      content: {
+        heroTitle: 'Fresh Indian Breads',
+        heroSubtitle: 'Traditional breads made fresh daily',
+        heroImage: 'assets/images/royalfoods/hero-food.jpg',
+        categories: [
+          { name: 'Chapati', icon: 'bakery_dining', route: '/menu?category=chapati' },
+          { name: 'Poori', icon: 'breakfast_dining', route: '/menu?category=poori' },
+          { name: 'Pulka', icon: 'restaurant', route: '/menu?category=pulka' },
+          { name: 'Parota', icon: 'ramen_dining', route: '/menu?category=parota' }
+        ]
+      }
+    },
+    {
+      id: 'automobile-insurance',
+      name: 'automobile-insurance',
+      displayName: 'Automobile Insurance',
+      description: 'Vehicle Insurance Policy Management',
+      logo: 'assets/images/automobile-insurance/logo.png',
+      primaryColor: '#0891b2',
+      secondaryColor: '#06b6d4',
+      accentColor: '#14b8a6',
+      backgroundGradient: 'linear-gradient(135deg, #0891b2 0%, #06b6d4 50%, #0e7490 100%)',
+      navbarGradient: 'linear-gradient(135deg, #0891b2 0%, #06b6d4 50%, #0e7490 100%)',
+      theme: 'insurance',
+      domain: 'autoinsurance.com',
+      features: {
+        inventory: true,
+        delivery: false,
+        multiStore: false,
+        userRoles: true,
+        payment: true
+      },
+      navigation: {
+        topNavbar: [
+          { icon: 'menu', position: 'left', action: 'toggleMenu' },
+          { label: 'Automobile Insurance', position: 'center' },
+          { icon: 'account_circle', position: 'right', action: 'openLogin', route: '/login' }
+        ],
+        bottomNavbar: [
+          { icon: 'home', label: 'Home', route: '/home', active: true },
+          { icon: 'description', label: 'Policies', route: '/menu' },
+          { icon: 'add_circle', label: 'New Policy', route: '/cart' },
+          { icon: 'analytics', label: 'Reports', route: '/inventory' },
+          { icon: 'person', label: 'Profile', route: '/profile' }
+        ]
+      },
+      content: {
+        heroTitle: 'Vehicle Insurance Management',
+        heroSubtitle: 'Manage all your vehicle insurance policies in one place',
+        heroImage: 'assets/images/automobile-insurance/hero-insurance.jpg',
+        categories: [
+          { name: 'Two Wheeler', icon: 'two_wheeler', route: '/menu?category=two-wheeler' },
+          { name: 'Four Wheeler', icon: 'directions_car', route: '/menu?category=four-wheeler' },
+          { name: 'Commercial Vehicle', icon: 'local_shipping', route: '/menu?category=commercial' },
+          { name: 'Renewals', icon: 'autorenew', route: '/menu?category=renewals' }
+        ]
+      }
     }
   ];
 
@@ -291,6 +384,10 @@ export class BrandService {
       return 'littleducks';
     } else if (hostname.includes('majili') || hostname.includes('fashion')) {
       return 'majili';
+    } else if (hostname.includes('royalfoods') || hostname.includes('food')) {
+      return 'royalfoods';
+    } else if (hostname.includes('dkassociates') || hostname.includes('automobile-insurance') || hostname.includes('autoinsurance') || hostname.includes('insurance')) {
+      return 'automobile-insurance';
     } else {
       return 'brewbuddy';
     }

@@ -78,8 +78,17 @@ export class Stores implements OnInit {
   }
 
   onImageError(event: Event) {
+    const imgElement = event.target as HTMLImageElement;
     const defaultImage = this.getBrandSpecificDefaultImage();
-    (event.target as HTMLImageElement).src = defaultImage;
+    
+    // Prevent infinite loop
+    if (imgElement.src !== defaultImage && !imgElement.src.includes('default.png')) {
+      imgElement.src = defaultImage;
+    } else if (!imgElement.src.includes('brew-buddy/default.png')) {
+      imgElement.src = 'assets/images/brew-buddy/default.png';
+    } else {
+      imgElement.onerror = null; // Stop retrying
+    }
   }
 
   private getBrandSpecificDefaultImage(): string {
@@ -88,17 +97,25 @@ export class Stores implements OnInit {
     }
     
     const brandId = this.brandService.getCurrentBrand()?.id;
+    const folderName = this.mapBrandIdToFolder(brandId);
+    return `assets/images/${folderName}/default.png`;
+  }
+
+  private mapBrandIdToFolder(brandId: string | undefined): string {
+    // Map brand IDs to their actual folder names
     switch (brandId) {
       case 'brewbuddy':
-        return 'assets/images/brew-buddy/default.png';
+        return 'brew-buddy';
       case 'littleducks':
-        return 'assets/images/little-ducks/default.png';
+        return 'little-ducks';
       case 'majili':
-        return 'assets/images/majili/default.png';
+        return 'majili';
       case 'cctv-device':
-        return 'assets/images/cctv-device/default.png';
+        return 'cctv-device';
+      case 'royalfoods':
+        return 'royalfoods';
       default:
-        return 'assets/images/brew-buddy/default.png'; // Default fallback
+        return 'brew-buddy';
     }
   }
 }

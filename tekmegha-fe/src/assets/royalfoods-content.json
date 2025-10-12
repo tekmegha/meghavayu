@@ -1,0 +1,82 @@
+{
+  "topNavbar": [
+    {
+      "icon": "restaurant_menu",
+      "position": "left",
+      "action": "toggleMenu"
+    },
+    {
+      "label": "Royal Foods",
+      "position": "center"
+    },
+    {
+      "icon": "account_circle",
+      "position": "right",
+      "action": "openLogin",
+      "route": "/login"
+    },
+    {
+      "icon": "shopping_cart",
+      "position": "right",
+      "action": "openCart",
+      "route": "/cart"
+    }
+  ],
+  "bottomNavbar": [
+    {
+      "icon": "home",
+      "label": "Home",
+      "route": "/home",
+      "active": true
+    },
+    {
+      "icon": "restaurant",
+      "label": "Menu",
+      "route": "/menu"
+    },
+    {
+      "icon": "shopping_cart",
+      "label": "Cart",
+      "route": "/cart"
+    },
+    {
+      "icon": "inventory",
+      "label": "Inventory",
+      "route": "/inventory"
+    },
+    {
+      "icon": "location_on",
+      "label": "Stores",
+      "route": "/stores"
+    },
+    {
+      "icon": "person",
+      "label": "Profile",
+      "route": "/profile"
+    }
+  ],
+  "stores": [
+    {
+      "id": "food-store1",
+      "name": "Royal Foods Main Branch",
+      "address": "123 Food Street, Jubilee Hills, Hyderabad, Telangana 500033",
+      "phone": "+91 40 2222 3333",
+      "hours": "Mon-Sun: 11 AM - 11 PM"
+    },
+    {
+      "id": "food-store2",
+      "name": "Royal Foods Express",
+      "address": "456 Restaurant Avenue, Banjara Hills, Hyderabad, Telangana 500034",
+      "phone": "+91 40 3333 4444",
+      "hours": "Mon-Sun: 10 AM - 10 PM"
+    },
+    {
+      "id": "food-store3",
+      "name": "Royal Foods Gachibowli",
+      "address": "789 Tech Park Road, Gachibowli, Hyderabad, Telangana 500032",
+      "phone": "+91 40 5555 6666",
+      "hours": "Mon-Fri: 8 AM - 10 PM, Sat-Sun: 10 AM - 11 PM"
+    }
+  ]
+}
+

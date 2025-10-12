@@ -84,6 +84,41 @@ export const routes: Routes = [
     { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] },
     { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
   ]},
+  { path: 'royalfoods', component: DynamicLayoutComponent, children: [
+    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    { path: 'home', component: Home },
+    { path: 'menu', component: Menu },
+    { path: 'cart', component: Cart },
+    { path: 'stores', component: Stores },
+    { path: 'profile', component: Profile },
+    { path: 'login', component: Login },
+    { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] },
+    { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
+  ]},
+  { path: 'automobile-insurance', component: DynamicLayoutComponent, children: [
+    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    { path: 'home', component: Home },
+    { path: 'menu', component: Menu },
+    { path: 'cart', component: Cart },
+    { path: 'stores', component: Stores },
+    { path: 'profile', component: Profile },
+    { path: 'login', component: Login },
+    { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] },
+    { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
+  ]},
+  { path: 'dkassociates', component: DynamicLayoutComponent, children: [
+    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    { path: 'home', component: Home },
+    { path: 'menu', component: Menu },
+    { path: 'cart', component: Cart },
+    { path: 'stores', component: Stores },
+    { path: 'profile', component: Profile },
+    { path: 'login', component: Login },
+    { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] },
+    { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
+  ]},
   { path: 'fashion', redirectTo: '/majili', pathMatch: 'full' },
-  { path: 'toys', redirectTo: '/little-ducks', pathMatch: 'full' }
+  { path: 'toys', redirectTo: '/little-ducks', pathMatch: 'full' },
+  { path: 'food', redirectTo: '/royalfoods', pathMatch: 'full' },
+  { path: 'insurance', redirectTo: '/automobile-insurance', pathMatch: 'full' }
 ];

@@ -21,9 +21,11 @@ import { Subscription } from 'rxjs';
           *ngFor="let store of availableStores" 
           class="store-card"
           [class.selected]="isStoreSelected(store)"
+          [style.--theme-primary]="getThemeColor(store.storeCode, 'primary')"
+          [style.--theme-secondary]="getThemeColor(store.storeCode, 'secondary')"
           (click)="selectStore(store)"
         >
-          <div class="store-icon">
+          <div class="store-icon" [style.background]="getIconBackground(store.storeCode)">
             <span class="material-icons">{{ getStoreIcon(store.storeCode) }}</span>
           </div>
           <div class="store-info">
@@ -125,6 +127,10 @@ export class StoreSelectorComponent implements OnInit, OnDestroy {
         return 'toys';
       case 'majili':
         return 'shopping_bag';
+      case 'royalfoods':
+        return 'restaurant';
+      case 'cctv-device':
+        return 'security';
       default:
         return 'store';
     }
@@ -138,8 +144,31 @@ export class StoreSelectorComponent implements OnInit, OnDestroy {
         return 'Educational toys and games';
       case 'majili':
         return 'Fashion and accessories';
+      case 'royalfoods':
+        return 'Fresh Indian breads specialist';
+      case 'cctv-device':
+        return 'Digital security solutions';
       default:
         return 'General store';
     }
+  }
+
+  getThemeColor(storeCode: string, colorType: 'primary' | 'secondary'): string {
+    const themes: { [key: string]: { primary: string, secondary: string } } = {
+      'brew-buddy': { primary: '#6366f1', secondary: '#ec4899' },
+      'little-ducks': { primary: '#f59e0b', secondary: '#ec4899' },
+      'majili': { primary: '#ec4899', secondary: '#8b5cf6' },
+      'cctv-device': { primary: '#0ea5e9', secondary: '#3b82f6' },
+      'royalfoods': { primary: '#d97706', secondary: '#f59e0b' }
+    };
+    
+    const theme = themes[storeCode] || themes['brew-buddy'];
+    return colorType === 'primary' ? theme.primary : theme.secondary;
+  }
+
+  getIconBackground(storeCode: string): string {
+    const primary = this.getThemeColor(storeCode, 'primary');
+    const secondary = this.getThemeColor(storeCode, 'secondary');
+    return `linear-gradient(135deg, ${primary}, ${secondary})`;
   }
 }

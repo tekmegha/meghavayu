@@ -52,6 +52,8 @@ export class SupabaseService {
       return 'majili';
     } else if (path.startsWith('/toys') || path.startsWith('/little-ducks')) {
       return 'little-ducks';
+    } else if (path.startsWith('/food') || path.startsWith('/royalfoods')) {
+      return 'royalfoods';
     } else if (path.startsWith('/clients') || path.startsWith('/tekmegha-clients')) {
       return 'tekmegha-clients';
     } else if (path.startsWith('/brew-buddy')) {

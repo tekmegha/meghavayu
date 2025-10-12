@@ -12,6 +12,8 @@ export class FallbackDataService {
       return this.getLittleDucksProducts();
     } else if (brandId === 'majili') {
       return this.getMajiliProducts();
+    } else if (brandId === 'royalfoods') {
+      return this.getRoyalFoodsProducts();
     } else {
       return this.getBrewBuddyProducts();
     }
@@ -186,6 +188,8 @@ export class FallbackDataService {
       return this.getLittleDucksStores();
     } else if (brandId === 'majili') {
       return this.getMajiliStores();
+    } else if (brandId === 'royalfoods') {
+      return this.getRoyalFoodsStores();
     } else {
       return this.getBrewBuddyStores();
     }
@@ -327,6 +331,67 @@ export class FallbackDataService {
         phone: '+91 40 1234 5678',
         hours: 'Mon-Sun: 10 AM - 11 PM',
         brand_id: 'majili'
+      }
+    ];
+  }
+
+  private getRoyalFoodsProducts(): Product[] {
+    return [
+      {
+        id: 'food-fallback-1',
+        name: 'Butter Chapati',
+        price: 20.00,
+        rating: 4.7,
+        reviewCount: 345,
+        serves: 1,
+        description: 'Soft whole wheat chapati brushed with fresh butter',
+        imageUrl: 'assets/images/royalfoods/products/2.png',
+        customisable: false,
+        category: 'Chapati',
+        discountPercentage: 10,
+        oldPrice: 22.00,
+        brand_id: 'royalfoods'
+      },
+      {
+        id: 'food-fallback-2',
+        name: 'Malabar Parota',
+        price: 40.00,
+        rating: 4.8,
+        reviewCount: 678,
+        serves: 1,
+        description: 'Kerala style multi-layered parota, crispy and soft',
+        imageUrl: 'assets/images/royalfoods/products/11.png',
+        customisable: false,
+        category: 'Parota',
+        discountPercentage: 10,
+        oldPrice: 44.00,
+        brand_id: 'royalfoods'
+      },
+      {
+        id: 'food-fallback-3',
+        name: 'Plain Poori',
+        price: 30.00,
+        rating: 4.5,
+        reviewCount: 189,
+        serves: 2,
+        description: 'Deep-fried puffed bread, crispy and golden',
+        imageUrl: 'assets/images/royalfoods/products/4.png',
+        customisable: false,
+        category: 'Poori',
+        brand_id: 'royalfoods'
+      }
+    ];
+  }
+
+  private getRoyalFoodsStores(): Store[] {
+    return [
+      {
+        id: 'food-store-1',
+        name: 'Royal Foods Main Branch',
+        address: 'Jubilee Hills, Hyderabad, Telangana 500033',
+        phone: '+91 40 2222 3333',
+        hours: 'Mon-Sun: 11 AM - 11 PM',
+        brand_id: 'royalfoods'
       }
     ];
   }

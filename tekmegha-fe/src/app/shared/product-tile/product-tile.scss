@@ -198,3 +198,71 @@
     }
   }
 }
+
+// Mobile responsive styles
+@media (max-width: 768px) {
+  .product-tile {
+    .product-tile-card {
+      .product-info {
+        .product-name {
+          font-size: 1rem; // Reduced from 1.2rem for mobile
+          height: 28px; // Slightly reduced height
+        }
+
+        .product-description {
+          font-size: 0.85rem; // Reduced from 0.95rem for mobile
+          -webkit-line-clamp: 2; // Limit to 2 lines on mobile
+        }
+
+        .price-and-add {
+          .prices {
+            .current-price {
+              font-size: 1.1rem; // Reduced from 1.3rem for mobile
+            }
+
+            .old-price {
+              font-size: 0.8rem; // Reduced from 0.9rem for mobile
+            }
+          }
+
+          .add-to-cart-button {
+            font-size: 0.85rem; // Reduced from 0.95rem for mobile
+            padding: 7px 12px; // Slightly smaller padding
+          }
+        }
+      }
+    }
+  }
+}
+
+// Extra small mobile devices
+@media (max-width: 480px) {
+  .product-tile {
+    .product-tile-card {
+      max-width: 100%; // Full width on very small screens
+      margin: 8px 0; // Vertical margin only
+
+      .product-info {
+        padding: 12px; // Reduced padding
+
+        .product-name {
+          font-size: 0.9rem; // Even smaller for very small screens
+          height: 26px;
+        }
+
+        .product-description {
+          font-size: 0.8rem;
+          margin-bottom: 10px;
+        }
+
+        .price-and-add {
+          .prices {
+            .current-price {
+              font-size: 1rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}

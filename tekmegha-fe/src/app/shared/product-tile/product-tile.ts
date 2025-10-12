@@ -48,21 +48,46 @@ export class ProductTileComponent implements OnInit {
   }
 
   onImageError(event: Event) {
-    // Fallback to brand-specific default image
+    const imgElement = event.target as HTMLImageElement;
     const defaultImage = this.getBrandSpecificDefaultImage();
-    (event.target as HTMLImageElement).src = defaultImage;
+    
+    // Prevent infinite loop - only set if not already the default
+    if (imgElement.src !== defaultImage && !imgElement.src.includes('default.png')) {
+      imgElement.src = defaultImage;
+    } else if (!imgElement.src.includes('brew-buddy/default.png')) {
+      // Final fallback to brew-buddy default
+      imgElement.src = 'assets/images/brew-buddy/default.png';
+    } else {
+      // Remove the error handler to prevent further calls
+      imgElement.onerror = null;
+    }
   }
 
   private getBrandSpecificDefaultImage(): string {
-    const brandId = this.brandService.getCurrentBrand()?.id || 'brew-buddy';
+    if (!this.brandService.getCurrentBrand()) {
+      return 'assets/images/brew-buddy/default.png'; // Default fallback
+    }
     
-    // Try different fallback images
-    const fallbacks = [
-      `assets/images/${brandId}/default.png`,
-      `assets/images/brew-buddy/default.png`,
-      'assets/images/default-product.png'
-    ];
-    
-    return fallbacks[0];
+    const brandId = this.brandService.getCurrentBrand()?.id;
+    const folderName = this.mapBrandIdToFolder(brandId);
+    return `assets/images/${folderName}/default.png`;
+  }
+
+  private mapBrandIdToFolder(brandId: string | undefined): string {
+    // Map brand IDs to their actual folder names
+    switch (brandId) {
+      case 'brewbuddy':
+        return 'brew-buddy';
+      case 'littleducks':
+        return 'little-ducks';
+      case 'majili':
+        return 'majili';
+      case 'cctv-device':
+        return 'cctv-device';
+      case 'royalfoods':
+        return 'royalfoods';
+      default:
+        return 'brew-buddy'; // Default fallback
+    }
   }
 }

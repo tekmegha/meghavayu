@@ -1,0 +1,26 @@
+<div class="layout-food">
+  <app-top-navbar  
+    [navbarItems]="getTopNavbarItems()"
+    (loginOpen)="onLoginOpen()"
+    (cartOpen)="onCartOpen()"
+    (exitApp)="onExitApp()">
+  </app-top-navbar>
+
+  <app-location-bar></app-location-bar>
+
+  <main class="main-content-wrapper">
+    <router-outlet></router-outlet>
+  </main>
+
+  <app-checkout-banner 
+    (loginOpen)="onLoginOpen()"
+    (cartOpen)="onCartOpen()">
+  </app-checkout-banner>
+
+  <app-bottom-sticky-navbar 
+    [navbarItems]="getBottomNavbarItems()">
+  </app-bottom-sticky-navbar>
+
+  <app-network-status></app-network-status>
+</div>
+

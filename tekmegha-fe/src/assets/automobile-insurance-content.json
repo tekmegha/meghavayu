@@ -1,0 +1,238 @@
+{
+  "topNavbar": [
+    {
+      "icon": "menu",
+      "position": "left",
+      "action": "toggleMenu"
+    },
+    {
+      "label": "Automobile Insurance",
+      "position": "center"
+    },
+    {
+      "icon": "account_circle",
+      "position": "right",
+      "action": "openLogin",
+      "route": "/login"
+    }
+  ],
+  "bottomNavbar": [
+    {
+      "icon": "home",
+      "label": "Home",
+      "route": "/home",
+      "active": true
+    },
+    {
+      "icon": "description",
+      "label": "Policies",
+      "route": "/menu"
+    },
+    {
+      "icon": "add_circle",
+      "label": "New Policy",
+      "route": "/cart"
+    },
+    {
+      "icon": "analytics",
+      "label": "Reports",
+      "route": "/inventory"
+    },
+    {
+      "icon": "person",
+      "label": "Profile",
+      "route": "/profile"
+    }
+  ],
+  "stores": [
+    {
+      "id": "insurance-office1",
+      "name": "Main Branch Office",
+      "address": "Plot No 123, Jubilee Hills, Hyderabad, Telangana 500033",
+      "phone": "+91 40 2345 6789",
+      "hours": "Mon-Sat: 9 AM - 6 PM, Sun: Closed"
+    },
+    {
+      "id": "insurance-office2",
+      "name": "Secundera Bad Branch",
+      "address": "456 Commercial Street, Secunderabad, Telangana 500003",
+      "phone": "+91 40 2765 4321",
+      "hours": "Mon-Sat: 9 AM - 6 PM, Sun: Closed"
+    }
+  ],
+  "policyTypes": [
+    {
+      "id": "tw-sod",
+      "name": "Two Wheeler - Stand Alone OD",
+      "code": "TW SOD",
+      "description": "Own Damage coverage for two-wheelers",
+      "icon": "two_wheeler"
+    },
+    {
+      "id": "tw-tp",
+      "name": "Two Wheeler - Third Party",
+      "code": "TW TP",
+      "description": "Third party liability coverage for two-wheelers",
+      "icon": "two_wheeler"
+    },
+    {
+      "id": "tw-full",
+      "name": "Two Wheeler - Comprehensive",
+      "code": "TW FULL",
+      "description": "Comprehensive coverage for two-wheelers",
+      "icon": "two_wheeler"
+    },
+    {
+      "id": "gcv-full",
+      "name": "Goods Carrier Vehicle - Full",
+      "code": "GCV FULL",
+      "description": "Comprehensive coverage for goods carrier vehicles",
+      "icon": "local_shipping"
+    },
+    {
+      "id": "pcv-full",
+      "name": "Passenger Carrier Vehicle - Full",
+      "code": "PCV FULL",
+      "description": "Comprehensive coverage for passenger carrier vehicles",
+      "icon": "directions_bus"
+    },
+    {
+      "id": "private-car",
+      "name": "Private Car - Comprehensive",
+      "code": "CAR FULL",
+      "description": "Comprehensive coverage for private cars",
+      "icon": "directions_car"
+    }
+  ],
+  "insuranceCompanies": [
+    {
+      "id": "digit",
+      "name": "Digit Insurance",
+      "code": "DIGIT"
+    },
+    {
+      "id": "future",
+      "name": "Future Generali",
+      "code": "FUTURE"
+    },
+    {
+      "id": "hdfc",
+      "name": "HDFC ERGO",
+      "code": "HDFC"
+    },
+    {
+      "id": "icici",
+      "name": "ICICI Lombard",
+      "code": "ICICI"
+    },
+    {
+      "id": "bajaj",
+      "name": "Bajaj Allianz",
+      "code": "BAJAJ"
+    },
+    {
+      "id": "sbi",
+      "name": "SBI General Insurance",
+      "code": "SBI"
+    },
+    {
+      "id": "tata-aig",
+      "name": "TATA AIG",
+      "code": "TATA"
+    },
+    {
+      "id": "reliance",
+      "name": "Reliance General",
+      "code": "RELIANCE"
+    }
+  ],
+  "vehicleTypes": [
+    {
+      "id": "bike",
+      "category": "Two Wheeler",
+      "models": [
+        "HERO SPLENDOR",
+        "HONDA ACTIVA",
+        "BAJAJ PULSAR",
+        "YAMAHA FZ",
+        "ROYAL ENFIELD",
+        "CB SHINE",
+        "PLEASURE"
+      ]
+    },
+    {
+      "id": "commercial-gcv",
+      "category": "Goods Carrier Vehicle",
+      "models": [
+        "TATA ACE",
+        "MAHINDRA BOLERO PICKUP",
+        "EICHER 10 90",
+        "EICHER 11 10",
+        "ASHOK LEYLAND DOST"
+      ]
+    },
+    {
+      "id": "commercial-pcv",
+      "category": "Passenger Carrier Vehicle",
+      "models": [
+        "TEMPO TRAVELLER",
+        "TATA WINGER",
+        "FORCE TRAVELLER"
+      ]
+    },
+    {
+      "id": "car",
+      "category": "Private Car",
+      "models": [
+        "MARUTI SWIFT",
+        "HYUNDAI i20",
+        "HONDA CITY",
+        "TATA NEXON"
+      ]
+    }
+  ],
+  "paymentModes": [
+    "CASH",
+    "ONLINE PAYMENT",
+    "CUSTOMER ONLINE",
+    "CHEQUE",
+    "UPI",
+    "CARD PAYMENT",
+    "NEFT/RTGS"
+  ],
+  "agents": [
+    {
+      "id": "shivaram",
+      "name": "SHIVARAM",
+      "code": "SHIVARAM"
+    },
+    {
+      "id": "vanith-anna",
+      "name": "VANITH ANNA",
+      "code": "VANITH ANNA"
+    },
+    {
+      "id": "sathish-anna",
+      "name": "SATHISH ANNA",
+      "code": "SATHISH ANNA"
+    }
+  ],
+  "references": [
+    {
+      "id": "crr",
+      "code": "CRR",
+      "name": "Customer Reference - Renewal"
+    },
+    {
+      "id": "mrr",
+      "code": "MRR",
+      "name": "Marketing Reference - Renewal"
+    },
+    {
+      "id": "drr",
+      "code": "DRR",
+      "name": "Direct Reference - Renewal"
+    }
+  ]
+}
+

@@ -9,7 +9,7 @@ INSERT INTO user_roles (
 ) VALUES
 ( 
   'cdfad50a-c229-4100-9b68-dc62c3bf5e1f',
-  'a50930c7-1bb6-4884-a1c5-c0d480d3ec8d',
+  '26d71c6f-eac6-4696-bb75-a3a80a9e2e65',
   'inventory_manager',
   '{
     "inventory": {

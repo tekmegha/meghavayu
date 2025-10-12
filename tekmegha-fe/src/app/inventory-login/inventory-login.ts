@@ -121,8 +121,8 @@ export class InventoryLogin implements OnInit {
       return false;
     }
 
-    if (this.password.length < 6) {
-      this.errorMessage = 'Password must be at least 6 characters long';
+    if (this.password.length < 4) {
+      this.errorMessage = 'Password must be at least 4 characters long';
       return false;
     }
 

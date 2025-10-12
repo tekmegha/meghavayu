@@ -6,6 +6,7 @@ import { Layout } from '../../layout/layout';
 import { LayoutFashion } from '../../layout-fashion/layout-fashion';
 import { LayoutToys } from '../../layout-toys/layout-toys';
 import { LayoutDigitalSecurity } from '../../layout-digitalsecurity/layout-digitalsecurity';
+import { LayoutFood } from '../../layout-food/layout-food';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -17,11 +18,12 @@ import { Subscription } from 'rxjs';
     Layout,
     LayoutFashion,
     LayoutToys,
-    LayoutDigitalSecurity
+    LayoutDigitalSecurity,
+    LayoutFood
   ],
   template: `
-    <!-- Default Layout (Brew Buddy) -->
-    <app-layout *ngIf="!selectedStore || selectedStore.storeCode === 'brew-buddy' || selectedStore.storeCode === 'tekmegha-clients'">
+    <!-- Default Layout (Brew Buddy & Insurance) -->
+    <app-layout *ngIf="!selectedStore || selectedStore.storeCode === 'brew-buddy' || selectedStore.storeCode === 'tekmegha-clients' || selectedStore.storeCode === 'dkassociates' || selectedStore.storeCode === 'automobile-insurance'">
       <router-outlet></router-outlet>
     </app-layout>
 
@@ -39,6 +41,11 @@ import { Subscription } from 'rxjs';
     <app-layout-digitalsecurity *ngIf="selectedStore?.storeCode === 'cctv-device'">
       <router-outlet></router-outlet>
     </app-layout-digitalsecurity>
+
+    <!-- Food Layout (Royal Foods) -->
+    <app-layout-food *ngIf="selectedStore?.storeCode === 'royalfoods'">
+      <router-outlet></router-outlet>
+    </app-layout-food>
   `,
   styleUrls: ['./dynamic-layout.scss']
 })
@@ -72,10 +79,20 @@ export class DynamicLayoutComponent implements OnInit, OnDestroy {
       storeCode = 'majili';
     } else if (path.startsWith('/cctv-device')) {
       storeCode = 'cctv-device';
+    } else if (path.startsWith('/royalfoods')) {
+      storeCode = 'royalfoods';
+    } else if (path.startsWith('/dkassociates')) {
+      storeCode = 'dkassociates';
+    } else if (path.startsWith('/automobile-insurance')) {
+      storeCode = 'automobile-insurance';
+    } else if (path.startsWith('/insurance')) {
+      storeCode = 'automobile-insurance';
     } else if (path.startsWith('/fashion')) {
       storeCode = 'majili';
     } else if (path.startsWith('/toys')) {
       storeCode = 'little-ducks';
+    } else if (path.startsWith('/food')) {
+      storeCode = 'royalfoods';
     }
 
     if (storeCode) {

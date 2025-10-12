@@ -220,7 +220,7 @@ export class StoreSessionService {
     const currentPath = window.location.pathname;
     
     // Remove existing store prefix
-    const pathWithoutStore = currentPath.replace(/^\/(brew-buddy|little-ducks|majili)/, '');
+    const pathWithoutStore = currentPath.replace(/^\/(brew-buddy|little-ducks|majili|royalfoods)/, '');
     
     // Add new store prefix
     const newPath = `/${storeCode}${pathWithoutStore}`;

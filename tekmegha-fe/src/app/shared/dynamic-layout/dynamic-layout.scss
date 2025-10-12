@@ -54,3 +54,10 @@ app-layout-toys {
   --secondary-color: #FF1493;
   --accent-color: #E91E63;
 }
+
+:host-context(.royalfoods-theme) {
+  // Royal Foods specific styles
+  --primary-color: #d97706;
+  --secondary-color: #f59e0b;
+  --accent-color: #ef4444;
+}

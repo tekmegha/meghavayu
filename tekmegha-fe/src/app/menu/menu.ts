@@ -244,6 +244,8 @@ export class Menu implements OnInit, OnDestroy {
         return 'Our Fashion Collection';
       case 'cctv-device':
         return 'Our Security Products';
+      case 'royalfoods':
+        return 'Our Food Menu';
       default:
         return 'Our Menu';
     }
@@ -261,6 +263,8 @@ export class Menu implements OnInit, OnDestroy {
         return 'Search fashion, clothing, accessories...';
       case 'cctv-device':
         return 'Search security, cameras, systems...';
+      case 'royalfoods':
+        return 'Search dishes, meals, beverages...';
       default:
         return 'Search products...';
     }
