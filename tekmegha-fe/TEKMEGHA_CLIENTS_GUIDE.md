@@ -310,7 +310,7 @@ filterClients() {
 /tekmegha-clients                    # Default route
 /brew-buddy/tekmegha-clients         # Brew Buddy store
 /little-ducks/tekmegha-clients       # Little Ducks store
-/opula/tekmegha-clients              # Opula store
+/majili/tekmegha-clients             # Majili store
 ```
 
 ### **Filtering Clients**

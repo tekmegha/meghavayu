@@ -48,8 +48,8 @@ export class SupabaseService {
   // Get current store based on URL path - returns store_code for new schema
   getCurrentStore(): string {
     const path = window.location.pathname;
-    if (path.startsWith('/fashion') || path.startsWith('/opula')) {
-      return 'opula';
+    if (path.startsWith('/fashion') || path.startsWith('/majili')) {
+      return 'majili';
     } else if (path.startsWith('/toys') || path.startsWith('/little-ducks')) {
       return 'little-ducks';
     } else if (path.startsWith('/clients') || path.startsWith('/tekmegha-clients')) {

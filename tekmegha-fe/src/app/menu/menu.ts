@@ -240,7 +240,7 @@ export class Menu implements OnInit, OnDestroy {
         return 'Our Coffee Menu';
       case 'littleducks':
         return 'Our Toys Collection';
-      case 'opula':
+      case 'majili':
         return 'Our Fashion Collection';
       case 'cctv-device':
         return 'Our Security Products';
@@ -257,7 +257,7 @@ export class Menu implements OnInit, OnDestroy {
         return 'Search coffee, drinks, pastries...';
       case 'littleducks':
         return 'Search toys, games, educational...';
-      case 'opula':
+      case 'majili':
         return 'Search fashion, clothing, accessories...';
       case 'cctv-device':
         return 'Search security, cameras, systems...';

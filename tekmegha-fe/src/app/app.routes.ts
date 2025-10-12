@@ -62,7 +62,7 @@ export const routes: Routes = [
     { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] },
     { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
   ]},
-  { path: 'opula', component: DynamicLayoutComponent, children: [
+  { path: 'majili', component: DynamicLayoutComponent, children: [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: 'home', component: Home },
     { path: 'menu', component: Menu },
@@ -84,6 +84,6 @@ export const routes: Routes = [
     { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] },
     { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
   ]},
-  { path: 'fashion', redirectTo: '/opula', pathMatch: 'full' },
+  { path: 'fashion', redirectTo: '/majili', pathMatch: 'full' },
   { path: 'toys', redirectTo: '/little-ducks', pathMatch: 'full' }
 ];

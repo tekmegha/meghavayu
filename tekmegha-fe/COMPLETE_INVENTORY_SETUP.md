@@ -64,7 +64,7 @@ CREATE TABLE categories (
 - 🧸 **Toys & Games** - Educational toys, action figures, board games
 - 📚 **Educational** - Learning toys and educational materials
 
-#### **Opula Store**
+#### **Majili Store**
 - 👗 **Clothing** - Fashion clothing and accessories
 - 💍 **Accessories** - Fashion accessories and jewelry
 

@@ -123,7 +123,7 @@ export class StoreSelectorComponent implements OnInit, OnDestroy {
         return 'local_cafe';
       case 'little-ducks':
         return 'toys';
-      case 'opula':
+      case 'majili':
         return 'shopping_bag';
       default:
         return 'store';
@@ -136,7 +136,7 @@ export class StoreSelectorComponent implements OnInit, OnDestroy {
         return 'Premium coffee and beverages';
       case 'little-ducks':
         return 'Educational toys and games';
-      case 'opula':
+      case 'majili':
         return 'Fashion and accessories';
       default:
         return 'General store';

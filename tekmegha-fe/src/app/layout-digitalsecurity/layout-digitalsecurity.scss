@@ -11,12 +11,8 @@
 
   // Digital Security-specific styling
   app-location-bar {
-    position: sticky;
-    top: 60px; // Below top navbar
-    z-index: 999;
-    background: var(--navbar-gradient);
-    backdrop-filter: blur(15px);
-    border-bottom: 1px solid rgba(0, 255, 255, 0.1);
+    display: block;
+    // Sticky positioning is handled within the component itself
   }
 
   // Modern CCTV/Security theme colors - Professional, light theme

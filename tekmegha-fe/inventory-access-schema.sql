@@ -19,7 +19,7 @@ SELECT
 FROM auth.users au
 CROSS JOIN megha_stores ms
 WHERE au.email = 'tm@tekmegha.com'
-AND ms.store_code IN ('brew-buddy', 'little-ducks', 'opula')
+AND ms.store_code IN ('brew-buddy', 'little-ducks', 'majili')
 ON CONFLICT (user_id, megha_store_id) 
 DO UPDATE SET 
     role = EXCLUDED.role,
@@ -38,7 +38,7 @@ SELECT
 FROM auth.users au
 CROSS JOIN megha_stores ms
 WHERE au.email = 'sarada@tekmegha.com'
-AND ms.store_code IN ('brew-buddy', 'little-ducks', 'opula')
+AND ms.store_code IN ('brew-buddy', 'little-ducks', 'majili')
 ON CONFLICT (user_id, megha_store_id) 
 DO UPDATE SET 
     role = EXCLUDED.role,

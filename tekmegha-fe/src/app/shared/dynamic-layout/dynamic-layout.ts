@@ -25,8 +25,8 @@ import { Subscription } from 'rxjs';
       <router-outlet></router-outlet>
     </app-layout>
 
-    <!-- Fashion Layout (Opula) -->
-    <app-layout-fashion *ngIf="selectedStore?.storeCode === 'opula'">
+    <!-- Fashion Layout (Majili) -->
+    <app-layout-fashion *ngIf="selectedStore?.storeCode === 'majili'">
       <router-outlet></router-outlet>
     </app-layout-fashion>
 
@@ -68,12 +68,12 @@ export class DynamicLayoutComponent implements OnInit, OnDestroy {
       storeCode = 'brew-buddy';
     } else if (path.startsWith('/little-ducks')) {
       storeCode = 'little-ducks';
-    } else if (path.startsWith('/opula')) {
-      storeCode = 'opula';
+    } else if (path.startsWith('/majili')) {
+      storeCode = 'majili';
     } else if (path.startsWith('/cctv-device')) {
       storeCode = 'cctv-device';
     } else if (path.startsWith('/fashion')) {
-      storeCode = 'opula';
+      storeCode = 'majili';
     } else if (path.startsWith('/toys')) {
       storeCode = 'little-ducks';
     }

@@ -14,14 +14,14 @@ This guide explains how to set up inventory access for team members in the TekMe
 - ✅ **Write**: Add, edit, and update products
 - ✅ **Delete**: Remove products and inventory items
 - ✅ **Manage Users**: Assign roles to other team members
-- ✅ **All Stores**: Access to Brew Buddy, Little Ducks, and Opula stores
+- ✅ **All Stores**: Access to Brew Buddy, Little Ducks, and Majili stores
 
 ### **Inventory Specialist (sarada@tekmegha.com)**
 - ✅ **Read**: View all products and inventory
 - ✅ **Write**: Add and edit products
 - ❌ **Delete**: Cannot delete products
 - ❌ **Manage Users**: Cannot assign roles
-- ✅ **All Stores**: Access to Brew Buddy, Little Ducks, and Opula stores
+- ✅ **All Stores**: Access to Brew Buddy, Little Ducks, and Majili stores
 
 ## 🚀 **Setup Process**
 

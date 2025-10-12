@@ -48,14 +48,14 @@ selectedStore.storeCode === 'brew-buddy' → Layout (Default)
 // Little Ducks (Toys)
 selectedStore.storeCode === 'little-ducks' → LayoutToys
 
-// Opula (Fashion)
-selectedStore.storeCode === 'opula' → LayoutFashion
+// Majili (Fashion)
+selectedStore.storeCode === 'majili' → LayoutFashion
 ```
 
 ### **Layout Components**
 - **Layout**: Default layout for Brew Buddy (coffee theme)
 - **LayoutToys**: Toys-themed layout for Little Ducks
-- **LayoutFashion**: Fashion-themed layout for Opula
+- **LayoutFashion**: Fashion-themed layout for Majili
 
 ## 🚀 **How It Works**
 
@@ -98,8 +98,8 @@ private initializeBrandForStore(store: StoreSession) {
     <router-outlet></router-outlet>
   </app-layout-toys>
 
-  <!-- Opula Layout -->
-  <app-layout-fashion *ngIf="selectedStore?.storeCode === 'opula'">
+  <!-- Majili Layout -->
+  <app-layout-fashion *ngIf="selectedStore?.storeCode === 'majili'">
     <router-outlet></router-outlet>
   </app-layout-fashion>
 </app-dynamic-layout>
@@ -123,8 +123,8 @@ private initializeBrandForStore(store: StoreSession) {
   --accent-color: #FF6B35;
 }
 
-// Opula Theme
-.opula-theme {
+// Majili Theme
+.majili-theme {
   --primary-color: #FF69B4;
   --secondary-color: #FF1493;
   --accent-color: #E91E63;
@@ -148,8 +148,8 @@ document.body.classList.add(`${store.storeCode}-theme`);
 /brew-buddy/menu           # Brew Buddy menu
 /little-ducks/home         # Little Ducks home
 /little-ducks/menu         # Little Ducks menu
-/opula/home                # Opula home
-/opula/menu                # Opula menu
+/majili/home               # Majili home
+/majili/menu               # Majili menu
 ```
 
 ### **URL Management**
@@ -199,7 +199,7 @@ if (!currentPath.includes(`/${store.storeCode}`)) {
 - **Educational Categories**: Toys, games, educational
 - **Playful Colors**: Bright and cheerful tones
 
-### **Opula Layout (Fashion)**
+### **Majili Layout (Fashion)**
 - **Fashion Theme**: Pink and magenta color scheme
 - **Fashion Icons**: Fashion-related navigation icons
 - **Fashion Categories**: Clothing, accessories, jewelry
@@ -217,7 +217,7 @@ if (!currentPath.includes(`/${store.storeCode}`)) {
       <router-outlet></router-outlet>
     </app-layout>
     
-    <app-layout-fashion *ngIf="selectedStore?.storeCode === 'opula'">
+    <app-layout-fashion *ngIf="selectedStore?.storeCode === 'majili'">
       <router-outlet></router-outlet>
     </app-layout-fashion>
     
@@ -247,7 +247,7 @@ export const routes: Routes = [
     { path: 'menu', component: Menu },
     // ... other routes
   ]},
-  { path: 'opula', component: DynamicLayoutComponent, children: [
+  { path: 'majili', component: DynamicLayoutComponent, children: [
     { path: 'home', component: Home },
     { path: 'menu', component: Menu },
     // ... other routes
@@ -271,7 +271,7 @@ export const routes: Routes = [
   --accent-color: #FF6B35;
 }
 
-:host-context(.opula-theme) {
+:host-context(.majili-theme) {
   --primary-color: #FF69B4;
   --secondary-color: #FF1493;
   --accent-color: #E91E63;
@@ -330,7 +330,7 @@ private loadProductsForStore(store: StoreSession) {
     case 'little-ducks':
       // Load toy products
       break;
-    case 'opula':
+    case 'majili':
       // Load fashion products
       break;
   }

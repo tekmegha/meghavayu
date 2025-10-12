@@ -76,8 +76,8 @@ export class Profile implements OnInit {
         return 'assets/images/brew-buddy/default.png';
       case 'littleducks':
         return 'assets/images/little-ducks/default.png';
-      case 'opula':
-        return 'assets/images/opula/default.png';
+      case 'majili':
+        return 'assets/images/majili/default.png';
       case 'cctv-device':
         return 'assets/images/cctv-device/default.png';
       default:

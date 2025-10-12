@@ -286,8 +286,8 @@ export class Home implements OnInit, OnDestroy {
         return 'assets/images/brew-buddy/default.png';
       case 'littleducks':
         return 'assets/images/little-ducks/default.png';
-      case 'opula':
-        return 'assets/images/opula/default.png';
+      case 'majili':
+        return 'assets/images/majili/default.png';
       case 'cctv-device':
         return 'assets/images/cctv-device/default.png';
       default:
@@ -301,7 +301,7 @@ export class Home implements OnInit, OnDestroy {
         return 'Premium coffee and beverages';
       case 'little-ducks':
         return 'Educational toys and games';
-      case 'opula':
+      case 'majili':
         return 'Fashion and accessories';
       case 'sarc-academy':
         return 'Competitive exam preparation courses';
@@ -339,8 +339,8 @@ export class Home implements OnInit, OnDestroy {
         return 'brewbuddy';
       case 'little-ducks':
         return 'littleducks';
-      case 'opula':
-        return 'opula';
+      case 'majili':
+        return 'majili';
       case 'cctv-device':
         return 'cctv-device';
       default:

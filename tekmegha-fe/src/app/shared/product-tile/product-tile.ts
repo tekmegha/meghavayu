@@ -48,27 +48,21 @@ export class ProductTileComponent implements OnInit {
   }
 
   onImageError(event: Event) {
+    // Fallback to brand-specific default image
     const defaultImage = this.getBrandSpecificDefaultImage();
     (event.target as HTMLImageElement).src = defaultImage;
   }
 
   private getBrandSpecificDefaultImage(): string {
-    if (!this.brandService.getCurrentBrand()) {
-      return 'assets/images/brew-buddy/default.png'; // Default fallback
-    }
+    const brandId = this.brandService.getCurrentBrand()?.id || 'brew-buddy';
     
-    const brandId = this.brandService.getCurrentBrand()?.id;
-    switch (brandId) {
-      case 'brewbuddy':
-        return 'assets/images/brew-buddy/default.png';
-      case 'littleducks':
-        return 'assets/images/little-ducks/default.png';
-      case 'opula':
-        return 'assets/images/opula/default.png';
-      case 'cctv-device':
-        return 'assets/images/cctv-device/default.png';
-      default:
-        return 'assets/images/brew-buddy/default.png'; // Default fallback
-    }
+    // Try different fallback images
+    const fallbacks = [
+      `assets/images/${brandId}/default.png`,
+      `assets/images/brew-buddy/default.png`,
+      'assets/images/default-product.png'
+    ];
+    
+    return fallbacks[0];
   }
 }

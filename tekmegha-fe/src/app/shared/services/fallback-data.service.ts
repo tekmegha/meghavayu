@@ -10,8 +10,8 @@ export class FallbackDataService {
   getFallbackProducts(brandId: string = 'brew-buddy'): Product[] {
     if (brandId === 'little-ducks') {
       return this.getLittleDucksProducts();
-    } else if (brandId === 'opula') {
-      return this.getOpulaProducts();
+    } else if (brandId === 'majili') {
+      return this.getMajiliProducts();
     } else {
       return this.getBrewBuddyProducts();
     }
@@ -184,8 +184,8 @@ export class FallbackDataService {
   getFallbackStores(brandId: string = 'brew-buddy'): Store[] {
     if (brandId === 'little-ducks') {
       return this.getLittleDucksStores();
-    } else if (brandId === 'opula') {
-      return this.getOpulaStores();
+    } else if (brandId === 'majili') {
+      return this.getMajiliStores();
     } else {
       return this.getBrewBuddyStores();
     }
@@ -269,7 +269,7 @@ export class FallbackDataService {
     ];
   }
 
-  private getOpulaProducts(): Product[] {
+  private getMajiliProducts(): Product[] {
     return [
       {
         id: 'fashion-fallback-1',
@@ -279,12 +279,12 @@ export class FallbackDataService {
         reviewCount: 145,
         serves: 1,
         description: 'Elegant evening dress for special occasions',
-        imageUrl: 'assets/images/opula/designer-dress.jpg',
+        imageUrl: 'assets/images/majili/designer-dress.jpg',
         customisable: false,
         category: 'Dresses',
         discountPercentage: 30,
         oldPrice: 50.00,
-        brand_id: 'opula'
+        brand_id: 'majili'
       },
       {
         id: 'fashion-fallback-2',
@@ -294,13 +294,13 @@ export class FallbackDataService {
         reviewCount: 67,
         serves: 1,
         description: 'Swiss-made luxury timepiece',
-        imageUrl: 'assets/images/opula/luxury-watch.jpg',
+        imageUrl: 'assets/images/majili/luxury-watch.jpg',
         customisable: false,
         category: 'Accessories',
         discount_percentage: 15,
         discountPercentage: 15,
         oldPrice: 100.00,
-        brand_id: 'opula'
+        brand_id: 'majili'
       }
     ];
   }
@@ -318,15 +318,15 @@ export class FallbackDataService {
     ];
   }
 
-  private getOpulaStores(): Store[] {
+  private getMajiliStores(): Store[] {
     return [
       {
         id: 'fashion-store-1',
-        name: 'Opula Fashion Mall',
+        name: 'Majili Fashion Mall',
         address: 'Phoenix Mall, Level 2, Hyderabad, Telangana 500032',
         phone: '+91 40 1234 5678',
         hours: 'Mon-Sun: 10 AM - 11 PM',
-        brand_id: 'opula'
+        brand_id: 'majili'
       }
     ];
   }

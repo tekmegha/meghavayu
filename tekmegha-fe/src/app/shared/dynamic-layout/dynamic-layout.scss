@@ -48,8 +48,8 @@ app-layout-toys {
   --accent-color: #FF6B35;
 }
 
-:host-context(.opula-theme) {
-  // Opula specific styles
+:host-context(.majili-theme) {
+  // Majili specific styles
   --primary-color: #FF69B4;
   --secondary-color: #FF1493;
   --accent-color: #E91E63;

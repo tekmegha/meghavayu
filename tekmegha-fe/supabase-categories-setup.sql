@@ -140,7 +140,7 @@ SELECT
     1,
     true
 FROM megha_stores ms
-WHERE ms.store_code = 'opula'
+WHERE ms.store_code = 'majili'
 ON CONFLICT (name, megha_store_id) DO NOTHING;
 
 INSERT INTO categories (name, description, slug, megha_store_id, sort_order, is_active)
@@ -152,7 +152,7 @@ SELECT
     2,
     true
 FROM megha_stores ms
-WHERE ms.store_code = 'opula'
+WHERE ms.store_code = 'majili'
 ON CONFLICT (name, megha_store_id) DO NOTHING;
 
 -- Verification query

@@ -144,7 +144,7 @@ getStoreIcon(storeCode: string): string {
   switch (storeCode) {
     case 'brew-buddy': return 'local_cafe';
     case 'little-ducks': return 'toys';
-    case 'opula': return 'shopping_bag';
+    case 'majili': return 'shopping_bag';
     default: return 'store';
   }
 }
@@ -155,7 +155,7 @@ getStoreIcon(storeCode: string): string {
 ### **Available Stores**
 - **Brew Buddy**: Coffee and beverages
 - **Little Ducks**: Educational toys and games
-- **Opula**: Fashion and accessories
+- **Majili**: Fashion and accessories
 
 ### **Store Information**
 ```typescript
@@ -192,7 +192,7 @@ getStoreIcon(storeCode: string): string {
 ```
 /brew-buddy/          # Brew Buddy store
 /little-ducks/        # Little Ducks store
-/opula/               # Opula store
+/majili/              # Majili store
 ```
 
 ## 🎯 **Benefits**
@@ -259,7 +259,7 @@ this.storeSessionService.updateUrlForStore('brew-buddy');
   background: linear-gradient(135deg, #FFD700, #FFA500);
 }
 
-.opula-theme {
+.majili-theme {
   background: linear-gradient(135deg, #FF69B4, #FF1493);
 }
 ```

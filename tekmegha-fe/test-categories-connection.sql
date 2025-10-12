@@ -22,7 +22,7 @@ FROM categories
 WHERE megha_store_id = 'de6fb86d-e6fd-4524-bed1-a9b326f0112f'::uuid
 ORDER BY sort_order, name;
 
--- 4. Check categories for Opula store
+-- 4. Check categories for Majili store
 SELECT 
   name, 
   slug, 

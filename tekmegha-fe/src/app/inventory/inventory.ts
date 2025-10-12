@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { InventoryService, InventoryProduct, InventoryStats } from '../shared/services/inventory.service';
 import { SupabaseService } from '../shared/services/supabase.service';
+import { BrandService } from '../shared/services/brand.service';
 
 @Component({
   selector: 'app-inventory',
@@ -47,6 +48,10 @@ export class Inventory implements OnInit {
     margin_percentage: 40
   };
 
+  // Product number for image path generation
+  productNumber: number = 1;
+  editProductNumber: number = 1;
+
   categories: string[] = [];
 
   currentUser: any = null;
@@ -54,7 +59,8 @@ export class Inventory implements OnInit {
   constructor(
     private inventoryService: InventoryService,
     private supabaseService: SupabaseService,
-    private router: Router
+    private router: Router,
+    private brandService: BrandService
   ) {}
 
   async ngOnInit() {
@@ -153,11 +159,12 @@ export class Inventory implements OnInit {
   }
 
   openAddModal() {
+    this.productNumber = this.getNextProductNumber();
     this.newProduct = {
       name: '',
       price: 0,
       description: '',
-      image_url: '',
+      image_url: this.generateImageUrl(this.productNumber),
       category: 'Espresso Drinks',
       stock_quantity: 100,
       low_stock_threshold: 10,
@@ -169,9 +176,66 @@ export class Inventory implements OnInit {
     this.showAddModal = true;
   }
 
+  getNextProductNumber(): number {
+    // Get the highest product number from existing products and add 1
+    if (this.products.length === 0) return 1;
+    
+    const numbers = this.products.map(p => this.extractProductNumber(p));
+    const maxNumber = Math.max(...numbers);
+    return maxNumber + 1;
+  }
+
+  onProductNumberChange(): void {
+    // Auto-generate image URL when product number changes
+    if (this.productNumber && this.productNumber > 0) {
+      this.newProduct.image_url = this.generateImageUrl(this.productNumber);
+    }
+  }
+
+  generateImageUrl(productNumber: number): string {
+    const brandId = this.brandService.getCurrentBrand()?.id || 'brewbuddy';
+    return `assets/images/${brandId}/products/${productNumber}.png`;
+  }
+
+  getBrandId(): string {
+    return this.brandService.getCurrentBrand()?.id || 'brewbuddy';
+  }
+
+  onPreviewImageError(event: Event): void {
+    // Show default image in preview if image fails to load
+    (event.target as HTMLImageElement).src = this.getBrandSpecificDefaultImage();
+  }
+
   openEditModal(product: InventoryProduct) {
     this.selectedProduct = { ...product };
+    // Extract product number from existing image URL or SKU
+    this.editProductNumber = this.extractProductNumberFromImageUrl(product.image_url) || this.extractProductNumberFromSKU(product.sku || '');
     this.showEditModal = true;
+  }
+
+  private extractProductNumberFromImageUrl(imageUrl: string | undefined): number | null {
+    // Extract number from image URL like "assets/images/brewbuddy/products/5.png"
+    if (!imageUrl) return null;
+    const match = imageUrl.match(/products\/(\d+)\.png/);
+    return match ? parseInt(match[1], 10) : null;
+  }
+
+  private extractProductNumberFromSKU(sku: string | undefined): number {
+    // Try to extract number from SKU
+    if (sku) {
+      const match = sku.match(/\d+/);
+      if (match) {
+        return parseInt(match[0], 10);
+      }
+    }
+    return 1;
+  }
+
+  onEditProductNumberChange(): void {
+    // Auto-generate image URL when edit product number changes
+    if (this.selectedProduct && this.editProductNumber && this.editProductNumber > 0) {
+      this.selectedProduct.image_url = this.generateImageUrl(this.editProductNumber);
+    }
   }
 
   openDeleteModal(product: InventoryProduct) {
@@ -280,6 +344,25 @@ export class Inventory implements OnInit {
 
   formatCurrency(amount: number): string {
     return `₹${amount.toFixed(2)}`;
+  }
+
+  onImageError(event: Event, product: InventoryProduct): void {
+    // Fallback to brand-specific default image
+    const defaultImage = this.getBrandSpecificDefaultImage();
+    (event.target as HTMLImageElement).src = defaultImage;
+  }
+
+  private getBrandSpecificDefaultImage(): string {
+    const brandId = this.brandService.getCurrentBrand()?.id || 'brewbuddy';
+    
+    // Try different fallback images
+    const fallbacks = [
+      `assets/images/${brandId}/default.png`,
+      `assets/images/brew-buddy/default.png`,
+      'assets/images/default-product.png'
+    ];
+    
+    return fallbacks[0];
   }
 
   async onLogout() {

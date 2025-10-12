@@ -231,7 +231,7 @@ WHERE schemaname = 'public';
 
 After completing all steps, you should have:
 
-- ✅ **3 stores**: Brew Buddy, Little Ducks, Opula
+- ✅ **3 stores**: Brew Buddy, Little Ducks, Majili
 - ✅ **6 categories**: 2 per store
 - ✅ **Location inventory**: Stock tracking system
 - ✅ **User access**: Team members with proper roles

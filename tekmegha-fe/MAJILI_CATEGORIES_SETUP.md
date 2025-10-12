@@ -1,11 +1,11 @@
-# Opula Fashion Store Categories Setup
+# Majili Fashion Store Categories Setup
 
 ## Overview
-This guide helps you set up comprehensive fashion categories for the Opula store with a hierarchical structure suitable for a fashion retail business.
+This guide helps you set up comprehensive fashion categories for the Majili store with a hierarchical structure suitable for a fashion retail business.
 
 ## Store Information
 - **Store ID**: `744160be-d602-443d-8616-d71673ae267f`
-- **Store Name**: OPULA
+- **Store Name**: MAJILI
 - **Store Type**: Fashion Retail
 
 ## Setup Steps
@@ -14,7 +14,7 @@ This guide helps you set up comprehensive fashion categories for the Opula store
 Execute the SQL script in Supabase SQL Editor:
 
 ```sql
--- Copy and paste the contents of insert-opula-categories.sql
+-- Copy and paste the contents of insert-majili-categories.sql
 ```
 
 ### 2. Verify Categories Creation
@@ -76,7 +76,7 @@ ORDER BY c.sort_order, c.name;
 ### Hierarchical Structure
 - **5 Main Categories**: Women's Clothing, Men's Clothing, Accessories, Shoes, Jewelry
 - **20 Subcategories**: Detailed breakdown of each main category
-- **Store-Specific**: Categories are isolated to Opula store only
+- **Store-Specific**: Categories are isolated to Majili store only
 
 ### Fashion-Focused Design
 - **Women's Fashion**: Dresses, tops, bottoms, outerwear
@@ -118,10 +118,10 @@ The application includes comprehensive icon mapping for fashion categories:
 ## Usage in Application
 
 ### Category Loading
-The application will automatically load Opula-specific categories when the store is selected:
+The application will automatically load Majili-specific categories when the store is selected:
 
 ```typescript
-// Get main categories for Opula store
+// Get main categories for Majili store
 const { data, error } = await this.supabaseService.getMainCategories();
 ```
 
@@ -160,14 +160,14 @@ Categories will be displayed with appropriate icons and navigation:
 - Professional presentation
 
 ### 5. **Store Isolation**
-- Categories are specific to Opula store
+- Categories are specific to Majili store
 - No cross-contamination with other stores
 - Independent category management
 
 ## Testing the Setup
 
 ### 1. Verify Categories Load
-After running the script, check that categories appear in the application when Opula store is selected.
+After running the script, check that categories appear in the application when Majili store is selected.
 
 ### 2. Test Category Navigation
 Ensure that clicking on categories navigates properly and shows relevant products.
@@ -212,7 +212,7 @@ Add meta descriptions and keywords for each category.
 ### Verification Queries
 
 ```sql
--- Check if categories exist for Opula store
+-- Check if categories exist for Majili store
 SELECT COUNT(*) as category_count 
 FROM categories 
 WHERE megha_store_id = '744160be-d602-443d-8616-d71673ae267f';
@@ -240,4 +240,4 @@ If you encounter issues:
 3. Ensure the categories table exists and has proper RLS policies
 4. Test with a simple category query first
 
-The Opula fashion store now has a comprehensive category structure that will provide an excellent shopping experience for fashion customers!
+The Majili fashion store now has a comprehensive category structure that will provide an excellent shopping experience for fashion customers!

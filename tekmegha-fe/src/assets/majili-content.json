@@ -6,7 +6,7 @@
       "action": "toggleMenu"
     },
     {
-      "label": "Opula",
+      "label": "Majili",
       "position": "center"
     },
     {
@@ -53,24 +53,25 @@
   "stores": [
     {
       "id": "fashion-store1",
-      "name": "Opula Flagship",
+      "name": "Majili Flagship",
       "address": "123 Fashion Avenue, Downtown, City, State 12345",
       "phone": "+1 555 123 4567",
       "hours": "Mon-Sun: 10 AM - 9 PM"
     },
     {
       "id": "fashion-store2",
-      "name": "Opula Boutique",
+      "name": "Majili Boutique",
       "address": "456 Style Street, Shopping District, City, State 12345",
       "phone": "+1 555 234 5678",
       "hours": "Mon-Sat: 10 AM - 8 PM, Sun: 12 PM - 6 PM"
     },
     {
       "id": "fashion-store3",
-      "name": "Opula Express",
+      "name": "Majili Express",
       "address": "789 Trend Lane, Mall Location, City, State 12345",
       "phone": "+1 555 345 6789",
       "hours": "Mon-Sun: 9 AM - 10 PM"
     }
   ]
 }
+

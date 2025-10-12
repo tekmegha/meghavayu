@@ -28,8 +28,8 @@ SELECT COUNT(*) as brew_buddy_categories
 FROM categories 
 WHERE megha_store_id = 'de6fb86d-e6fd-4524-bed1-a9b326f0112f'::uuid;
 
--- Check categories for Opula store
-SELECT COUNT(*) as opula_categories 
+-- Check categories for Majili store
+SELECT COUNT(*) as majili_categories 
 FROM categories 
 WHERE megha_store_id = '744160be-d602-443d-8616-d71673ae267f'::uuid;
 ```
@@ -77,9 +77,9 @@ WHERE megha_store_id = 'de6fb86d-e6fd-4524-bed1-a9b326f0112f'::uuid
 ORDER BY sort_order, name;
 ```
 
-### 3.2 Test Opula Categories
+### 3.2 Test Majili Categories
 ```sql
--- Test Opula categories query
+-- Test Majili categories query
 SELECT 
   name, 
   slug, 
@@ -100,7 +100,7 @@ ORDER BY sort_order, name;
 1. Open your application in the browser
 2. Press F12 to open Developer Tools
 3. Go to the Console tab
-4. Select a store (Brew Buddy or Opula)
+4. Select a store (Brew Buddy or Majili)
 5. Look for category-related logs
 
 ### 4.2 Expected Log Messages
@@ -152,8 +152,8 @@ Current store: {store details}
 -- For Brew Buddy store
 -- Copy and paste insert-brew-buddy-categories.sql
 
--- For Opula store  
--- Copy and paste insert-opula-categories.sql
+-- For Majili store  
+-- Copy and paste insert-majili-categories.sql
 ```
 
 ### 5.3 RLS Policy Issues
@@ -188,7 +188,7 @@ The application now has comprehensive debug logging. Check the browser console f
 
 ### 6.2 Test Different Stores
 1. Try selecting Brew Buddy store
-2. Try selecting Opula store
+2. Try selecting Majili store
 3. Check if categories load for each store
 4. Compare console logs between stores
 
@@ -225,7 +225,7 @@ If categories are not loading, try:
 If data is missing:
 1. Run `create-categories-table.sql`
 2. Run `insert-brew-buddy-categories.sql`
-3. Run `insert-opula-categories.sql`
+3. Run `insert-majili-categories.sql`
 4. Test the application
 
 ### 8.3 Check Store Selection

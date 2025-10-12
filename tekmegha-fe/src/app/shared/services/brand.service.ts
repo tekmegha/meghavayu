@@ -148,18 +148,18 @@ export class BrandService {
       }
     },
     {
-      id: 'opula',
-      name: 'opula',
-      displayName: 'Opula',
+      id: 'majili',
+      name: 'majili',
+      displayName: 'Majili',
       description: 'Trendy Fashion & Style',
-      logo: 'assets/images/opula/logo.png',
+      logo: 'assets/images/majili/logo.png',
       primaryColor: '#ec4899',
       secondaryColor: '#8b5cf6',
       accentColor: '#f59e0b',
       backgroundGradient: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)',
       navbarGradient: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)',
       theme: 'fashion',
-      domain: 'opula.com',
+      domain: 'majili.com',
       features: {
         inventory: true,
         delivery: true,
@@ -184,7 +184,7 @@ export class BrandService {
       content: {
         heroTitle: 'Trendy Fashion & Style',
         heroSubtitle: 'Express your unique style',
-        heroImage: 'assets/images/opula/hero-fashion.jpg',
+        heroImage: 'assets/images/majili/hero-fashion.jpg',
         categories: [
           { name: 'Women\'s Fashion', icon: 'woman', route: '/menu?category=womens' },
           { name: 'Men\'s Fashion', icon: 'man', route: '/menu?category=mens' },
@@ -289,8 +289,8 @@ export class BrandService {
     
     if (hostname.includes('littleducks') || hostname.includes('toys')) {
       return 'littleducks';
-    } else if (hostname.includes('opula') || hostname.includes('fashion')) {
-      return 'opula';
+    } else if (hostname.includes('majili') || hostname.includes('fashion')) {
+      return 'majili';
     } else {
       return 'brewbuddy';
     }

@@ -10,11 +10,8 @@
 
   // Toys-specific styling
   app-location-bar {
-    position: sticky;
-    top: 60px; // Below top navbar
-    z-index: 999;
-    background: var(--navbar-gradient);
-    backdrop-filter: blur(10px);
+    display: block;
+    // Sticky positioning is handled within the component itself
   }
 
   // Toys theme colors - these will be overridden by brand service
