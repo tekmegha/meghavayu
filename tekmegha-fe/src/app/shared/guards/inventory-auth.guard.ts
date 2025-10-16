@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { SupabaseService } from '../services/supabase.service';
 
 @Injectable({
@@ -11,13 +11,26 @@ export class InventoryAuthGuard implements CanActivate {
     private router: Router
   ) {}
 
-  async canActivate(): Promise<boolean> {
+  async canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Promise<boolean> {
     try {
       const user = this.supabaseService.getCurrentUser();
       
       if (!user) {
-        // No user logged in, redirect to inventory login
-        this.router.navigate(['/inventory-login']);
+        // No user logged in, redirect to inventory login with return URL
+        const returnUrl = state.url;
+        
+        // Check if the URL has a store context, if not redirect to store selection
+        if (this.isGlobalRoute(state.url)) {
+          this.router.navigate(['/stores']);
+          return false;
+        }
+        
+        this.router.navigate(['/inventory-login'], { 
+          queryParams: { returnUrl: returnUrl }
+        });
         return false;
       }
 
@@ -25,15 +38,35 @@ export class InventoryAuthGuard implements CanActivate {
       const hasAccess = await this.checkInventoryAccess(user.id);
       
       if (!hasAccess) {
-        // User doesn't have access, redirect to inventory login
-        this.router.navigate(['/inventory-login']);
+        // User doesn't have access, redirect to inventory login with return URL
+        const returnUrl = state.url;
+        
+        // Check if the URL has a store context, if not redirect to store selection
+        if (this.isGlobalRoute(state.url)) {
+          this.router.navigate(['/stores']);
+          return false;
+        }
+        
+        this.router.navigate(['/inventory-login'], { 
+          queryParams: { returnUrl: returnUrl }
+        });
         return false;
       }
 
       return true;
     } catch (error) {
       console.error('Error checking inventory access:', error);
-      this.router.navigate(['/inventory-login']);
+      const returnUrl = state.url;
+      
+      // Check if the URL has a store context, if not redirect to store selection
+      if (this.isGlobalRoute(state.url)) {
+        this.router.navigate(['/stores']);
+        return false;
+      }
+      
+      this.router.navigate(['/inventory-login'], { 
+        queryParams: { returnUrl: returnUrl }
+      });
       return false;
     }
   }
@@ -64,5 +97,11 @@ export class InventoryAuthGuard implements CanActivate {
       console.error('Error checking inventory access:', error);
       return false;
     }
+  }
+
+  private isGlobalRoute(url: string): boolean {
+    // Check if the URL is a global route without store context
+    const globalRoutes = ['/invoices', '/invoice', '/inventory'];
+    return globalRoutes.some(route => url.startsWith(route));
   }
 }

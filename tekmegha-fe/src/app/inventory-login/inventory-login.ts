@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { SupabaseService } from '../shared/services/supabase.service';
 
 @Component({
@@ -19,7 +19,8 @@ export class InventoryLogin implements OnInit {
 
   constructor(
     private supabaseService: SupabaseService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit() {
@@ -33,7 +34,9 @@ export class InventoryLogin implements OnInit {
       // Check if user has inventory access
       const hasAccess = await this.checkInventoryAccess(user.id);
       if (hasAccess) {
-        this.router.navigate(['/inventory']);
+        // Check if there's a return URL, otherwise go to inventory
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/inventory';
+        this.router.navigateByUrl(returnUrl);
       }
     }
   }
@@ -59,9 +62,11 @@ export class InventoryLogin implements OnInit {
         const hasAccess = await this.checkInventoryAccess(data.user.id);
         
         if (hasAccess) {
-          this.successMessage = 'Login successful! Redirecting to inventory...';
+          // Check if there's a return URL, otherwise go to inventory
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/inventory';
+          this.successMessage = 'Login successful! Redirecting...';
           setTimeout(() => {
-            this.router.navigate(['/inventory']);
+            this.router.navigateByUrl(returnUrl);
           }, 1500);
         } else {
           this.errorMessage = 'Access denied. You do not have permission to access the inventory module.';

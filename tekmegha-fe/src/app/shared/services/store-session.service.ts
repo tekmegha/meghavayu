@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SupabaseService } from './supabase.service';
-import { StoreContextService } from './store-context.service';
 
 export interface StoreSession {
   storeId: string;
@@ -19,38 +18,23 @@ export class StoreSessionService {
   public selectedStore$ = this.selectedStoreSubject.asObservable();
 
   constructor(
-    private supabaseService: SupabaseService,
-    private storeContextService: StoreContextService
+    private supabaseService: SupabaseService
   ) {
     // Initialize with stored session or default
     this.initializeStoreSession();
   }
 
   private async initializeStoreSession() {
-    // Check if there's a stored session
-    const storedStore = localStorage.getItem('selected-store');
-    if (storedStore) {
-      try {
-        const storeSession = JSON.parse(storedStore);
-        this.selectedStoreSubject.next(storeSession);
-        // Update store context
-        this.storeContextService.setCurrentStore(storeSession);
-        return;
-      } catch (error) {
-        console.error('Error parsing stored store session:', error);
-        localStorage.removeItem('selected-store');
-      }
-    }
-
-    // Check if URL indicates a specific store
+    // Always determine store from URL (URL-driven approach)
     const currentStore = this.supabaseService.getCurrentStore();
     if (currentStore) {
       await this.loadStoreByCode(currentStore);
-    } else {
-      // Don't set a default store - let user choose from all available stores
-      // The store selector will display all megha stores for selection
-      console.log('No default store set - user will choose from available stores');
+      return;
     }
+
+    // No store detected from URL - this is normal for global routes
+    console.log('No store detected from URL - using global context');
+    this.selectedStoreSubject.next(null);
   }
 
   async loadStoreByCode(storeCode: string): Promise<StoreSession | null> {
@@ -141,10 +125,8 @@ export class StoreSessionService {
 
   setSelectedStore(store: StoreSession): void {
     this.selectedStoreSubject.next(store);
-    // Update store context for other services
-    this.storeContextService.setCurrentStore(store);
-    // Store in localStorage for persistence
-    localStorage.setItem('selected-store', JSON.stringify(store));
+    // Note: No localStorage storage - store context is URL-driven
+    console.log('Store session set from URL:', store);
   }
 
   getSelectedStore(): StoreSession | null {
@@ -161,9 +143,9 @@ export class StoreSessionService {
 
   clearSelectedStore(): void {
     this.selectedStoreSubject.next(null);
-    // Clear store context
-    this.storeContextService.setCurrentStore(null);
-    localStorage.removeItem('selected-store');
+    // Navigate to global home instead of clearing localStorage
+    window.location.href = '/home';
+    console.log('Cleared store session - navigating to global home');
   }
 
   // Get all available stores for selection
@@ -206,13 +188,20 @@ export class StoreSessionService {
     }
   }
 
-  // Check if current store is selected
-  isCurrentStoreSelected(): boolean {
+  // Check if current store matches URL store
+  isCurrentStoreFromUrl(): boolean {
     const selectedStore = this.getSelectedStore();
     if (!selectedStore) return false;
 
-    const currentStoreCode = this.supabaseService.getCurrentStore();
-    return selectedStore.storeCode === currentStoreCode;
+    const urlStoreCode = this.supabaseService.getCurrentStore();
+    return selectedStore.storeCode === urlStoreCode;
+  }
+
+  // Navigate to store-specific URL
+  navigateToStore(storeCode: string, path: string = 'home'): void {
+    const storeUrl = `/${storeCode}/${path}`;
+    window.location.href = storeUrl;
+    console.log('Navigating to store URL:', storeUrl);
   }
 
   // Update URL to match selected store

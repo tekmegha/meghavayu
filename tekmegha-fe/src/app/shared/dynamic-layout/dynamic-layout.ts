@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, ActivatedRoute } from '@angular/router';
 import { StoreSessionService, StoreSession } from '../services/store-session.service';
 import { Layout } from '../../layout/layout';
 import { LayoutFashion } from '../../layout-fashion/layout-fashion';
@@ -22,8 +22,8 @@ import { Subscription } from 'rxjs';
     LayoutFood
   ],
   template: `
-    <!-- Default Layout (Brew Buddy & Insurance) -->
-    <app-layout *ngIf="!selectedStore || selectedStore.storeCode === 'brew-buddy' || selectedStore.storeCode === 'tekmegha-clients' || selectedStore.storeCode === 'dkassociates' || selectedStore.storeCode === 'automobile-insurance'">
+    <!-- Default Layout (All stores except specific ones) -->
+    <app-layout *ngIf="!selectedStore || !isSpecialLayout(selectedStore.storeCode)">
       <router-outlet></router-outlet>
     </app-layout>
 
@@ -53,7 +53,10 @@ export class DynamicLayoutComponent implements OnInit, OnDestroy {
   selectedStore: StoreSession | null = null;
   private subscription = new Subscription();
 
-  constructor(private storeSessionService: StoreSessionService) {}
+  constructor(
+    private storeSessionService: StoreSessionService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
     // Subscribe to store session changes
@@ -65,42 +68,112 @@ export class DynamicLayoutComponent implements OnInit, OnDestroy {
 
     // Auto-select store based on URL path
     this.detectStoreFromUrl();
+
+    // Also listen to route changes to re-detect store when URL changes
+    this.subscription.add(
+      this.route.params.subscribe(() => {
+        this.detectStoreFromUrl();
+        // Store context is managed by StoreSessionService
+      })
+    );
+
+    this.subscription.add(
+      this.route.queryParams.subscribe(() => {
+        this.detectStoreFromUrl();
+        // Store context is managed by StoreSessionService
+      })
+    );
   }
 
   private detectStoreFromUrl() {
+    console.log('DynamicLayoutComponent - Detecting store from URL:', window.location.pathname);
+    
+    // First check if we have a storeCode parameter from the route
+    const storeCodeParam = this.route.snapshot.paramMap.get('storeCode');
+    console.log('Store code from route param:', storeCodeParam);
+    
+    if (storeCodeParam) {
+      console.log('Loading store by code from route param:', storeCodeParam);
+      this.storeSessionService.loadStoreByCode(storeCodeParam);
+      return;
+    }
+
+    // Check if we're on inventory-login and have a returnUrl with store code
+    const currentPath = window.location.pathname;
+    if (currentPath === '/inventory-login') {
+      const returnUrl = this.route.snapshot.queryParams['returnUrl'];
+      if (returnUrl) {
+        const storeCodeFromReturnUrl = this.extractStoreCodeFromPath(returnUrl);
+        if (storeCodeFromReturnUrl) {
+          this.storeSessionService.loadStoreByCode(storeCodeFromReturnUrl);
+          return;
+        }
+      }
+    }
+
+    // Fallback to path-based detection for specific routes
     const path = window.location.pathname;
     let storeCode = '';
 
-    if (path.startsWith('/brew-buddy')) {
-      storeCode = 'brew-buddy';
-    } else if (path.startsWith('/little-ducks')) {
-      storeCode = 'little-ducks';
-    } else if (path.startsWith('/majili')) {
-      storeCode = 'majili';
-    } else if (path.startsWith('/cctv-device')) {
-      storeCode = 'cctv-device';
-    } else if (path.startsWith('/royalfoods')) {
-      storeCode = 'royalfoods';
-    } else if (path.startsWith('/dkassociates')) {
-      storeCode = 'dkassociates';
-    } else if (path.startsWith('/automobile-insurance')) {
-      storeCode = 'automobile-insurance';
-    } else if (path.startsWith('/insurance')) {
-      storeCode = 'automobile-insurance';
-    } else if (path.startsWith('/fashion')) {
+    console.log('Checking path-based detection for:', path);
+
+    // Handle redirects first
+    if (path.startsWith('/fashion')) {
       storeCode = 'majili';
     } else if (path.startsWith('/toys')) {
       storeCode = 'little-ducks';
     } else if (path.startsWith('/food')) {
       storeCode = 'royalfoods';
+    } else if (path.startsWith('/insurance')) {
+      storeCode = 'automobile-insurance';
+    } else {
+      // Extract store code from path dynamically
+      const pathSegments = path.split('/').filter(segment => segment);
+      if (pathSegments.length > 0) {
+        const potentialStoreCode = pathSegments[0];
+        const globalRoutes = ['home', 'menu', 'cart', 'stores', 'profile', 'login', 'inventory', 'invoice', 'insurances', 'tekmegha-clients', 'inventory-login'];
+        
+        if (!globalRoutes.includes(potentialStoreCode)) {
+          storeCode = potentialStoreCode;
+        }
+      }
     }
 
+    console.log('Detected store code from path:', storeCode);
+
     if (storeCode) {
+      console.log('Loading store by code from path:', storeCode);
       this.storeSessionService.loadStoreByCode(storeCode);
+    } else {
+      console.log('No store code detected from path');
     }
+  }
+
+  private extractStoreCodeFromPath(path: string): string | null {
+    // Remove leading slash and split by '/'
+    const segments = path.replace(/^\//, '').split('/');
+    if (segments.length > 0) {
+      const potentialStoreCode = segments[0];
+      // Check if it's not a known global route
+      const globalRoutes = ['home', 'menu', 'cart', 'stores', 'profile', 'login', 'inventory', 'invoice', 'insurances', 'tekmegha-clients'];
+      if (!globalRoutes.includes(potentialStoreCode)) {
+        return potentialStoreCode;
+      }
+    }
+    return null;
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  /**
+   * Check if a store code requires a special layout
+   * @param storeCode The store code to check
+   * @returns true if the store needs a special layout, false for default layout
+   */
+  isSpecialLayout(storeCode: string): boolean {
+    const specialLayouts = ['majili', 'little-ducks', 'cctv-device', 'royalfoods'];
+    return specialLayouts.includes(storeCode);
   }
 }

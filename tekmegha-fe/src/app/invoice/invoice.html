@@ -1,0 +1,617 @@
+<!-- Invoice Form (when not in preview mode) -->
+<div class="invoice-container" *ngIf="!showPreview">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <span class="material-icons">arrow_back</span>
+      </button>
+      <h1 class="page-title">{{ getPageTitle() }}</h1>
+    </div>
+    <div class="header-actions">
+      <button *ngIf="mode === 'new' || mode === 'edit'" class="btn btn-secondary" (click)="previewInvoice()" [disabled]="!invoiceForm.valid">
+        <span class="material-icons">visibility</span>
+        Preview
+      </button>
+      <button *ngIf="mode === 'view'" class="btn btn-primary" (click)="editInvoice()">
+        <span class="material-icons">edit</span>
+        Edit
+      </button>
+      <button *ngIf="mode === 'view'" class="btn btn-secondary" (click)="printInvoice()">
+        <span class="material-icons">print</span>
+        Print
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div class="error-message" *ngIf="error">
+    <span class="material-icons">error</span>
+    {{ error }}
+  </div>
+
+
+  <!-- Tab Navigation -->
+  <div class="form-tabs">
+    <div class="tab-nav">
+      <button 
+        type="button" 
+        class="tab-button" 
+        [class.active]="isTabActive('items')"
+        (click)="setActiveTab('items')"
+      >
+        <span class="material-icons">shopping_cart</span>
+        Items
+      </button>
+      <button 
+        type="button" 
+        class="tab-button" 
+        [class.active]="isTabActive('invoice')"
+        (click)="setActiveTab('invoice')"
+      >
+        <span class="material-icons">receipt</span>
+        Invoice Details
+      </button>
+      <button 
+        type="button" 
+        class="tab-button" 
+        [class.active]="isTabActive('store')"
+        (click)="setActiveTab('store')"
+      >
+        <span class="material-icons">store</span>
+        Store Info
+      </button>
+      <button 
+        type="button" 
+        class="tab-button" 
+        [class.active]="isTabActive('buyer')"
+        (click)="setActiveTab('buyer')"
+      >
+        <span class="material-icons">person</span>
+        Bill To
+      </button>
+    </div>
+  </div>
+
+  <!-- Invoice Form -->
+  <form [formGroup]="invoiceForm" class="invoice-form" [class.view-mode]="mode === 'view'">
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+      
+      <!-- Items Tab -->
+      <div class="tab-panel" [class.active]="isTabActive('items')">
+        <div class="items-section">
+          <div class="section-header">
+            <h3>Invoice Items</h3>
+            <button type="button" class="btn btn-primary" (click)="addItem()">
+              <span class="material-icons">add</span>
+              Add Item
+            </button>
+          </div>
+          
+          <!-- Items Table -->
+          <div class="items-table" formArrayName="items">
+            <div class="table-header">
+              <div class="col-item">Item Name</div>
+              <div class="col-qty">Qty</div>
+              <div class="col-rate">Rate</div>
+              <div class="col-amount">Amount</div>
+              <div class="col-discount">Discount %</div>
+              <div class="col-final">Final Amount</div>
+              <div class="col-actions">Actions</div>
+            </div>
+            
+            <div 
+              *ngFor="let itemGroup of items.controls; let i = index" 
+              class="table-row"
+              [formGroupName]="i"
+            >
+              <div class="col-item">
+                <input 
+                  type="text" 
+                  formControlName="itemName" 
+                  class="form-control"
+                  placeholder="Item name"
+                  [class.error]="itemGroup.get('itemName')?.invalid && itemGroup.get('itemName')?.touched"
+                >
+              </div>
+              
+              <div class="col-qty">
+                <input 
+                  type="number" 
+                  formControlName="quantity" 
+                  class="form-control"
+                  min="1"
+                  step="1"
+                  (input)="calculateItemTotal(i)"
+                  [class.error]="itemGroup.get('quantity')?.invalid && itemGroup.get('quantity')?.touched"
+                >
+              </div>
+              
+              <div class="col-rate">
+                <input 
+                  type="number" 
+                  formControlName="rate" 
+                  class="form-control"
+                  min="0"
+                  step="0.01"
+                  (input)="calculateItemTotal(i)"
+                  [class.error]="itemGroup.get('rate')?.invalid && itemGroup.get('rate')?.touched"
+                >
+              </div>
+              
+              <div class="col-amount">
+                <input 
+                  type="number" 
+                  formControlName="amount" 
+                  class="form-control"
+                  readonly
+                  [value]="getItemTotal(i)"
+                >
+              </div>
+              
+              <div class="col-discount">
+                <input 
+                  type="number" 
+                  formControlName="discount" 
+                  class="form-control"
+                  min="0"
+                  max="100"
+                  step="0.01"
+                  (input)="calculateItemTotal(i)"
+                >
+              </div>
+              
+              <div class="col-final">
+                <input 
+                  type="number" 
+                  formControlName="finalAmount" 
+                  class="form-control"
+                  readonly
+                  [value]="getItemFinalAmount(i)"
+                >
+              </div>
+              
+              <div class="col-actions">
+                <button 
+                  type="button" 
+                  class="btn btn-sm btn-secondary" 
+                  (click)="duplicateItem(i)"
+                  title="Duplicate"
+                >
+                  <span class="material-icons">content_copy</span>
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-sm btn-danger" 
+                  (click)="removeItem(i)"
+                  [disabled]="items.length <= 1"
+                  title="Delete"
+                >
+                  <span class="material-icons">delete</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Summary -->
+          <div class="items-summary">
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span>{{ formatCurrency(getSubtotal()) }}</span>
+            </div>
+            <div class="summary-row">
+              <span>Total Discount:</span>
+              <span>{{ formatCurrency(getTotalDiscount()) }}</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total Amount:</span>
+              <span>{{ formatCurrency(getTotalAmount()) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Invoice Details Tab -->
+      <div class="tab-panel" [class.active]="isTabActive('invoice')">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="invoiceNumber">Invoice Number</label>
+            <input 
+              type="text" 
+              id="invoiceNumber" 
+              formControlName="invoiceNumber" 
+              class="form-control"
+              [class.error]="invoiceNumberControl?.invalid && invoiceNumberControl?.touched"
+            >
+            <div class="error-text" *ngIf="invoiceNumberControl?.invalid && invoiceNumberControl?.touched">
+              Invoice number is required
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="date">Date</label>
+            <input 
+              type="date" 
+              id="date" 
+              formControlName="date" 
+              class="form-control"
+              [class.error]="dateControl?.invalid && dateControl?.touched"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Store Information Tab -->
+      <div class="tab-panel" [class.active]="isTabActive('store')">
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="storeName">Store Name</label>
+            <input 
+              type="text" 
+              id="storeName" 
+              formControlName="storeName" 
+              class="form-control"
+              [class.error]="storeNameControl?.invalid && storeNameControl?.touched"
+            >
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="storeAddress">Store Address</label>
+            <textarea 
+              id="storeAddress" 
+              formControlName="storeAddress" 
+              class="form-control"
+              rows="2"
+              [class.error]="storeAddressControl?.invalid && storeAddressControl?.touched"
+            ></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="storeContact">Contact</label>
+            <input 
+              type="text" 
+              id="storeContact" 
+              formControlName="storeContact" 
+              class="form-control"
+              [class.error]="storeContactControl?.invalid && storeContactControl?.touched"
+            >
+          </div>
+          <div class="form-group">
+            <label for="storeGstin">GSTIN</label>
+            <input 
+              type="text" 
+              id="storeGstin" 
+              formControlName="storeGstin" 
+              class="form-control"
+              [class.error]="storeGstinControl?.invalid && storeGstinControl?.touched"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Buyer Information Tab -->
+      <div class="tab-panel" [class.active]="isTabActive('buyer')">
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="buyerName">Customer Name</label>
+            <input 
+              type="text" 
+              id="buyerName" 
+              formControlName="buyerName" 
+              class="form-control"
+              [class.error]="buyerNameControl?.invalid && buyerNameControl?.touched"
+            >
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="buyerAddress">Address</label>
+            <textarea 
+              id="buyerAddress" 
+              formControlName="buyerAddress" 
+              class="form-control"
+              rows="2"
+              [class.error]="buyerAddressControl?.invalid && buyerAddressControl?.touched"
+            ></textarea>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="buyerContact">Contact</label>
+            <input 
+              type="text" 
+              id="buyerContact" 
+              formControlName="buyerContact" 
+              class="form-control"
+              [class.error]="buyerContactControl?.invalid && buyerContactControl?.touched"
+            >
+          </div>
+          <div class="form-group">
+            <label for="paymentMode">Payment Mode</label>
+            <select 
+              id="paymentMode" 
+              formControlName="paymentMode" 
+              class="form-control"
+              [class.error]="paymentModeControl?.invalid && paymentModeControl?.touched"
+            >
+              <option value="Cash">Cash</option>
+              <option value="Card">Card</option>
+              <option value="UPI">UPI</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="Cheque">Cheque</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Items Section -->
+    <div class="form-section">
+      <div class="section-header">
+        <h3>Items</h3>
+        <button type="button" class="btn btn-primary" (click)="addItem()">
+          <span class="material-icons">add</span>
+          Add Item
+        </button>
+      </div>
+
+      <div formArrayName="items" class="items-list">
+        <div 
+          *ngFor="let item of items.controls; let i = index" 
+          [formGroupName]="i" 
+          class="item-row"
+        >
+          <div class="item-serial">{{ i + 1 }}</div>
+          <div class="item-name">
+            <input 
+              type="text" 
+              formControlName="itemName" 
+              class="form-control"
+              placeholder="Item Name"
+              [class.error]="item.get('itemName')?.invalid && item.get('itemName')?.touched"
+            >
+          </div>
+          <div class="item-rate">
+            <input 
+              type="number" 
+              formControlName="rate" 
+              class="form-control"
+              placeholder="Rate"
+              min="0"
+              step="0.01"
+              [class.error]="item.get('rate')?.invalid && item.get('rate')?.touched"
+            >
+          </div>
+          <div class="item-quantity">
+            <input 
+              type="number" 
+              formControlName="quantity" 
+              class="form-control"
+              placeholder="Qty"
+              min="1"
+              [class.error]="item.get('quantity')?.invalid && item.get('quantity')?.touched"
+            >
+          </div>
+          <div class="item-amount">
+            <span class="amount-display">₹{{ item.get('amount')?.value || 0 }}</span>
+          </div>
+          <div class="item-actions">
+            <button 
+              type="button" 
+              class="btn-remove" 
+              (click)="removeItem(i)"
+              *ngIf="items.length > 1"
+            >
+              <span class="material-icons">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Totals -->
+      <div class="totals-section">
+        <div class="total-row">
+          <span class="total-label">Subtotal:</span>
+          <span class="total-value">₹{{ subtotal }}</span>
+        </div>
+        <div class="total-row">
+          <span class="total-label">Discount:</span>
+          <div class="discount-input">
+            <input 
+              type="number" 
+              formControlName="discount" 
+              class="form-control"
+              min="0"
+              step="0.01"
+            >
+          </div>
+        </div>
+        <div class="total-row">
+          <span class="total-label">SGST @9%:</span>
+          <span class="total-value">₹{{ sgstAmount }}</span>
+        </div>
+        <div class="total-row">
+          <span class="total-label">CGST @9%:</span>
+          <span class="total-value">₹{{ cgstAmount }}</span>
+        </div>
+        <div class="total-row final-total">
+          <span class="total-label">Total:</span>
+          <span class="total-value">₹{{ totalAmount }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="goBack()">
+        Cancel
+      </button>
+      <button 
+        type="button" 
+        class="btn btn-primary" 
+        (click)="saveInvoice()" 
+        [disabled]="!invoiceForm.valid || loading"
+      >
+        <span class="material-icons" *ngIf="loading">hourglass_empty</span>
+        <span class="material-icons" *ngIf="!loading">save</span>
+        {{ loading ? 'Saving...' : 'Save Invoice' }}
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Invoice Preview/Print View -->
+<div class="invoice-preview" *ngIf="showPreview">
+  <!-- Header Bar -->
+  <div class="preview-header">
+    <button class="btn-back" (click)="showPreview = false">
+      <span class="material-icons">arrow_back</span>
+    </button>
+    <h2>Invoice Preview</h2>
+    <div class="preview-actions">
+      <button class="btn btn-secondary" (click)="printInvoice()">
+        <span class="material-icons">print</span>
+        Print
+      </button>
+      <button class="btn btn-primary" (click)="shareInvoice()">
+        <span class="material-icons">share</span>
+        Share
+      </button>
+    </div>
+  </div>
+
+  <!-- Invoice Document -->
+  <div class="invoice-document">
+    <!-- Top Bar -->
+    <div class="invoice-top-bar">
+      <button class="btn-back-white" (click)="showPreview = false">
+        <span class="material-icons">arrow_back</span>
+      </button>
+      <div class="invoice-logo">
+        <span class="logo-text">{{ currentStore?.store_name || 'Tek Megha' }}</span>
+      </div>
+    </div>
+
+    <!-- Invoice Title -->
+    <div class="invoice-title">
+      <h1>INVOICE</h1>
+    </div>
+
+    <!-- Invoice Details -->
+    <div class="invoice-details">
+      <div class="invoice-left">
+        <!-- Seller Info -->
+        <div class="seller-info">
+          <h3>{{ invoiceForm.value.storeName }}</h3>
+          <p>{{ invoiceForm.value.storeAddress }}</p>
+          <p>Contact - {{ invoiceForm.value.storeContact }}</p>
+          <p>GSTIN - {{ invoiceForm.value.storeGstin }}</p>
+        </div>
+
+        <!-- Buyer Info -->
+        <div class="buyer-info">
+          <h4>Bill To:</h4>
+          <h3>{{ invoiceForm.value.buyerName }}</h3>
+          <p>{{ invoiceForm.value.buyerAddress }}</p>
+          <p>Contact - {{ invoiceForm.value.buyerContact }}</p>
+        </div>
+      </div>
+
+      <div class="invoice-right">
+        <!-- Invoice Metadata -->
+        <div class="invoice-meta">
+          <div class="meta-row">
+            <span class="meta-label">Invoice No:</span>
+            <span class="meta-value">{{ invoiceForm.value.invoiceNumber }}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Date:</span>
+            <span class="meta-value">{{ invoiceForm.value.date | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+
+        <!-- Quick Process Icon -->
+        <div class="quick-process-icon">
+          <div class="icon-circle">
+            <span class="material-icons">payment</span>
+            <span class="material-icons">fast_forward</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Items Table -->
+    <div class="invoice-table">
+      <div class="table-header">
+        <div class="col-serial">#</div>
+        <div class="col-item">Item Name</div>
+        <div class="col-rate">Rate</div>
+        <div class="col-qty">Qty</div>
+        <div class="col-amount">Amount</div>
+      </div>
+
+      <div class="table-body">
+        <div 
+          *ngFor="let item of items.controls; let i = index" 
+          class="table-row"
+        >
+          <div class="col-serial">{{ i + 1 }}</div>
+          <div class="col-item">{{ item.get('itemName')?.value }}</div>
+          <div class="col-rate">₹{{ item.get('rate')?.value }}</div>
+          <div class="col-qty">{{ item.get('quantity')?.value }}</div>
+          <div class="col-amount">₹{{ item.get('amount')?.value }}</div>
+        </div>
+      </div>
+
+      <!-- Subtotal Row -->
+      <div class="table-subtotal">
+        <div class="col-serial"></div>
+        <div class="col-item"></div>
+        <div class="col-rate">Total</div>
+        <div class="col-qty">{{ items.length }}</div>
+        <div class="col-amount">₹{{ subtotal }}</div>
+      </div>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="invoice-summary">
+      <div class="summary-row">
+        <span class="summary-label">Discount</span>
+        <span class="summary-value">₹{{ discountAmount }}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">SGST@9%</span>
+        <span class="summary-value">₹{{ sgstAmount }}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">CGST@9%</span>
+        <span class="summary-value">₹{{ cgstAmount }}</span>
+      </div>
+      <div class="summary-row final-total">
+        <span class="summary-label">Total</span>
+        <span class="summary-value">₹{{ totalAmount }}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Balance Due</span>
+        <span class="summary-value">₹{{ balanceDue }}</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Payment Mode</span>
+        <span class="summary-value">{{ invoiceForm.value.paymentMode }}</span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="invoice-actions">
+      <button class="btn-print" (click)="printInvoice()">
+        <span class="material-icons">print</span>
+      </button>
+      <button class="btn-share" (click)="shareInvoice()">
+        SHARE
+      </button>
+    </div>
+  </div>
+</div>

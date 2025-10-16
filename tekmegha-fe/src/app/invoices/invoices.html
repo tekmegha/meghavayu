@@ -1,0 +1,263 @@
+<div class="invoices-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">Invoices</h1>
+      <button class="btn btn-primary" (click)="createNewInvoice()">
+        <i class="icon-plus"></i>
+        Create New Invoice
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label for="search">Search</label>
+        <input 
+          type="text" 
+          id="search"
+          [(ngModel)]="searchTerm" 
+          placeholder="Search by invoice number or buyer name..."
+          class="form-control"
+        >
+      </div>
+      
+      <div class="filter-group">
+        <label for="dateFrom">Date From</label>
+        <input 
+          type="date" 
+          id="dateFrom"
+          [(ngModel)]="dateFrom" 
+          class="form-control"
+        >
+      </div>
+      
+      <div class="filter-group">
+        <label for="dateTo">Date To</label>
+        <input 
+          type="date" 
+          id="dateTo"
+          [(ngModel)]="dateTo" 
+          class="form-control"
+        >
+      </div>
+      
+      <div class="filter-group">
+        <label for="status">Status</label>
+        <select 
+          id="status"
+          [(ngModel)]="statusFilter" 
+          class="form-control"
+        >
+          <option value="all">All</option>
+          <option value="paid">Paid</option>
+          <option value="unpaid">Unpaid</option>
+        </select>
+      </div>
+      
+      <div class="filter-actions">
+        <button class="btn btn-secondary" (click)="applyFilters()">
+          Apply Filters
+        </button>
+        <button class="btn btn-outline" (click)="clearFilters()">
+          Clear
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Debug Information -->
+  <div *ngIf="true" class="debug-info" style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 4px; font-family: monospace; font-size: 12px;">
+    <strong>Debug Info:</strong><br>
+    Loading: {{ loading }}<br>
+    Error: {{ error }}<br>
+    Current Store: {{ currentStore?.storeName || 'None' }}<br>
+    Invoices Count: {{ invoices.length }}<br>
+    Total Items: {{ totalItems }}<br>
+    Current Page: {{ currentPage }}<br>
+    Total Pages: {{ totalPages }}
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error" class="alert alert-error">
+    <i class="icon-alert"></i>
+    {{ error }}
+    
+    <!-- Database Setup Instructions -->
+    <div *ngIf="error && error.includes('Invoice tables not found')" class="setup-instructions" style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 4px; border-left: 4px solid #007bff;">
+      <h4 style="margin: 0 0 10px 0; color: #007bff;">Database Setup Required</h4>
+      <p style="margin: 0 0 10px 0;">The invoice tables haven't been created yet. Please run the following SQL script:</p>
+      <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px; margin: 10px 0;">
+        <code>psql -d your_database -f invoice-setup-megha-store.sql</code>
+      </div>
+      <p style="margin: 0; font-size: 14px; color: #6b7280;">
+        This will create the necessary tables for invoice management.
+      </p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading invoices...</p>
+  </div>
+
+  <!-- No Invoices Message -->
+  <div *ngIf="!loading && !error && invoices.length === 0" class="no-invoices">
+    <div class="no-invoices-content">
+      <i class="icon-document"></i>
+      <h3>No invoices found</h3>
+      <p>You haven't created any invoices yet. Create your first invoice to get started.</p>
+      <button class="btn btn-primary" (click)="createNewInvoice()">
+        <i class="icon-plus"></i>
+        Create Your First Invoice
+      </button>
+    </div>
+  </div>
+
+  <!-- Database Setup Message -->
+  <div *ngIf="!loading && error && error.includes('Invoice tables not found')" class="no-invoices">
+    <div class="no-invoices-content">
+      <i class="icon-database"></i>
+      <h3>Database Setup Required</h3>
+      <p>The invoice system needs to be set up first. Please run the database setup script.</p>
+      <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: left;">
+        <h4 style="margin: 0 0 10px 0; color: #495057;">Setup Instructions:</h4>
+        <ol style="margin: 0; padding-left: 20px; color: #6c757d;">
+          <li>Open your database client (psql, pgAdmin, etc.)</li>
+          <li>Run the SQL script: <code>invoice-setup-megha-store.sql</code></li>
+          <li>Refresh this page after setup is complete</li>
+        </ol>
+      </div>
+      <button class="btn btn-secondary" (click)="loadInvoices()">
+        <i class="icon-refresh"></i>
+        Retry After Setup
+      </button>
+    </div>
+  </div>
+
+  <!-- Invoices List -->
+  <div *ngIf="!loading && invoices.length > 0" class="invoices-list">
+    <div class="invoices-grid">
+      <div *ngFor="let invoice of invoices" class="invoice-card">
+        <div class="invoice-header">
+          <div class="invoice-number">
+            <h3>{{ invoice.invoiceNumber }}</h3>
+            <span class="invoice-date">{{ formatDate(invoice.date) }}</span>
+          </div>
+          <div class="invoice-status">
+            <span class="status-badge" [ngClass]="getStatusClass(invoice.balanceDue)">
+              {{ getStatusText(invoice.balanceDue) }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="invoice-details">
+          <div class="buyer-info">
+            <h4>{{ invoice.buyerName }}</h4>
+            <p *ngIf="invoice.buyerContact">{{ invoice.buyerContact }}</p>
+            <p *ngIf="invoice.buyerAddress">{{ invoice.buyerAddress }}</p>
+          </div>
+          
+          <div class="invoice-amounts">
+            <div class="amount-row">
+              <span class="label">Subtotal:</span>
+              <span class="amount">{{ formatCurrency(invoice.subtotal) }}</span>
+            </div>
+            <div class="amount-row" *ngIf="invoice.discount > 0">
+              <span class="label">Discount:</span>
+              <span class="amount">{{ formatCurrency(invoice.discount) }}</span>
+            </div>
+            <div class="amount-row" *ngIf="invoice.sgst > 0">
+              <span class="label">SGST:</span>
+              <span class="amount">{{ formatCurrency(invoice.sgst) }}</span>
+            </div>
+            <div class="amount-row" *ngIf="invoice.cgst > 0">
+              <span class="label">CGST:</span>
+              <span class="amount">{{ formatCurrency(invoice.cgst) }}</span>
+            </div>
+            <div class="amount-row total">
+              <span class="label">Total:</span>
+              <span class="amount">{{ formatCurrency(invoice.total) }}</span>
+            </div>
+            <div class="amount-row" *ngIf="invoice.balanceDue > 0">
+              <span class="label">Balance Due:</span>
+              <span class="amount">{{ formatCurrency(invoice.balanceDue) }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="invoice-actions">
+          <button class="btn btn-sm btn-outline" (click)="viewInvoice(invoice.id)">
+            <i class="icon-eye"></i>
+            View
+          </button>
+          <button class="btn btn-sm btn-secondary" (click)="editInvoice(invoice.id)">
+            <i class="icon-edit"></i>
+            Edit
+          </button>
+          <button class="btn btn-sm btn-primary" (click)="printInvoice(invoice.id)">
+            <i class="icon-print"></i>
+            Print
+          </button>
+          <button class="btn btn-sm btn-danger" (click)="deleteInvoice(invoice.id)">
+            <i class="icon-trash"></i>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && invoices.length === 0" class="empty-state">
+    <div class="empty-icon">
+      <i class="icon-invoice"></i>
+    </div>
+    <h3>No invoices found</h3>
+    <p>Create your first invoice to get started.</p>
+    <button class="btn btn-primary" (click)="createNewInvoice()">
+      <i class="icon-plus"></i>
+      Create New Invoice
+    </button>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!loading && totalPages > 1" class="pagination">
+    <div class="pagination-info">
+      Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to 
+      {{ getEndItemNumber() }} of {{ totalItems }} invoices
+    </div>
+    
+    <div class="pagination-controls">
+      <button 
+        class="btn btn-outline" 
+        [disabled]="currentPage === 1"
+        (click)="goToPage(currentPage - 1)"
+      >
+        Previous
+      </button>
+      
+      <div class="page-numbers">
+        <button 
+          *ngFor="let page of getPageNumbers()" 
+          class="btn btn-sm"
+          [ngClass]="{'btn-primary': page === currentPage, 'btn-outline': page !== currentPage}"
+          (click)="goToPage(page)"
+        >
+          {{ page }}
+        </button>
+      </div>
+      
+      <button 
+        class="btn btn-outline" 
+        [disabled]="currentPage === totalPages"
+        (click)="goToPage(currentPage + 1)"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+</div>

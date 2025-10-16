@@ -16,25 +16,40 @@ import { Subscription } from 'rxjs';
         <p>Choose a store to browse products and place orders</p>
       </div>
       
-      <div class="stores-grid" *ngIf="!isLoading; else loadingTemplate">
-        <div 
-          *ngFor="let store of availableStores" 
-          class="store-card"
-          [class.selected]="isStoreSelected(store)"
-          [style.--theme-primary]="getThemeColor(store.storeCode, 'primary')"
-          [style.--theme-secondary]="getThemeColor(store.storeCode, 'secondary')"
-          (click)="selectStore(store)"
-        >
-          <div class="store-icon" [style.background]="getIconBackground(store.storeCode)">
-            <span class="material-icons">{{ getStoreIcon(store.storeCode) }}</span>
-          </div>
-          <div class="store-info">
-            <h4>{{ store.storeName }}</h4>
-            <p>{{ getStoreDescription(store.storeCode) }}</p>
-            <span class="store-type">{{ store.storeType }}</span>
-          </div>
-          <div class="store-status" *ngIf="store.isActive">
-            <span class="status-badge active">Open</span>
+      <div class="stores-container" *ngIf="!isLoading; else loadingTemplate">
+        <div *ngFor="let storeType of storeTypes" class="store-category">
+          <h4 class="category-title">{{ getStoreTypeDisplayName(storeType) }}</h4>
+          <div class="stores-grid">
+            <div 
+              *ngFor="let store of groupedStores[storeType]" 
+              class="store-card"
+              [class.selected]="isStoreSelected(store)"
+              [style.--theme-primary]="getThemeColor(store.storeCode, 'primary')"
+              [style.--theme-secondary]="getThemeColor(store.storeCode, 'secondary')"
+              (click)="selectStore(store)"
+            >
+              <div class="store-icon">
+                <img 
+                  *ngIf="getStoreLogo(store)" 
+                  [src]="getStoreLogo(store)" 
+                  [alt]="store.storeName + ' logo'"
+                  class="store-logo"
+                >
+                <span 
+                  *ngIf="!getStoreLogo(store)" 
+                  class="material-icons"
+                  [style.background]="getIconBackground(store.storeCode)"
+                >{{ getStoreIcon(store.storeCode) }}</span>
+              </div>
+              <div class="store-info">
+                <h4>{{ store.storeName }}</h4>
+                <p>{{ getStoreDescription(store.storeCode) }}</p>
+                <span class="store-type">{{ store.storeType }}</span>
+              </div>
+              <div class="store-status" *ngIf="store.isActive">
+                <span class="status-badge active">Open</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -63,6 +78,8 @@ import { Subscription } from 'rxjs';
 })
 export class StoreSelectorComponent implements OnInit, OnDestroy {
   availableStores: StoreSession[] = [];
+  groupedStores: { [key: string]: StoreSession[] } = {};
+  storeTypes: string[] = [];
   selectedStore: StoreSession | null = null;
   isLoading = true;
   showSelector = true;
@@ -95,11 +112,29 @@ export class StoreSelectorComponent implements OnInit, OnDestroy {
     try {
       this.isLoading = true;
       this.availableStores = await this.storeSessionService.getAvailableStores();
+      this.groupStoresByType();
     } catch (error) {
       console.error('Error loading stores:', error);
     } finally {
       this.isLoading = false;
     }
+  }
+
+  private groupStoresByType() {
+    this.groupedStores = {};
+    this.storeTypes = [];
+    
+    this.availableStores.forEach(store => {
+      const storeType = store.storeType || 'other';
+      if (!this.groupedStores[storeType]) {
+        this.groupedStores[storeType] = [];
+        this.storeTypes.push(storeType);
+      }
+      this.groupedStores[storeType].push(store);
+    });
+    
+    // Sort store types for consistent display
+    this.storeTypes.sort();
   }
 
   selectStore(store: StoreSession) {
@@ -170,5 +205,27 @@ export class StoreSelectorComponent implements OnInit, OnDestroy {
     const primary = this.getThemeColor(storeCode, 'primary');
     const secondary = this.getThemeColor(storeCode, 'secondary');
     return `linear-gradient(135deg, ${primary}, ${secondary})`;
+  }
+
+  getStoreLogo(store: any): string | null {
+    // Check if store has theme_config and logo
+    if (store.theme_config && store.theme_config.logo) {
+      return store.theme_config.logo;
+    }
+    return null;
+  }
+
+  getStoreTypeDisplayName(storeType: string): string {
+    const displayNames: { [key: string]: string } = {
+      'coffee': 'Coffee & Beverages',
+      'toys': 'Toys & Games',
+      'fashion': 'Fashion & Clothing',
+      'digitalsecurity': 'Security & Technology',
+      'food': 'Food & Groceries',
+      'insurance': 'Insurance & Finance',
+      'dealer': 'Dealers & Wholesale',
+      'other': 'Other Stores'
+    };
+    return displayNames[storeType] || storeType.charAt(0).toUpperCase() + storeType.slice(1);
   }
 }

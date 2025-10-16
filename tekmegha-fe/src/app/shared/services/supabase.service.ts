@@ -8,6 +8,7 @@ import { StoreContextService } from './store-context.service';
 import { Product, MeghaStore, StoreLocation, LocationInventory } from '../interfaces/product.interface';
 import { CartItem, Order, OrderItem, UserRole } from '../interfaces/store.interface';
 import { Category } from '../interfaces/category.interface';
+import { StoreFeatures, StoreFeatureType } from '../interfaces/store-features.interface';
 
 // Re-export interfaces for backward compatibility
 export type { Product, MeghaStore, StoreLocation, LocationInventory } from '../interfaces/product.interface';
@@ -48,6 +49,8 @@ export class SupabaseService {
   // Get current store based on URL path - returns store_code for new schema
   getCurrentStore(): string {
     const path = window.location.pathname;
+    
+    // Check specific known routes first
     if (path.startsWith('/fashion') || path.startsWith('/majili')) {
       return 'majili';
     } else if (path.startsWith('/toys') || path.startsWith('/little-ducks')) {
@@ -58,9 +61,51 @@ export class SupabaseService {
       return 'tekmegha-clients';
     } else if (path.startsWith('/brew-buddy')) {
       return 'brew-buddy';
+    } else if (path.startsWith('/cctv-device')) {
+      return 'cctv-device';
+    } else if (path.startsWith('/dkassociates')) {
+      return 'dkassociates';
+    } else if (path.startsWith('/automobile-insurance')) {
+      return 'automobile-insurance';
+    } else if (path.startsWith('/insurance')) {
+      return 'automobile-insurance';
+    } else if (path === '/inventory-login' || path === '/login') {
+      // Special case for login pages - check returnUrl parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnUrl = urlParams.get('returnUrl');
+      if (returnUrl) {
+        const storeCode = this.extractStoreCodeFromPath(returnUrl);
+        if (storeCode) {
+          return storeCode;
+        }
+      }
     } else {
-      return ''; // No default store - let user choose
+      // Check if path starts with a store code pattern (e.g., /any-store-code/...)
+      const pathSegments = path.split('/').filter(segment => segment);
+      if (pathSegments.length > 0) {
+        const potentialStoreCode = pathSegments[0];
+        // Check if it's not a known global route
+        const globalRoutes = ['home', 'menu', 'cart', 'stores', 'profile', 'login', 'inventory', 'invoice', 'insurances', 'tekmegha-clients', 'inventory-login'];
+        if (!globalRoutes.includes(potentialStoreCode)) {
+          return potentialStoreCode;
+        }
+      }
     }
+    return ''; // No default store - let user choose
+  }
+
+  private extractStoreCodeFromPath(path: string): string | null {
+    // Remove leading slash and split by '/'
+    const segments = path.replace(/^\//, '').split('/');
+    if (segments.length > 0) {
+      const potentialStoreCode = segments[0];
+      // Check if it's not a known global route
+      const globalRoutes = ['home', 'menu', 'cart', 'stores', 'profile', 'login', 'inventory', 'invoice', 'insurances', 'tekmegha-clients'];
+      if (!globalRoutes.includes(potentialStoreCode)) {
+        return potentialStoreCode;
+      }
+    }
+    return null;
   }
 
   // Legacy method for backward compatibility
@@ -68,34 +113,32 @@ export class SupabaseService {
     return this.getCurrentStore();
   }
 
-  // Get current store ID from store context service
+  // Get current store ID from URL-based store context
   async getCurrentStoreId(): Promise<string | null> {
     try {
-      const currentStoreId = this.storeContextService.getCurrentStoreId();
-      if (currentStoreId) {
-        return currentStoreId;
-      }
-      
-      // Fallback to URL-based detection if no store context
+      // Always get store ID from URL-based context
       const storeCode = this.getCurrentStore();
-      if (storeCode) {
-        const { data, error } = await this.supabase
-          .from('megha_stores')
-          .select('id')
-          .eq('store_code', storeCode)
-          .eq('is_active', true);
-        
-        if (error) {
-          console.error('Error fetching store ID:', error);
-          return null;
-        }
-        
-        return data?.[0]?.id || null;
+      if (!storeCode) {
+        console.log('No store code detected from URL');
+        return null;
+      }
+
+      const { data, error } = await this.supabase
+        .from('megha_stores')
+        .select('id')
+        .eq('store_code', storeCode)
+        .eq('is_active', true);
+      
+      if (error) {
+        console.error('Error fetching store ID from URL:', error);
+        return null;
       }
       
-      return null;
+      const storeId = data?.[0]?.id?.toString() || null;
+      console.log('Store ID from URL:', { storeCode, storeId });
+      return storeId;
     } catch (error) {
-      console.error('Error getting store ID:', error);
+      console.error('Error getting store ID from URL:', error);
       return null;
     }
   }
@@ -1052,6 +1095,87 @@ export class SupabaseService {
       console.error('Error updating inventory:', error);
       return { data: null, error };
     }
+  }
+
+  // Store Features Methods
+  async getStoreFeatures(storeCode: string): Promise<{ data: StoreFeatures | null, error: any }> {
+    try {
+      const { data, error } = await this.supabase
+        .rpc('get_store_features', { store_code_param: storeCode });
+
+      if (error) {
+        console.error('Error fetching store features:', error);
+        return { data: null, error };
+      }
+
+      const features = data?.[0] ? {
+        storeId: data[0].store_id,
+        storeCode: data[0].store_code,
+        storeName: data[0].store_name,
+        storeType: data[0].store_type,
+        enableProducts: data[0].enable_products,
+        enableCart: data[0].enable_cart,
+        enablePayments: data[0].enable_payments,
+        enableInventory: data[0].enable_inventory,
+        enableInvoices: data[0].enable_invoices,
+        enableCustomers: data[0].enable_customers,
+        enableReports: data[0].enable_reports
+      } : null;
+
+      return { data: features, error: null };
+    } catch (error) {
+      console.error('Error fetching store features:', error);
+      return { data: null, error };
+    }
+  }
+
+  async isStoreFeatureEnabled(storeCode: string, feature: StoreFeatureType): Promise<boolean> {
+    try {
+      const { data, error } = await this.supabase
+        .rpc('is_store_feature_enabled', { 
+          store_code_param: storeCode, 
+          feature_name: feature 
+        });
+
+      if (error) {
+        console.error('Error checking store feature:', error);
+        return false;
+      }
+
+      return data || false;
+    } catch (error) {
+      console.error('Error checking store feature:', error);
+      return false;
+    }
+  }
+
+  // Convenience methods for common feature checks
+  async canShowProducts(storeCode: string): Promise<boolean> {
+    return this.isStoreFeatureEnabled(storeCode, 'products');
+  }
+
+  async canShowCart(storeCode: string): Promise<boolean> {
+    return this.isStoreFeatureEnabled(storeCode, 'cart');
+  }
+
+  async canShowPayments(storeCode: string): Promise<boolean> {
+    return this.isStoreFeatureEnabled(storeCode, 'payments');
+  }
+
+  async canShowInventory(storeCode: string): Promise<boolean> {
+    return this.isStoreFeatureEnabled(storeCode, 'inventory');
+  }
+
+  async canShowInvoices(storeCode: string): Promise<boolean> {
+    return this.isStoreFeatureEnabled(storeCode, 'invoices');
+  }
+
+  async canShowCustomers(storeCode: string): Promise<boolean> {
+    return this.isStoreFeatureEnabled(storeCode, 'customers');
+  }
+
+  async canShowReports(storeCode: string): Promise<boolean> {
+    return this.isStoreFeatureEnabled(storeCode, 'reports');
   }
 }
  
