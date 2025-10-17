@@ -1,0 +1,108 @@
+<div class="pet-care-services">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <h1 class="hero-title">Our Services</h1>
+    <p class="hero-subtitle">Professional pet care services for your beloved companions</p>
+  </div>
+
+  <!-- Services Grid -->
+  <div class="services-grid">
+    <div 
+      *ngFor="let service of services; trackBy: trackByServiceId" 
+      class="service-card"
+      [class.emergency-service]="service.is_emergency_service"
+    >
+      <div class="service-icon">
+        {{ getServiceIcon(service.service_code) }}
+      </div>
+      <div class="service-content">
+        <h3 class="service-name">{{ service.service_name }}</h3>
+        <p class="service-description">{{ service.service_description }}</p>
+        <div class="service-details">
+          <span class="service-price">{{ formatPrice(service.price) }}</span>
+          <span class="service-duration">{{ formatDuration(service.duration_minutes) }}</span>
+        </div>
+        <div class="service-badges">
+          <span *ngIf="service.is_home_visit_available" class="home-visit-badge">🏠 Home Visit</span>
+          <span *ngIf="service.is_emergency_service" class="emergency-badge">🚨 Emergency</span>
+          <span *ngIf="!service.requires_appointment" class="walk-in-badge">🚶 Walk In</span>
+        </div>
+        <button 
+          class="service-button"
+          (click)="bookService(service)"
+        >
+          Book Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Section -->
+  <div class="contact-section">
+    <h2 class="contact-title">Get In Touch</h2>
+    <div class="contact-info">
+      <div class="contact-item">
+        <span class="contact-icon">📞</span>
+        <span class="contact-text">{{ contactInfo.phone }}</span>
+        <button class="contact-button" (click)="callPhone()">Call</button>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">💬</span>
+        <span class="contact-text">WhatsApp</span>
+        <button class="contact-button" (click)="openWhatsApp()">Chat</button>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">📱</span>
+        <span class="contact-text">{{ contactInfo.socialMedia }}</span>
+      </div>
+    </div>
+    
+    <!-- QR Code Section -->
+    <div class="qr-section">
+      <div class="qr-code">
+        <!-- QR Code placeholder - in production, generate actual QR code -->
+        <div class="qr-placeholder">
+          <div class="qr-pattern"></div>
+        </div>
+      </div>
+      <p class="qr-text">{{ contactInfo.qrCodeText }}</p>
+    </div>
+  </div>
+
+  <!-- Doctors Section -->
+  <div class="doctors-section" *ngIf="doctors.length > 0">
+    <h2 class="doctors-title">Our Veterinarians</h2>
+    <div class="doctors-grid">
+      <div *ngFor="let doctor of doctors" class="doctor-card">
+        <div class="doctor-info">
+          <h3 class="doctor-name">{{ doctor.full_name }}</h3>
+          <p class="doctor-specialization">{{ doctor.specialization }}</p>
+          <p class="doctor-qualifications">{{ doctor.qualifications }}</p>
+          <div class="doctor-stats">
+            <span class="doctor-experience">{{ doctor.experience_years }} years experience</span>
+            <span class="doctor-rating">⭐ {{ doctor.rating }} ({{ doctor.review_count }})</span>
+          </div>
+          <div class="doctor-fees">
+            <span class="consultation-fee">Consultation: {{ formatPrice(doctor.consultation_fee) }}</span>
+            <span class="home-visit-fee" *ngIf="doctor.is_available_for_home_visits">Home Visit: {{ formatPrice(doctor.home_visit_fee) }}</span>
+          </div>
+        </div>
+        <div class="doctor-actions">
+          <button class="book-doctor-button" (click)="bookDoctor(doctor)">Book Consultation</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-spinner"></div>
+    <p>Loading services...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-state">
+    <p>{{ error }}</p>
+    <button (click)="ngOnInit()">Retry</button>
+  </div>
+</div>

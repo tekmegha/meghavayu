@@ -38,6 +38,8 @@
         type="button" 
         class="tab-button" 
         [class.active]="isTabActive('items')"
+        [class.has-error]="hasTabError('items')"
+        [class.completed]="isTabCompleted('items')"
         (click)="setActiveTab('items')"
       >
         <span class="material-icons">shopping_cart</span>
@@ -47,6 +49,8 @@
         type="button" 
         class="tab-button" 
         [class.active]="isTabActive('invoice')"
+        [class.has-error]="hasTabError('invoice')"
+        [class.completed]="isTabCompleted('invoice')"
         (click)="setActiveTab('invoice')"
       >
         <span class="material-icons">receipt</span>
@@ -56,6 +60,8 @@
         type="button" 
         class="tab-button" 
         [class.active]="isTabActive('store')"
+        [class.has-error]="hasTabError('store')"
+        [class.completed]="isTabCompleted('store')"
         (click)="setActiveTab('store')"
       >
         <span class="material-icons">store</span>
@@ -65,6 +71,8 @@
         type="button" 
         class="tab-button" 
         [class.active]="isTabActive('buyer')"
+        [class.has-error]="hasTabError('buyer')"
+        [class.completed]="isTabCompleted('buyer')"
         (click)="setActiveTab('buyer')"
       >
         <span class="material-icons">person</span>
@@ -216,21 +224,29 @@
       <!-- Invoice Details Tab -->
       <div class="tab-panel" [class.active]="isTabActive('invoice')">
         <div class="form-row">
-          <div class="form-group">
-            <label for="invoiceNumber">Invoice Number</label>
+          <div class="form-group" [class.has-error]="invoiceNumberControl?.invalid && invoiceNumberControl?.touched">
+            <label for="invoiceNumber">
+              Invoice Number
+              <span class="required">*</span>
+            </label>
             <input 
               type="text" 
               id="invoiceNumber" 
               formControlName="invoiceNumber" 
               class="form-control"
+              placeholder="Enter invoice number"
               [class.error]="invoiceNumberControl?.invalid && invoiceNumberControl?.touched"
             >
             <div class="error-text" *ngIf="invoiceNumberControl?.invalid && invoiceNumberControl?.touched">
+              <span class="material-icons">error</span>
               Invoice number is required
             </div>
           </div>
-          <div class="form-group">
-            <label for="date">Date</label>
+          <div class="form-group" [class.has-error]="dateControl?.invalid && dateControl?.touched">
+            <label for="date">
+              Date
+              <span class="required">*</span>
+            </label>
             <input 
               type="date" 
               id="date" 
@@ -238,6 +254,10 @@
               class="form-control"
               [class.error]="dateControl?.invalid && dateControl?.touched"
             >
+            <div class="error-text" *ngIf="dateControl?.invalid && dateControl?.touched">
+              <span class="material-icons">error</span>
+              Date is required
+            </div>
           </div>
         </div>
       </div>
@@ -245,49 +265,81 @@
       <!-- Store Information Tab -->
       <div class="tab-panel" [class.active]="isTabActive('store')">
         <div class="form-row">
-          <div class="form-group full-width">
-            <label for="storeName">Store Name</label>
+          <div class="form-group full-width" [class.has-error]="storeNameControl?.invalid && storeNameControl?.touched">
+            <label for="storeName">
+              Store Name
+              <span class="required">*</span>
+            </label>
             <input 
               type="text" 
               id="storeName" 
               formControlName="storeName" 
               class="form-control"
+              placeholder="Enter store name"
               [class.error]="storeNameControl?.invalid && storeNameControl?.touched"
             >
+            <div class="error-text" *ngIf="storeNameControl?.invalid && storeNameControl?.touched">
+              <span class="material-icons">error</span>
+              Store name is required
+            </div>
           </div>
         </div>
         <div class="form-row">
-          <div class="form-group full-width">
-            <label for="storeAddress">Store Address</label>
+          <div class="form-group full-width" [class.has-error]="storeAddressControl?.invalid && storeAddressControl?.touched">
+            <label for="storeAddress">
+              Store Address
+              <span class="required">*</span>
+            </label>
             <textarea 
               id="storeAddress" 
               formControlName="storeAddress" 
               class="form-control"
-              rows="2"
+              rows="3"
+              placeholder="Enter store address"
               [class.error]="storeAddressControl?.invalid && storeAddressControl?.touched"
             ></textarea>
+            <div class="error-text" *ngIf="storeAddressControl?.invalid && storeAddressControl?.touched">
+              <span class="material-icons">error</span>
+              Store address is required
+            </div>
           </div>
         </div>
         <div class="form-row">
-          <div class="form-group">
-            <label for="storeContact">Contact</label>
+          <div class="form-group" [class.has-error]="storeContactControl?.invalid && storeContactControl?.touched">
+            <label for="storeContact">
+              Contact
+              <span class="required">*</span>
+            </label>
             <input 
               type="text" 
               id="storeContact" 
               formControlName="storeContact" 
               class="form-control"
+              placeholder="Enter contact number"
               [class.error]="storeContactControl?.invalid && storeContactControl?.touched"
             >
+            <div class="error-text" *ngIf="storeContactControl?.invalid && storeContactControl?.touched">
+              <span class="material-icons">error</span>
+              Contact number is required
+            </div>
           </div>
-          <div class="form-group">
-            <label for="storeGstin">GSTIN</label>
+          <div class="form-group" [class.has-error]="storeGstinControl?.invalid && storeGstinControl?.touched">
+            <label for="storeGstin">
+              GSTIN
+              <span class="required">*</span>
+            </label>
             <input 
               type="text" 
               id="storeGstin" 
               formControlName="storeGstin" 
               class="form-control"
+              placeholder="Enter GSTIN number"
               [class.error]="storeGstinControl?.invalid && storeGstinControl?.touched"
             >
+            <div class="error-text" *ngIf="storeGstinControl?.invalid && storeGstinControl?.touched">
+              <span class="material-icons">error</span>
+              GSTIN is required
+            </div>
           </div>
         </div>
       </div>
@@ -295,54 +347,86 @@
       <!-- Buyer Information Tab -->
       <div class="tab-panel" [class.active]="isTabActive('buyer')">
         <div class="form-row">
-          <div class="form-group full-width">
-            <label for="buyerName">Customer Name</label>
+          <div class="form-group full-width" [class.has-error]="buyerNameControl?.invalid && buyerNameControl?.touched">
+            <label for="buyerName">
+              Customer Name
+              <span class="required">*</span>
+            </label>
             <input 
               type="text" 
               id="buyerName" 
               formControlName="buyerName" 
               class="form-control"
+              placeholder="Enter customer name"
               [class.error]="buyerNameControl?.invalid && buyerNameControl?.touched"
             >
+            <div class="error-text" *ngIf="buyerNameControl?.invalid && buyerNameControl?.touched">
+              <span class="material-icons">error</span>
+              Customer name is required
+            </div>
           </div>
         </div>
         <div class="form-row">
-          <div class="form-group full-width">
-            <label for="buyerAddress">Address</label>
+          <div class="form-group full-width" [class.has-error]="buyerAddressControl?.invalid && buyerAddressControl?.touched">
+            <label for="buyerAddress">
+              Address
+              <span class="required">*</span>
+            </label>
             <textarea 
               id="buyerAddress" 
               formControlName="buyerAddress" 
               class="form-control"
-              rows="2"
+              rows="3"
+              placeholder="Enter customer address"
               [class.error]="buyerAddressControl?.invalid && buyerAddressControl?.touched"
             ></textarea>
+            <div class="error-text" *ngIf="buyerAddressControl?.invalid && buyerAddressControl?.touched">
+              <span class="material-icons">error</span>
+              Customer address is required
+            </div>
           </div>
         </div>
         <div class="form-row">
-          <div class="form-group">
-            <label for="buyerContact">Contact</label>
+          <div class="form-group" [class.has-error]="buyerContactControl?.invalid && buyerContactControl?.touched">
+            <label for="buyerContact">
+              Contact
+              <span class="required">*</span>
+            </label>
             <input 
               type="text" 
               id="buyerContact" 
               formControlName="buyerContact" 
               class="form-control"
+              placeholder="Enter contact number"
               [class.error]="buyerContactControl?.invalid && buyerContactControl?.touched"
             >
+            <div class="error-text" *ngIf="buyerContactControl?.invalid && buyerContactControl?.touched">
+              <span class="material-icons">error</span>
+              Contact number is required
+            </div>
           </div>
-          <div class="form-group">
-            <label for="paymentMode">Payment Mode</label>
+          <div class="form-group" [class.has-error]="paymentModeControl?.invalid && paymentModeControl?.touched">
+            <label for="paymentMode">
+              Payment Mode
+              <span class="required">*</span>
+            </label>
             <select 
               id="paymentMode" 
               formControlName="paymentMode" 
               class="form-control"
               [class.error]="paymentModeControl?.invalid && paymentModeControl?.touched"
             >
+              <option value="">Select payment mode</option>
               <option value="Cash">Cash</option>
               <option value="Card">Card</option>
               <option value="UPI">UPI</option>
               <option value="Bank Transfer">Bank Transfer</option>
               <option value="Cheque">Cheque</option>
             </select>
+            <div class="error-text" *ngIf="paymentModeControl?.invalid && paymentModeControl?.touched">
+              <span class="material-icons">error</span>
+              Payment mode is required
+            </div>
           </div>
         </div>
       </div>

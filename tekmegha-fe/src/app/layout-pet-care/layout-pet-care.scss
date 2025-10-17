@@ -1,0 +1,203 @@
+.layout-pet-care {
+  min-height: 100vh;
+  background: var(--background-color);
+  position: relative;
+
+  .main-content-wrapper {
+    padding-bottom: 100px; // Space for bottom navbar and checkout banner
+    min-height: calc(100vh - 60px); // Adjust for top navbar height
+  }
+
+  // Pet care-specific styling
+  app-location-bar {
+    display: block;
+    // Sticky positioning is handled within the component itself
+  }
+
+  // Pet care theme colors - medical and caring
+  --primary-color: #0891b2;
+  --secondary-color: #06b6d4;
+  --accent-color: #14b8a6;
+  --background-color: #f0fdfa;
+  --surface-color: #ffffff;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border-color: #a7f3d0;
+  --gradient-primary: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+  --gradient-accent: linear-gradient(135deg, #14b8a6 0%, #059669 100%);
+  --gradient-hero: linear-gradient(135deg, #f0fdfa 0%, #ecfdf5 100%);
+  
+  // Service card specific colors for Pet Care theme
+  --service-card-bg: var(--surface-color);
+  --service-card-shadow: 0 8px 25px rgba(8, 145, 178, 0.15);
+  --service-card-border: var(--border-color);
+  --service-card-hover-shadow: 0 12px 35px rgba(8, 145, 178, 0.25);
+  
+  --service-icon-bg: var(--gradient-primary);
+  --service-icon-color: #fff;
+  --service-icon-shadow: 0 4px 15px rgba(8, 145, 178, 0.3);
+  
+  --service-name-color: var(--text-primary);
+  --service-description-color: var(--text-secondary);
+  --service-price-color: var(--primary-color);
+  
+  --service-button-bg: var(--gradient-primary);
+  --service-button-text: #fff;
+  --service-button-shadow: 0 4px 15px rgba(8, 145, 178, 0.3);
+  --service-button-hover-shadow: 0 6px 20px rgba(8, 145, 178, 0.4);
+  
+  --emergency-service-bg: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  --emergency-service-border: #fca5a5;
+  --emergency-service-text: #dc2626;
+  
+  --home-visit-badge-bg: var(--gradient-accent);
+  --home-visit-badge-text: #fff;
+  --home-visit-badge-shadow: 0 2px 8px rgba(20, 184, 166, 0.4);
+
+  // Pet care-specific animations with gentle, caring motion
+  .main-content-wrapper {
+    animation: gentleSlideIn 0.8s ease-out;
+  }
+
+  @keyframes gentleSlideIn {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // Gentle hover effects for pet care theme
+  app-top-navbar, app-bottom-sticky-navbar {
+    .nav-item:hover {
+      transform: translateY(-1px);
+      transition: all 0.3s ease;
+    }
+  }
+
+  // Pet care service cards styling
+  .service-card {
+    background: var(--service-card-bg);
+    border: 1px solid var(--service-card-border);
+    border-radius: 16px;
+    box-shadow: var(--service-card-shadow);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      box-shadow: var(--service-card-hover-shadow);
+      transform: translateY(-2px);
+    }
+    
+    .service-icon {
+      background: var(--service-icon-bg);
+      color: var(--service-icon-color);
+      box-shadow: var(--service-icon-shadow);
+    }
+    
+    .service-name {
+      color: var(--service-name-color);
+    }
+    
+    .service-description {
+      color: var(--service-description-color);
+    }
+    
+    .service-price {
+      color: var(--service-price-color);
+    }
+    
+    .service-button {
+      background: var(--service-button-bg);
+      color: var(--service-button-text);
+      box-shadow: var(--service-button-shadow);
+      
+      &:hover {
+        box-shadow: var(--service-button-hover-shadow);
+      }
+    }
+  }
+
+  // Emergency service styling
+  .emergency-service {
+    background: var(--emergency-service-bg);
+    border: 2px solid var(--emergency-service-border);
+    
+    .service-name {
+      color: var(--emergency-service-text);
+    }
+  }
+
+  // Home visit badge styling
+  .home-visit-badge {
+    background: var(--home-visit-badge-bg);
+    color: var(--home-visit-badge-text);
+    box-shadow: var(--home-visit-badge-shadow);
+  }
+
+  // Pet care-specific responsive design
+  @media (max-width: 768px) {
+    .main-content-wrapper {
+      padding-bottom: 80px;
+    }
+  }
+
+  @media (max-width: 375px) {
+    .main-content-wrapper {
+      padding-bottom: 70px;
+    }
+  }
+
+  // Pet care hero section styling
+  .hero-section {
+    background: var(--gradient-hero);
+    border-radius: 0 0 24px 24px;
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+    
+    .hero-title {
+      color: var(--text-primary);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    
+    .hero-subtitle {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+  }
+
+  // Contact section styling
+  .contact-section {
+    background: var(--surface-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin: 1rem;
+    box-shadow: var(--service-card-shadow);
+    
+    .contact-title {
+      color: var(--text-primary);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    
+    .contact-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      
+      .contact-icon {
+        color: var(--primary-color);
+        font-size: 1.2rem;
+      }
+      
+      .contact-text {
+        color: var(--text-secondary);
+      }
+    }
+  }
+}

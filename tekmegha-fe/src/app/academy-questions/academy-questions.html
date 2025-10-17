@@ -1,0 +1,193 @@
+<div class="academy-questions">
+  <!-- Header Section -->
+  <div class="academy-header">
+    <h1>SarcAcademy</h1>
+    <p>Master competitive exams with our comprehensive question bank and personalized study plans</p>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section">
+    <div class="container">
+      <!-- Categories -->
+      <div class="filter-group">
+        <h3>Categories</h3>
+        <div class="categories-grid">
+          <div 
+            *ngFor="let category of categories" 
+            class="category-card"
+            [class.active]="selectedCategory === category.id"
+            (click)="onCategorySelect(category.id)">
+            <div class="category-image" [style.background-color]="category.colorCode"></div>
+            <div class="category-content">
+              <h4 class="category-name">{{ category.categoryName }}</h4>
+              <p class="category-description">{{ category.description }}</p>
+              <div class="category-stats">
+                <span class="question-count">{{ category.questionCount }} Questions</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Job Pills -->
+      <div class="filter-group">
+        <h3>Applicable Jobs</h3>
+        <div class="job-pills">
+          <div 
+            *ngFor="let jobPill of jobPills" 
+            class="job-pill"
+            [class.active]="selectedJobPill === jobPill.id"
+            [style.background]="selectedJobPill === jobPill.id ? 'white' : 'linear-gradient(135deg, ' + jobPill.colorCode + ' 0%, ' + jobPill.colorCode + 'dd 100%)'"
+            [style.color]="selectedJobPill === jobPill.id ? jobPill.colorCode : 'white'"
+            [style.border-color]="selectedJobPill === jobPill.id ? jobPill.colorCode : 'transparent'"
+            (click)="onJobPillSelect(jobPill.id)">
+            {{ jobPill.jobTitle }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Difficulty Filter -->
+      <div class="filter-group">
+        <h3>Difficulty Level</h3>
+        <div class="difficulty-filters">
+          <button 
+            *ngFor="let difficulty of ['easy', 'medium', 'hard', 'expert']" 
+            class="difficulty-btn"
+            [class.active]="selectedDifficulty === difficulty"
+            (click)="onDifficultySelect(difficulty)">
+            {{ difficulty | titlecase }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Questions Section -->
+  <div class="questions-section">
+    <div class="container">
+      <div class="questions-header">
+        <h2>Questions</h2>
+        <div class="questions-stats">
+          <span>{{ totalItems }} questions found</span>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Loading questions...</p>
+      </div>
+
+      <!-- Questions List -->
+      <div *ngIf="!isLoading" class="questions-list">
+        <div *ngFor="let question of questions" class="question-card">
+          <div class="question-header">
+            <div class="question-meta">
+              <span class="difficulty-badge" [class]="getDifficultyClass(question.difficultyLevel)">
+                {{ question.difficultyLevel | titlecase }}
+              </span>
+              <span class="time-limit">
+                <i class="clock-icon">⏱️</i>
+                {{ formatTime(question.timeLimitSeconds) }}
+              </span>
+            </div>
+            
+            <h3 class="question-text">{{ question.questionText }}</h3>
+            
+            <div *ngIf="question.imageUrl" class="question-image">
+              <img [src]="question.imageUrl" [alt]="'Question image for ' + question.questionCode">
+            </div>
+          </div>
+
+          <div *ngIf="question.options && question.options.length > 0" class="question-options">
+            <div 
+              *ngFor="let option of question.options" 
+              class="option">
+              <span class="option-label">{{ option.id }}</span>
+              <span class="option-text">{{ option.text }}</span>
+            </div>
+          </div>
+
+          <div class="question-footer">
+            <div class="tags">
+              <span *ngFor="let tag of question.tags" class="tag">{{ tag }}</span>
+              <span class="tag category-tag" [style.background-color]="question.category.colorCode + '20'" [style.color]="question.category.colorCode">
+                {{ question.category.name }}
+              </span>
+            </div>
+            
+            <div class="question-actions">
+              <button class="primary">Start Practice</button>
+              <button class="secondary">View Explanation</button>
+            </div>
+          </div>
+
+          <!-- Job Pills for this question -->
+          <div *ngIf="question.jobPills && question.jobPills.length > 0" class="question-job-pills">
+            <h4>Applicable for:</h4>
+            <div class="job-pills-list">
+              <span 
+                *ngFor="let jobPill of question.jobPills" 
+                class="job-pill-small"
+                [style.background-color]="jobPill.colorCode + '20'"
+                [style.color]="jobPill.colorCode">
+                {{ jobPill.title }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Geography Areas -->
+          <div *ngIf="question.geographyAreas && question.geographyAreas.length > 0" class="question-areas">
+            <h4>Geography:</h4>
+            <div class="areas-list">
+              <span 
+                *ngFor="let area of question.geographyAreas" 
+                class="area-tag">
+                {{ area.name }} ({{ area.type }})
+              </span>
+            </div>
+          </div>
+
+          <!-- Politics Areas -->
+          <div *ngIf="question.politicsAreas && question.politicsAreas.length > 0" class="question-areas">
+            <h4>Politics:</h4>
+            <div class="areas-list">
+              <span 
+                *ngFor="let area of question.politicsAreas" 
+                class="area-tag">
+                {{ area.name }} ({{ area.type }})
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="!isLoading && getTotalPages() > 1" class="pagination">
+        <button 
+          class="pagination-btn"
+          [disabled]="currentPage === 1"
+          (click)="onPageChange(currentPage - 1)">
+          Previous
+        </button>
+        
+        <div class="pagination-numbers">
+          <button 
+            *ngFor="let page of getPageNumbers()" 
+            class="pagination-number"
+            [class.active]="page === currentPage"
+            (click)="onPageChange(page)">
+            {{ page }}
+          </button>
+        </div>
+        
+        <button 
+          class="pagination-btn"
+          [disabled]="currentPage === getTotalPages()"
+          (click)="onPageChange(currentPage + 1)">
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

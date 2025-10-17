@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -42,7 +42,8 @@ interface Invoice {
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './invoice.html',
-  styleUrls: ['./invoice.scss']
+  styleUrl: './invoice.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class InvoiceComponent implements OnInit {
   invoiceForm: FormGroup;
@@ -442,6 +443,56 @@ export class InvoiceComponent implements OnInit {
 
   isTabActive(tab: string): boolean {
     return this.activeTab === tab;
+  }
+
+  hasTabError(tab: string): boolean {
+    switch (tab) {
+      case 'items':
+        return this.items.controls.some(item => 
+          (item.get('itemName')?.invalid ?? false) || 
+          (item.get('rate')?.invalid ?? false) || 
+          (item.get('quantity')?.invalid ?? false)
+        );
+      case 'invoice':
+        return (this.invoiceNumberControl?.invalid ?? false) || (this.dateControl?.invalid ?? false);
+      case 'store':
+        return (this.storeNameControl?.invalid ?? false) || 
+               (this.storeAddressControl?.invalid ?? false) || 
+               (this.storeContactControl?.invalid ?? false) || 
+               (this.storeGstinControl?.invalid ?? false);
+      case 'buyer':
+        return (this.buyerNameControl?.invalid ?? false) || 
+               (this.buyerAddressControl?.invalid ?? false) || 
+               (this.buyerContactControl?.invalid ?? false) || 
+               (this.paymentModeControl?.invalid ?? false);
+      default:
+        return false;
+    }
+  }
+
+  isTabCompleted(tab: string): boolean {
+    switch (tab) {
+      case 'items':
+        return this.items.length > 0 && this.items.controls.every(item => 
+          (item.get('itemName')?.valid ?? false) && 
+          (item.get('rate')?.valid ?? false) && 
+          (item.get('quantity')?.valid ?? false)
+        );
+      case 'invoice':
+        return (this.invoiceNumberControl?.valid ?? false) && (this.dateControl?.valid ?? false);
+      case 'store':
+        return (this.storeNameControl?.valid ?? false) && 
+               (this.storeAddressControl?.valid ?? false) && 
+               (this.storeContactControl?.valid ?? false) && 
+               (this.storeGstinControl?.valid ?? false);
+      case 'buyer':
+        return (this.buyerNameControl?.valid ?? false) && 
+               (this.buyerAddressControl?.valid ?? false) && 
+               (this.buyerContactControl?.valid ?? false) && 
+               (this.paymentModeControl?.valid ?? false);
+      default:
+        return false;
+    }
   }
 
   // Items management methods (enhanced)

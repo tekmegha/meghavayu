@@ -7,6 +7,8 @@ import { LayoutFashion } from '../../layout-fashion/layout-fashion';
 import { LayoutToys } from '../../layout-toys/layout-toys';
 import { LayoutDigitalSecurity } from '../../layout-digitalsecurity/layout-digitalsecurity';
 import { LayoutFood } from '../../layout-food/layout-food';
+import { LayoutPetCare } from '../../layout-pet-care/layout-pet-care';
+import { LayoutAcademy } from '../../layout-academy/layout-academy';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -19,7 +21,9 @@ import { Subscription } from 'rxjs';
     LayoutFashion,
     LayoutToys,
     LayoutDigitalSecurity,
-    LayoutFood
+    LayoutFood,
+    LayoutPetCare,
+    LayoutAcademy
   ],
   template: `
     <!-- Default Layout (All stores except specific ones) -->
@@ -46,6 +50,16 @@ import { Subscription } from 'rxjs';
     <app-layout-food *ngIf="selectedStore?.storeCode === 'royalfoods'">
       <router-outlet></router-outlet>
     </app-layout-food>
+
+    <!-- Pet Care Layout (Paws Nexus) -->
+    <app-layout-pet-care *ngIf="selectedStore?.storeCode === 'paws-nexus'">
+      <router-outlet></router-outlet>
+    </app-layout-pet-care>
+
+    <!-- Academy Layout (SarcAcademy) -->
+    <app-layout-academy *ngIf="selectedStore?.storeCode === 'sarcacademy'">
+      <router-outlet></router-outlet>
+    </app-layout-academy>
   `,
   styleUrls: ['./dynamic-layout.scss']
 })
@@ -173,7 +187,7 @@ export class DynamicLayoutComponent implements OnInit, OnDestroy {
    * @returns true if the store needs a special layout, false for default layout
    */
   isSpecialLayout(storeCode: string): boolean {
-    const specialLayouts = ['majili', 'little-ducks', 'cctv-device', 'royalfoods'];
+    const specialLayouts = ['majili', 'little-ducks', 'cctv-device', 'royalfoods', 'paws-nexus', 'sarcacademy'];
     return specialLayouts.includes(storeCode);
   }
 }
