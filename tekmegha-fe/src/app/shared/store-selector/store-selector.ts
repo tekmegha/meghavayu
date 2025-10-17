@@ -9,80 +9,18 @@ import { Subscription } from 'rxjs';
   selector: 'app-store-selector',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-    <div class="store-selector" *ngIf="showSelector">
-      <div class="store-selector-header">
-        <h3>Select Your Store</h3>
-        <p>Choose a store to browse products and place orders</p>
-      </div>
-      
-      <div class="stores-container" *ngIf="!isLoading; else loadingTemplate">
-        <div *ngFor="let storeType of storeTypes" class="store-category">
-          <h4 class="category-title">{{ getStoreTypeDisplayName(storeType) }}</h4>
-          <div class="stores-grid">
-            <div 
-              *ngFor="let store of groupedStores[storeType]" 
-              class="store-card"
-              [class.selected]="isStoreSelected(store)"
-              [style.--theme-primary]="getThemeColor(store.storeCode, 'primary')"
-              [style.--theme-secondary]="getThemeColor(store.storeCode, 'secondary')"
-              (click)="selectStore(store)"
-            >
-              <div class="store-icon">
-                <img 
-                  *ngIf="getStoreLogo(store)" 
-                  [src]="getStoreLogo(store)" 
-                  [alt]="store.storeName + ' logo'"
-                  class="store-logo"
-                >
-                <span 
-                  *ngIf="!getStoreLogo(store)" 
-                  class="material-icons"
-                  [style.background]="getIconBackground(store.storeCode)"
-                >{{ getStoreIcon(store.storeCode) }}</span>
-              </div>
-              <div class="store-info">
-                <h4>{{ store.storeName }}</h4>
-                <p>{{ getStoreDescription(store.storeCode) }}</p>
-                <span class="store-type">{{ store.storeType }}</span>
-              </div>
-              <div class="store-status" *ngIf="store.isActive">
-                <span class="status-badge active">Open</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <ng-template #loadingTemplate>
-        <div class="loading-stores">
-          <div class="skeleton-card" *ngFor="let i of [1,2,3]">
-            <div class="skeleton-icon"></div>
-            <div class="skeleton-content">
-              <div class="skeleton-title"></div>
-              <div class="skeleton-description"></div>
-            </div>
-          </div>
-        </div>
-      </ng-template>
-      
-      <div class="store-selector-footer" *ngIf="selectedStore">
-        <p>Selected: <strong>{{ selectedStore.storeName }}</strong></p>
-        <button class="continue-btn" (click)="continueWithStore()">
-          Continue Shopping
-        </button>
-      </div>
-    </div>
-  `,
+  templateUrl: './store-selector.html',
   styleUrls: ['./store-selector.scss']
 })
 export class StoreSelectorComponent implements OnInit, OnDestroy {
   availableStores: StoreSession[] = [];
+  filteredStores: StoreSession[] = [];
   groupedStores: { [key: string]: StoreSession[] } = {};
   storeTypes: string[] = [];
   selectedStore: StoreSession | null = null;
   isLoading = true;
   showSelector = true;
+  searchQuery = '';
   private subscription = new Subscription();
 
   constructor(
@@ -112,11 +50,35 @@ export class StoreSelectorComponent implements OnInit, OnDestroy {
     try {
       this.isLoading = true;
       this.availableStores = await this.storeSessionService.getAvailableStores();
+      this.filteredStores = [...this.availableStores];
       this.groupStoresByType();
     } catch (error) {
       console.error('Error loading stores:', error);
     } finally {
       this.isLoading = false;
+    }
+  }
+
+  onSearchChange() {
+    this.filterStores();
+  }
+
+  clearSearch() {
+    this.searchQuery = '';
+    this.filterStores();
+  }
+
+  private filterStores() {
+    if (!this.searchQuery.trim()) {
+      this.filteredStores = [...this.availableStores];
+    } else {
+      const query = this.searchQuery.toLowerCase().trim();
+      this.filteredStores = this.availableStores.filter(store => 
+        store.storeName.toLowerCase().includes(query) ||
+        store.storeCode.toLowerCase().includes(query) ||
+        this.getStoreDescription(store.storeCode).toLowerCase().includes(query) ||
+        (store.storeType && store.storeType.toLowerCase().includes(query))
+      );
     }
   }
 

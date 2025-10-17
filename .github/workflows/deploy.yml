@@ -56,7 +56,7 @@ jobs:
           username: 'u250903974.storehostingerprodftp'
           password: 'Mystoretm2025tm*'
           local-dir: dist/
-          server-dir: /store/
+          server-dir: /
           delete-excluded: true
           exclude: | # Files/directories to exclude from upload
             .git/

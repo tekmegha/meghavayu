@@ -1,78 +1,100 @@
-@if (showModal) {
-  <div class="modal-overlay" (click)="closeModal()">
-    <div class="store-selector-modal" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2>Select App</h2>
-        <button class="close-btn" (click)="closeModal()">
+<div class="store-selector" *ngIf="showSelector">
+  <div class="store-selector-header">
+    <h3>Select Your Store</h3>
+    <p>Choose a store to browse products and place orders</p>
+    
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <span class="material-icons search-icon">search</span>
+        <input 
+          type="text" 
+          class="search-input" 
+          placeholder="Search stores..." 
+          [(ngModel)]="searchQuery"
+          (input)="onSearchChange()"
+        >
+        <button 
+          *ngIf="searchQuery" 
+          class="clear-search" 
+          (click)="clearSearch()"
+        >
           <span class="material-icons">close</span>
         </button>
       </div>
-
-      <div class="modal-body">
-        @if (isLoading) {
-          <div class="loading-state">
-            <div class="spinner"></div>
-            <p>Loading available apps...</p>
-          </div>
-        } @else {
-          <div class="stores-grid">
-            @for (store of deliveryOptions; track store.id) {
-              <div 
-                class="store-card" 
-                [class.selected]="selectedStore?.id === store.id"
-                [class.unavailable]="!store.isAvailable"
-                (click)="selectStore(store)"
-              >
-                <div class="store-header">
-                  <h3>{{ store.storeName }}</h3>
-                  <div class="status-badge" [class]="getStatusColor(store)">
-                    {{ getStatusText(store) }}
-                  </div>
-                </div>
-
-                <div class="store-details">
-                  <p class="address">{{ store.storeAddress }}</p>
-                  
-                  <div class="delivery-info">
-                    <div class="info-item">
-                      <span class="material-icons">schedule</span>
-                      <span>{{ formatTime(store.estimatedTime) }}</span>
-                    </div>
-                    
-                    <div class="info-item">
-                      <span class="material-icons">location_on</span>
-                      <span>{{ formatDistance(store.distance) }}</span>
-                    </div>
-                    
-                    <div class="info-item">
-                      <span class="material-icons">local_shipping</span>
-                      <span>₹{{ store.deliveryFee }}</span>
-                    </div>
-                  </div>
-                </div>
-
-                @if (store.isAvailable) {
-                  <button class="select-btn" (click)="selectStore(store)">
-                    Select App
-                  </button>
-                } @else {
-                  <button class="select-btn unavailable" disabled>
-                    App Unavailable
-                  </button>
-                }
-              </div>
-            }
-          </div>
-
-          @if (deliveryOptions.length === 0) {
-            <div class="no-stores">
-              <span class="material-icons">store</span>
-              <h3>No apps available</h3>
-              <p>Please try again later or contact support.</p>
+    </div>
+  </div>
+  
+  <div class="stores-container" *ngIf="!isLoading; else loadingTemplate">
+    <div class="cloud-cards-grid">
+      <div 
+        *ngFor="let store of filteredStores; let i = index" 
+        class="store-item"
+        (click)="selectStore(store)"
+      >
+        <div 
+          class="cloud-card"
+          [class.selected]="isStoreSelected(store)"
+          [style.--theme-primary]="getThemeColor(store.storeCode, 'primary')"
+          [style.--theme-secondary]="getThemeColor(store.storeCode, 'secondary')"
+          [attr.data-cloud]="i + 1"
+        >
+          <svg class="cloud-svg" viewBox="0 0 592 362" preserveAspectRatio="none">
+            <defs>
+              <linearGradient [id]="'cloudGrad' + (i + 1)" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" [style.stop-color]="'rgba(255,255,255,0.95)'" stop-opacity="1" />
+                <stop offset="100%" [style.stop-color]="'rgba(240,248,255,0.9)'" stop-opacity="1" />
+              </linearGradient>
+            </defs>
+            <path d="M125.109 361.483C125.109 361.435 125.071 361.395 125.022 361.392C55.3682 357.787 0 300.168 0 229.617C0 156.741 59.0779 97.6626 131.954 97.6626C139.912 97.6626 147.427 93.6129 151.583 86.8272C183.321 35.0086 240.462 0.434814 305.679 0.434814C395.596 0.434814 470.162 66.1569 483.961 152.184C484.414 155.006 486.89 157.073 489.748 157.073C546.22 157.073 591.999 202.852 591.999 259.324C591.999 315.795 546.22 361.574 489.748 361.574C488.587 361.574 487.43 361.555 486.278 361.516C486.262 361.516 486.249 361.529 486.249 361.545C486.249 361.561 486.236 361.574 486.22 361.574H305.679H125.2C125.15 361.574 125.109 361.533 125.109 361.483Z" 
+                  [attr.fill]="'url(#cloudGrad' + (i + 1) + ')'" 
+                  stroke="rgba(135, 206, 235, 0.3)" 
+                  stroke-width="2"/>
+          </svg>
+          <div class="cloud-content">
+            <img 
+              *ngIf="getStoreLogo(store)" 
+              [src]="getStoreLogo(store)" 
+              [alt]="store.storeName + ' logo'"
+              class="cloud-logo"
+            >
+            <div 
+              *ngIf="!getStoreLogo(store)" 
+              class="cloud-icon"
+              [style.background]="getIconBackground(store.storeCode)"
+            >
+              <span class="material-icons">{{ getStoreIcon(store.storeCode) }}</span>
             </div>
-          }
-        }
+            <div class="store-name">{{ store.storeName }}</div>
+            <div class="cloud-status" *ngIf="store.isActive">
+              <span class="status-badge active">Open</span>
+            </div>
+            <button style="display: none;" class="cloud-btn" (click)="selectStore(store)">
+              Select Store
+            </button>
+          </div>
+        </div>
+        
+        <p class="cloud-category">{{ getStoreDescription(store.storeCode) }}</p>
       </div>
     </div>
   </div>
-}
+  
+  <ng-template #loadingTemplate>
+    <div class="loading-clouds">
+      <div class="skeleton-cloud-card" *ngFor="let i of [1,2,3]">
+        <div class="skeleton-cloud-icon"></div>
+        <div class="skeleton-cloud-content">
+          <div class="skeleton-cloud-title"></div>
+          <div class="skeleton-cloud-description"></div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  
+  <div class="store-selector-footer" *ngIf="selectedStore">
+    <p>Selected: <strong>{{ selectedStore.storeName }}</strong></p>
+    <button class="continue-btn" (click)="continueWithStore()">
+      Continue Shopping
+    </button>
+  </div>
+</div>
