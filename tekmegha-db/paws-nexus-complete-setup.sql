@@ -1,9 +1,9 @@
 -- ============================================
--- PAWS NEXUS STORE SETUP
+-- PAWS NEXUS COMPLETE SETUP
 -- Pet care store with specialized services
 -- ============================================
 
--- Insert Paws Nexus store
+-- Insert Paws Nexus store with correct schema
 INSERT INTO megha_stores (
   store_code,
   store_name,
@@ -298,6 +298,14 @@ SELECT
   s.store_type,
   s.support_phone,
   s.is_active,
+  s.enable_products,
+  s.enable_cart,
+  s.enable_payments,
+  s.enable_inventory,
+  s.enable_invoices,
+  s.enable_customers,
+  s.enable_reports,
+  s.is_prod_ready,
   l.name as location_name,
   l.phone as location_phone
 FROM megha_stores s

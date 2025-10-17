@@ -14,6 +14,7 @@ import { DynamicLayoutComponent } from './shared/dynamic-layout/dynamic-layout';
 import { InsurancesComponent } from './insurances/insurances';
 import { InvoiceComponent } from './invoice/invoice';
 import { InvoicesComponent } from './invoices/invoices';
+import { PetCareServicesComponent } from './pet-care-services/pet-care-services';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -177,10 +178,30 @@ export const routes: Routes = [
     { path: 'invoice/print/:id', component: InvoiceComponent, canActivate: [InventoryAuthGuard] },
     { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
   ]},
+  { path: 'paws-nexus', component: DynamicLayoutComponent, children: [
+    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    { path: 'home', component: Home },
+    { path: 'menu', component: PetCareServicesComponent },
+    { path: 'services', component: PetCareServicesComponent },
+    { path: 'doctors', component: PetCareServicesComponent },
+    { path: 'cart', component: Cart },
+    { path: 'stores', component: Stores },
+    { path: 'profile', component: Profile },
+    { path: 'login', component: Login },
+    { path: 'inventory', component: Inventory, canActivate: [InventoryAuthGuard] },
+    { path: 'invoices', component: InvoicesComponent, canActivate: [InventoryAuthGuard] },
+    { path: 'invoice', redirectTo: 'invoices', pathMatch: 'full' },
+    { path: 'invoice/new', component: InvoiceComponent, canActivate: [InventoryAuthGuard] },
+    { path: 'invoice/edit/:id', component: InvoiceComponent, canActivate: [InventoryAuthGuard] },
+    { path: 'invoice/view/:id', component: InvoiceComponent, canActivate: [InventoryAuthGuard] },
+    { path: 'invoice/print/:id', component: InvoiceComponent, canActivate: [InventoryAuthGuard] },
+    { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
+  ]},
   { path: 'fashion', redirectTo: '/majili', pathMatch: 'full' },
   { path: 'toys', redirectTo: '/little-ducks', pathMatch: 'full' },
   { path: 'food', redirectTo: '/royalfoods', pathMatch: 'full' },
   { path: 'insurance', redirectTo: '/automobile-insurance', pathMatch: 'full' },
+  { path: 'petcare', redirectTo: '/paws-nexus', pathMatch: 'full' },
   
   // Wildcard route for any store code that doesn't have a specific route
   // This allows stores from the database to be accessible via /store-code/invoice, /store-code/inventory, etc.

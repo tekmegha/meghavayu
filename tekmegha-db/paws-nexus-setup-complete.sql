@@ -1,9 +1,12 @@
 -- ============================================
--- PAWS NEXUS STORE SETUP
--- Pet care store with specialized services
+-- PAWS NEXUS COMPLETE SETUP
+-- This script creates the schema and inserts all data
 -- ============================================
 
--- Insert Paws Nexus store
+-- Step 1: Create the pet care schema first
+\i pet-care-schema.sql
+
+-- Step 2: Insert Paws Nexus store with correct schema
 INSERT INTO megha_stores (
   store_code,
   store_name,
@@ -63,7 +66,7 @@ INSERT INTO megha_stores (
   true
 );
 
--- Insert store location for Paws Nexus
+-- Step 3: Insert store location for Paws Nexus
 INSERT INTO store_locations (
   megha_store_id,
   location_code,
@@ -102,7 +105,7 @@ INSERT INTO store_locations (
   true
 );
 
--- Insert categories for pet care
+-- Step 4: Insert categories for pet care
 INSERT INTO categories (
   name,
   description,
@@ -154,7 +157,7 @@ INSERT INTO categories (
   'assets/images/paws-nexus/categories/emergency.jpg'
 );
 
--- Insert sample freelance doctors
+-- Step 5: Insert sample freelance doctors
 INSERT INTO freelance_doctors (
   megha_store_id,
   doctor_code,
@@ -230,7 +233,7 @@ INSERT INTO freelance_doctors (
   true
 );
 
--- Insert sample pet stores (partners)
+-- Step 6: Insert sample pet stores (partners)
 INSERT INTO pet_stores (
   megha_store_id,
   store_code,
@@ -291,15 +294,32 @@ INSERT INTO pet_stores (
   true
 );
 
--- Verify the setup
+-- Step 7: Verify the setup
 SELECT 
   s.store_code,
   s.store_name,
   s.store_type,
   s.support_phone,
   s.is_active,
+  s.enable_products,
+  s.enable_cart,
+  s.enable_payments,
+  s.enable_inventory,
+  s.enable_invoices,
+  s.enable_customers,
+  s.enable_reports,
+  s.is_prod_ready,
   l.name as location_name,
   l.phone as location_phone
 FROM megha_stores s
 LEFT JOIN store_locations l ON s.id = l.megha_store_id
 WHERE s.store_code = 'paws-nexus';
+
+-- Step 8: Show created tables
+SELECT 
+  table_name,
+  table_type
+FROM information_schema.tables 
+WHERE table_schema = 'public' 
+  AND table_name IN ('pet_care_services', 'freelance_doctors', 'pet_stores', 'doctor_services', 'pet_appointments', 'pet_emergency_contacts')
+ORDER BY table_name;

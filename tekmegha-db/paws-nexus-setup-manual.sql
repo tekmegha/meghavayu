@@ -1,9 +1,144 @@
 -- ============================================
--- PAWS NEXUS STORE SETUP
--- Pet care store with specialized services
+-- PAWS NEXUS MANUAL SETUP
+-- Run this script step by step or all at once
 -- ============================================
 
--- Insert Paws Nexus store
+-- Step 1: Create pet care tables (if they don't exist)
+
+-- Create pet_care_services table
+CREATE TABLE IF NOT EXISTS pet_care_services (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  megha_store_id UUID REFERENCES megha_stores(id) ON DELETE CASCADE,
+  service_code VARCHAR(50) NOT NULL,
+  service_name VARCHAR(255) NOT NULL,
+  service_description TEXT,
+  service_type VARCHAR(100) NOT NULL,
+  category VARCHAR(100) NOT NULL,
+  subcategory VARCHAR(100),
+  price DECIMAL(10,2) NOT NULL,
+  duration_minutes INTEGER DEFAULT 30,
+  is_emergency_service BOOLEAN DEFAULT false,
+  requires_appointment BOOLEAN DEFAULT true,
+  is_home_visit_available BOOLEAN DEFAULT false,
+  home_visit_charge DECIMAL(10,2) DEFAULT 0.00,
+  is_active BOOLEAN DEFAULT true,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  CONSTRAINT unique_store_service_code UNIQUE (megha_store_id, service_code)
+);
+
+-- Create freelance_doctors table
+CREATE TABLE IF NOT EXISTS freelance_doctors (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  megha_store_id UUID REFERENCES megha_stores(id) ON DELETE CASCADE,
+  doctor_code VARCHAR(50) NOT NULL,
+  full_name VARCHAR(255) NOT NULL,
+  specialization VARCHAR(255) NOT NULL,
+  qualifications TEXT,
+  experience_years INTEGER DEFAULT 0,
+  phone VARCHAR(20) NOT NULL,
+  email VARCHAR(255),
+  address TEXT,
+  city VARCHAR(100),
+  state VARCHAR(100),
+  pincode VARCHAR(20),
+  consultation_fee DECIMAL(10,2) DEFAULT 0.00,
+  home_visit_fee DECIMAL(10,2) DEFAULT 0.00,
+  emergency_fee DECIMAL(10,2) DEFAULT 0.00,
+  available_days JSONB,
+  available_hours JSONB,
+  is_available_for_home_visits BOOLEAN DEFAULT false,
+  is_available_for_emergency BOOLEAN DEFAULT false,
+  rating DECIMAL(3,2) DEFAULT 0.0,
+  review_count INTEGER DEFAULT 0,
+  is_verified BOOLEAN DEFAULT false,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  CONSTRAINT unique_store_doctor_code UNIQUE (megha_store_id, doctor_code)
+);
+
+-- Create pet_stores table
+CREATE TABLE IF NOT EXISTS pet_stores (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  megha_store_id UUID REFERENCES megha_stores(id) ON DELETE CASCADE,
+  store_code VARCHAR(50) NOT NULL,
+  store_name VARCHAR(255) NOT NULL,
+  store_type VARCHAR(100) NOT NULL,
+  contact_person VARCHAR(255),
+  phone VARCHAR(20) NOT NULL,
+  email VARCHAR(255),
+  address TEXT NOT NULL,
+  city VARCHAR(100),
+  state VARCHAR(100),
+  pincode VARCHAR(20),
+  latitude DECIMAL(10,8),
+  longitude DECIMAL(11,8),
+  business_hours JSONB,
+  delivery_radius_km DECIMAL(5,2) DEFAULT 5.0,
+  min_order_amount DECIMAL(10,2) DEFAULT 0.00,
+  is_partner BOOLEAN DEFAULT true,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  CONSTRAINT unique_store_partner_code UNIQUE (megha_store_id, store_code)
+);
+
+-- Create doctor_services table
+CREATE TABLE IF NOT EXISTS doctor_services (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  doctor_id UUID REFERENCES freelance_doctors(id) ON DELETE CASCADE,
+  service_id UUID REFERENCES pet_care_services(id) ON DELETE CASCADE,
+  is_available BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  CONSTRAINT unique_doctor_service UNIQUE (doctor_id, service_id)
+);
+
+-- Create pet_appointments table
+CREATE TABLE IF NOT EXISTS pet_appointments (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  megha_store_id UUID REFERENCES megha_stores(id) ON DELETE CASCADE,
+  appointment_number VARCHAR(50) UNIQUE NOT NULL,
+  user_id UUID REFERENCES auth.users(id),
+  doctor_id UUID REFERENCES freelance_doctors(id),
+  service_id UUID REFERENCES pet_care_services(id),
+  pet_name VARCHAR(255) NOT NULL,
+  pet_type VARCHAR(100) NOT NULL,
+  pet_breed VARCHAR(255),
+  pet_age_months INTEGER,
+  pet_weight_kg DECIMAL(5,2),
+  appointment_date DATE NOT NULL,
+  appointment_time TIME NOT NULL,
+  appointment_type VARCHAR(50) NOT NULL,
+  address TEXT,
+  phone VARCHAR(20) NOT NULL,
+  email VARCHAR(255),
+  symptoms TEXT,
+  previous_medical_history TEXT,
+  status VARCHAR(50) DEFAULT 'scheduled' CHECK (status IN ('scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show')),
+  total_amount DECIMAL(10,2) NOT NULL,
+  payment_status VARCHAR(50) DEFAULT 'pending' CHECK (payment_status IN ('pending', 'paid', 'refunded')),
+  payment_method VARCHAR(50),
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create pet_emergency_contacts table
+CREATE TABLE IF NOT EXISTS pet_emergency_contacts (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  megha_store_id UUID REFERENCES megha_stores(id) ON DELETE CASCADE,
+  contact_name VARCHAR(255) NOT NULL,
+  phone VARCHAR(20) NOT NULL,
+  email VARCHAR(255),
+  service_type VARCHAR(100) NOT NULL,
+  is_24_hours BOOLEAN DEFAULT false,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Step 2: Insert Paws Nexus store
 INSERT INTO megha_stores (
   store_code,
   store_name,
@@ -63,7 +198,7 @@ INSERT INTO megha_stores (
   true
 );
 
--- Insert store location for Paws Nexus
+-- Step 3: Insert store location
 INSERT INTO store_locations (
   megha_store_id,
   location_code,
@@ -102,7 +237,7 @@ INSERT INTO store_locations (
   true
 );
 
--- Insert categories for pet care
+-- Step 4: Insert categories
 INSERT INTO categories (
   name,
   description,
@@ -154,7 +289,7 @@ INSERT INTO categories (
   'assets/images/paws-nexus/categories/emergency.jpg'
 );
 
--- Insert sample freelance doctors
+-- Step 5: Insert freelance doctors
 INSERT INTO freelance_doctors (
   megha_store_id,
   doctor_code,
@@ -230,7 +365,7 @@ INSERT INTO freelance_doctors (
   true
 );
 
--- Insert sample pet stores (partners)
+-- Step 6: Insert pet stores (partners)
 INSERT INTO pet_stores (
   megha_store_id,
   store_code,
@@ -291,15 +426,14 @@ INSERT INTO pet_stores (
   true
 );
 
--- Verify the setup
+-- Step 7: Verify setup
 SELECT 
   s.store_code,
   s.store_name,
   s.store_type,
   s.support_phone,
   s.is_active,
-  l.name as location_name,
-  l.phone as location_phone
+  l.name as location_name
 FROM megha_stores s
 LEFT JOIN store_locations l ON s.id = l.megha_store_id
 WHERE s.store_code = 'paws-nexus';
