@@ -1,0 +1,258 @@
+<div class="invoice-create-container">
+  <!-- Header -->
+  <div class="invoice-header">
+    <button class="back-btn" (click)="goBack()">
+      <span class="material-icons">arrow_back</span>
+    </button>
+    <h1>Invoice Creation</h1>
+  </div>
+
+  <!-- Main Form -->
+  <form [formGroup]="invoiceForm" class="invoice-form">
+    <!-- Customer Name -->
+    <div class="form-section">
+      <input 
+        type="text" 
+        formControlName="buyerName" 
+        class="form-input"
+        placeholder="Customer Name"
+        [class.error]="invoiceForm.get('buyerName')?.invalid && invoiceForm.get('buyerName')?.touched"
+      >
+      <button type="button" class="add-customer-btn" (click)="openCustomerModal()">
+        <span class="material-icons">person_add</span>
+      </button>
+    </div>
+
+    <!-- Item Description -->
+    <div class="form-section">
+      <label class="form-label">Item Description</label>
+      <textarea 
+        formControlName="itemDescription" 
+        class="form-textarea"
+        placeholder="Enter item description"
+        rows="3"
+      ></textarea>
+    </div>
+
+    <!-- Quantity Controls -->
+    <div class="form-section">
+      <label class="form-label">Quantity</label>
+      <div class="quantity-controls">
+        <button type="button" class="qty-btn" (click)="decreaseQuantity()">
+          <span class="material-icons">remove</span>
+        </button>
+        <input 
+          type="number" 
+          formControlName="quantity" 
+          class="qty-input"
+          min="1"
+          value="1"
+        >
+        <button type="button" class="qty-btn" (click)="increaseQuantity()">
+          <span class="material-icons">add</span>
+        </button>
+        <input 
+          type="number" 
+          formControlName="rate" 
+          class="qty-input"
+          min="0"
+          step="0.01"
+          placeholder="Rate"
+        >
+        <button type="button" class="qty-btn">
+          <span class="material-icons">expand_more</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Price -->
+    <div class="form-section">
+      <label class="form-label">Price</label>
+      <div class="price-display">
+        <span class="currency">₹</span>
+        <span class="price-value">{{ getItemPrice() | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <!-- Total -->
+    <div class="form-section">
+      <label class="form-label">Total</label>
+      <div class="total-display">
+        <span class="currency">₹</span>
+        <span class="total-value">{{ getTotalAmount() | number:'1.2-2' }}</span>
+      </div>
+    </div>
+  </form>
+
+  <!-- Debug Info -->
+  <div class="debug-info" *ngIf="!hasRequiredStoreData()">
+    <div class="debug-message">
+      <span class="material-icons">warning</span>
+      Store information not loaded. 
+      <button type="button" class="debug-btn" (click)="debugStoreStatus()">
+        Debug Store Status
+      </button>
+      <button type="button" class="debug-btn" (click)="refreshStoreData()">
+        Refresh Store Data
+      </button>
+      <button type="button" class="debug-btn" (click)="setStoreDataManually()">
+        Set Manual Store
+      </button>
+    </div>
+  </div>
+
+  <!-- Store Info Display -->
+  <div class="store-info-display" *ngIf="hasRequiredStoreData()">
+    <div class="store-info-card">
+      <h3>Store Information</h3>
+      <div class="store-details">
+        <div class="store-detail">
+          <strong>Store Name:</strong> {{ invoiceForm.get('storeName')?.value }}
+        </div>
+        <div class="store-detail">
+          <strong>Address:</strong> {{ invoiceForm.get('storeAddress')?.value }}
+        </div>
+        <div class="store-detail">
+          <strong>Contact:</strong> {{ invoiceForm.get('storeContact')?.value }}
+        </div>
+        <div class="store-detail" *ngIf="invoiceForm.get('storeGstin')?.value">
+          <strong>GSTIN:</strong> {{ invoiceForm.get('storeGstin')?.value }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button 
+      type="button" 
+      class="btn-clear" 
+      (click)="clearForm()"
+    >
+      Clear Form
+    </button>
+    <button 
+      type="button" 
+      class="btn-save-draft" 
+      (click)="saveDraft()"
+    >
+      Save Draft
+    </button>
+    <button 
+      type="button" 
+      class="btn-submit" 
+      (click)="submitInvoice()"
+      [disabled]="loading"
+    >
+      {{ loading ? 'Submitting...' : 'Submit Invoice' }}
+    </button>
+  </div>
+
+  <!-- Error Display -->
+  <div class="error-message" *ngIf="error">
+    <span class="material-icons">error</span>
+    {{ error }}
+  </div>
+</div>
+
+<!-- Customer Details Popup Modal -->
+<div class="modal-overlay" *ngIf="showCustomerModal" (click)="closeCustomerModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Customer Details</h3>
+      <button class="close-btn" (click)="closeCustomerModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form [formGroup]="customerForm" class="customer-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="customerName">Customer Name *</label>
+            <input 
+              type="text" 
+              id="customerName"
+              formControlName="customerName" 
+              class="form-control"
+              placeholder="Enter customer name"
+              [class.error]="customerForm.get('customerName')?.invalid && customerForm.get('customerName')?.touched"
+            >
+            <div class="error-message" *ngIf="customerForm.get('customerName')?.invalid && customerForm.get('customerName')?.touched">
+              Customer name is required
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="customerPhone">Phone Number</label>
+            <input 
+              type="tel" 
+              id="customerPhone"
+              formControlName="customerPhone" 
+              class="form-control"
+              placeholder="Enter phone number"
+            >
+          </div>
+          <div class="form-group">
+            <label for="customerEmail">Email</label>
+            <input 
+              type="email" 
+              id="customerEmail"
+              formControlName="customerEmail" 
+              class="form-control"
+              placeholder="Enter email address"
+            >
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="customerAddress">Address</label>
+            <textarea 
+              id="customerAddress"
+              formControlName="customerAddress" 
+              class="form-control"
+              placeholder="Enter customer address"
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="customerGstin">GSTIN (Optional)</label>
+            <input 
+              type="text" 
+              id="customerGstin"
+              formControlName="customerGstin" 
+              class="form-control"
+              placeholder="Enter GSTIN number"
+            >
+          </div>
+          <div class="form-group">
+            <label for="customerCity">City</label>
+            <input 
+              type="text" 
+              id="customerCity"
+              formControlName="customerCity" 
+              class="form-control"
+              placeholder="Enter city"
+            >
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeCustomerModal()">
+        Cancel
+      </button>
+      <button type="button" class="btn btn-primary" (click)="saveCustomerDetails()" [disabled]="customerForm.invalid">
+        <span class="material-icons">save</span>
+        Save & Continue
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { StoreSessionService, StoreSession } from '../services/store-session.service';
 import { SupabaseService } from '../services/supabase.service';
 import { Subscription } from 'rxjs';
@@ -25,7 +26,8 @@ export class StoreSelectorComponent implements OnInit, OnDestroy {
 
   constructor(
     private storeSessionService: StoreSessionService,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -102,6 +104,9 @@ export class StoreSelectorComponent implements OnInit, OnDestroy {
   selectStore(store: StoreSession) {
     this.selectedStore = store;
     this.storeSessionService.setSelectedStore(store);
+    
+    // Navigate to the selected store's home page
+    this.router.navigate([`/${store.storeCode}/home`]);
   }
 
   isStoreSelected(store: StoreSession): boolean {
@@ -118,6 +123,8 @@ export class StoreSelectorComponent implements OnInit, OnDestroy {
 
   getStoreIcon(storeCode: string): string {
     switch (storeCode) {
+      case 'megha':
+        return 'business';
       case 'brew-buddy':
         return 'local_cafe';
       case 'little-ducks':
@@ -128,6 +135,16 @@ export class StoreSelectorComponent implements OnInit, OnDestroy {
         return 'restaurant';
       case 'cctv-device':
         return 'security';
+      case 'automobile-insurance':
+        return 'directions_car';
+      case 'dkassociates':
+        return 'directions_car';
+      case 'paws-nexus':
+        return 'pets';
+      case 'sarcacademy':
+        return 'school';
+      case 'visakha-vendi':
+        return 'diamond';
       default:
         return 'store';
     }
@@ -135,6 +152,8 @@ export class StoreSelectorComponent implements OnInit, OnDestroy {
 
   getStoreDescription(storeCode: string): string {
     switch (storeCode) {
+      case 'megha':
+        return 'Multi-store management platform';
       case 'brew-buddy':
         return 'Premium coffee and beverages';
       case 'little-ducks':
@@ -145,6 +164,16 @@ export class StoreSelectorComponent implements OnInit, OnDestroy {
         return 'Fresh Indian breads specialist';
       case 'cctv-device':
         return 'Digital security solutions';
+      case 'automobile-insurance':
+        return 'Vehicle insurance policies';
+      case 'dkassociates':
+        return 'Insurance services';
+      case 'paws-nexus':
+        return 'Pet care and veterinary services';
+      case 'sarcacademy':
+        return 'Educational services';
+      case 'visakha-vendi':
+        return 'Silver exchange service';
       default:
         return 'General store';
     }

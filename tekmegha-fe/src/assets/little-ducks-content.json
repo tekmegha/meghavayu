@@ -45,6 +45,11 @@
       "route": "/inventory"
     },
     {
+      "icon": "receipt",
+      "label": "Bill",
+      "route": "/invoices"
+    },
+    {
       "icon": "person",
       "label": "Profile",
       "route": "/profile"

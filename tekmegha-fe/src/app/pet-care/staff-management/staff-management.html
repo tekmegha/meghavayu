@@ -1,0 +1,277 @@
+<div class="staff-management-container">
+  <div class="header">
+    <h2>Staff Management</h2>
+    <button class="btn btn-primary" (click)="addStaff()">
+      <i class="icon-plus"></i>
+      Add Staff Member
+    </button>
+  </div>
+
+  <!-- Staff Form -->
+  <div class="staff-form" *ngIf="isAddingStaff || isEditingStaff">
+    <h3>{{ isAddingStaff ? 'Add New Staff Member' : 'Edit Staff Member' }}</h3>
+    
+    <form [formGroup]="staffForm" (ngSubmit)="saveStaff()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="staff_code">Staff Code *</label>
+          <input 
+            type="text" 
+            id="staff_code" 
+            formControlName="staff_code"
+            placeholder="e.g., DR001, GRM001"
+            [class.error]="staffForm.get('staff_code')?.invalid && staffForm.get('staff_code')?.touched">
+          <div class="error-message" *ngIf="staffForm.get('staff_code')?.invalid && staffForm.get('staff_code')?.touched">
+            Staff code is required (minimum 3 characters)
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="full_name">Full Name *</label>
+          <input 
+            type="text" 
+            id="full_name" 
+            formControlName="full_name"
+            placeholder="Enter full name"
+            [class.error]="staffForm.get('full_name')?.invalid && staffForm.get('full_name')?.touched">
+          <div class="error-message" *ngIf="staffForm.get('full_name')?.invalid && staffForm.get('full_name')?.touched">
+            Full name is required (minimum 2 characters)
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="role">Role *</label>
+          <select 
+            id="role" 
+            formControlName="role"
+            [class.error]="staffForm.get('role')?.invalid && staffForm.get('role')?.touched">
+            <option value="">Select Role</option>
+            <option *ngFor="let role of roles" [value]="role.value">{{ role.label }}</option>
+          </select>
+          <div class="error-message" *ngIf="staffForm.get('role')?.invalid && staffForm.get('role')?.touched">
+            Role is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="specialization">Specialization</label>
+          <input 
+            type="text" 
+            id="specialization" 
+            formControlName="specialization"
+            placeholder="e.g., Small Animals, Surgery">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="phone">Phone *</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            formControlName="phone"
+            placeholder="Enter phone number"
+            [class.error]="staffForm.get('phone')?.invalid && staffForm.get('phone')?.touched">
+          <div class="error-message" *ngIf="staffForm.get('phone')?.invalid && staffForm.get('phone')?.touched">
+            Valid phone number is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email"
+            placeholder="Enter email address"
+            [class.error]="staffForm.get('email')?.invalid && staffForm.get('email')?.touched">
+          <div class="error-message" *ngIf="staffForm.get('email')?.invalid && staffForm.get('email')?.touched">
+            Valid email address is required
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="hire_date">Hire Date *</label>
+          <input 
+            type="date" 
+            id="hire_date" 
+            formControlName="hire_date"
+            [class.error]="staffForm.get('hire_date')?.invalid && staffForm.get('hire_date')?.touched">
+          <div class="error-message" *ngIf="staffForm.get('hire_date')?.invalid && staffForm.get('hire_date')?.touched">
+            Hire date is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="salary">Salary</label>
+          <input 
+            type="number" 
+            id="salary" 
+            formControlName="salary"
+            placeholder="Enter salary"
+            min="0"
+            step="0.01">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="qualifications">Qualifications</label>
+        <textarea 
+          id="qualifications" 
+          formControlName="qualifications"
+          placeholder="Enter qualifications and certifications"
+          rows="3"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Address</label>
+        <textarea 
+          id="address" 
+          formControlName="address"
+          placeholder="Enter address"
+          rows="2"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="staffForm.invalid">
+          {{ isAddingStaff ? 'Add Staff Member' : 'Update Staff Member' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="cancelEdit()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Staff List -->
+  <div class="staff-list">
+    <div class="staff-grid">
+      <div class="staff-card" *ngFor="let staff of staffMembers">
+        <div class="staff-header">
+          <h4>{{ staff.full_name }}</h4>
+          <div class="staff-status">
+            <span class="status-badge" [class.active]="staff.is_active" [class.inactive]="!staff.is_active">
+              {{ staff.is_active ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="staff-details">
+          <div class="detail-item">
+            <strong>Code:</strong> {{ staff.staff_code }}
+          </div>
+          <div class="detail-item">
+            <strong>Role:</strong> {{ getRoleLabel(staff.role) }}
+          </div>
+          <div class="detail-item" *ngIf="staff.specialization">
+            <strong>Specialization:</strong> {{ staff.specialization }}
+          </div>
+          <div class="detail-item">
+            <strong>Phone:</strong> {{ staff.phone }}
+          </div>
+          <div class="detail-item" *ngIf="staff.email">
+            <strong>Email:</strong> {{ staff.email }}
+          </div>
+          <div class="detail-item">
+            <strong>Hire Date:</strong> {{ staff.hire_date | date:'mediumDate' }}
+          </div>
+          <div class="detail-item" *ngIf="staff.salary">
+            <strong>Salary:</strong> ₹{{ staff.salary | number:'1.2-2' }}
+          </div>
+        </div>
+
+        <div class="staff-actions">
+          <button class="btn btn-sm btn-primary" (click)="editStaff(staff)">
+            <i class="icon-edit"></i>
+            Edit
+          </button>
+          <button class="btn btn-sm btn-secondary" (click)="toggleStaffStatus(staff)">
+            <i class="icon-toggle"></i>
+            {{ staff.is_active ? 'Deactivate' : 'Activate' }}
+          </button>
+          <button class="btn btn-sm btn-danger" (click)="deleteStaff(staff)">
+            <i class="icon-delete"></i>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="staffMembers.length === 0">
+      <div class="empty-icon">
+        <i class="icon-staff"></i>
+      </div>
+      <h3>No Staff Members</h3>
+      <p>Add your first staff member to get started with managing your team.</p>
+      <button class="btn btn-primary" (click)="addStaff()">
+        <i class="icon-plus"></i>
+        Add Staff Member
+      </button>
+    </div>
+  </div>
+
+  <!-- Schedule Management -->
+  <div class="schedule-section" *ngIf="selectedStaff">
+    <h3>Schedule for {{ selectedStaff.full_name }}</h3>
+    
+    <form [formGroup]="scheduleForm" (ngSubmit)="addSchedule()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="day_of_week">Day of Week *</label>
+          <select 
+            id="day_of_week" 
+            formControlName="day_of_week"
+            [class.error]="scheduleForm.get('day_of_week')?.invalid && scheduleForm.get('day_of_week')?.touched">
+            <option value="">Select Day</option>
+            <option *ngFor="let day of daysOfWeek" [value]="day.value">{{ day.label }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="start_time">Start Time *</label>
+          <input 
+            type="time" 
+            id="start_time" 
+            formControlName="start_time"
+            [class.error]="scheduleForm.get('start_time')?.invalid && scheduleForm.get('start_time')?.touched">
+        </div>
+
+        <div class="form-group">
+          <label for="end_time">End Time *</label>
+          <input 
+            type="time" 
+            id="end_time" 
+            formControlName="end_time"
+            [class.error]="scheduleForm.get('end_time')?.invalid && scheduleForm.get('end_time')?.touched">
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" formControlName="is_available">
+            Available
+          </label>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="scheduleForm.invalid">
+          Add Schedule
+        </button>
+      </div>
+    </form>
+
+    <div class="schedule-list">
+      <div class="schedule-item" *ngFor="let schedule of getStaffSchedules(selectedStaff.id)">
+        <div class="schedule-day">{{ getDayLabel(schedule.day_of_week) }}</div>
+        <div class="schedule-time">{{ schedule.start_time }} - {{ schedule.end_time }}</div>
+        <div class="schedule-status" [class.available]="schedule.is_available" [class.unavailable]="!schedule.is_available">
+          {{ schedule.is_available ? 'Available' : 'Unavailable' }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

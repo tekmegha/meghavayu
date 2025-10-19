@@ -1,0 +1,168 @@
+<div class="invoice-view-container" *ngIf="!loading && invoice">
+  <!-- Header -->
+  <div class="invoice-header">
+    <div class="header-left">
+      <button class="btn btn-secondary" (click)="goBack()">
+        <span class="material-icons">arrow_back</span>
+        Back to Invoices
+      </button>
+      <h1>Invoice #{{ invoice.invoiceNumber }}</h1>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline-primary" (click)="shareInvoice()">
+        <span class="material-icons">share</span>
+        Share
+      </button>
+      <button class="btn btn-outline-secondary" (click)="printInvoice()">
+        <span class="material-icons">print</span>
+        Print
+      </button>
+      <button class="btn btn-primary" (click)="editInvoice()">
+        <span class="material-icons">edit</span>
+        Edit Invoice
+      </button>
+    </div>
+  </div>
+
+  <!-- Invoice Content -->
+  <div class="invoice-content">
+    <div class="invoice-document">
+      <!-- Invoice Header -->
+      <div class="invoice-doc-header">
+        <div class="company-info">
+          <h2>{{ invoice.storeName }}</h2>
+          <p>{{ invoice.storeAddress }}</p>
+          <p>Contact: {{ invoice.storeContact }}</p>
+          <p *ngIf="invoice.storeGstin">GSTIN: {{ invoice.storeGstin }}</p>
+        </div>
+        <div class="invoice-meta">
+          <h3>INVOICE</h3>
+          <div class="meta-row">
+            <span class="meta-label">Invoice No:</span>
+            <span class="meta-value">{{ invoice.invoiceNumber }}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Date:</span>
+            <span class="meta-value">{{ formatDate(invoice.date) }}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Payment Mode:</span>
+            <span class="meta-value">{{ invoice.paymentMode }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bill To Section -->
+      <div class="bill-to-section">
+        <div class="bill-to-info">
+          <h4>Bill To:</h4>
+          <h3>{{ invoice.buyerName }}</h3>
+          <p>{{ invoice.buyerAddress }}</p>
+          <p>Contact: {{ invoice.buyerContact }}</p>
+          <p *ngIf="invoice.buyerGstin">GSTIN: {{ invoice.buyerGstin }}</p>
+        </div>
+      </div>
+
+      <!-- Items Table -->
+      <div class="invoice-table">
+        <div class="table-header">
+          <div class="col-serial">#</div>
+          <div class="col-item">Item Description</div>
+          <div class="col-rate">Rate</div>
+          <div class="col-qty">Qty</div>
+          <div class="col-amount">Amount</div>
+        </div>
+
+        <div class="table-body">
+          <div 
+            *ngFor="let item of invoice.items; let i = index" 
+            class="table-row"
+          >
+            <div class="col-serial">{{ i + 1 }}</div>
+            <div class="col-item">{{ item.itemName }}</div>
+            <div class="col-rate">{{ formatCurrency(item.rate) }}</div>
+            <div class="col-qty">{{ item.quantity }}</div>
+            <div class="col-amount">{{ formatCurrency(item.amount) }}</div>
+          </div>
+        </div>
+
+        <!-- Totals Section -->
+        <div class="totals-section">
+          <div class="totals-row">
+            <span class="total-label">Subtotal:</span>
+            <span class="total-value">{{ formatCurrency(invoice.subtotal) }}</span>
+          </div>
+          <div class="totals-row" *ngIf="invoice.discount > 0">
+            <span class="total-label">Discount:</span>
+            <span class="total-value">-{{ formatCurrency(invoice.discount) }}</span>
+          </div>
+          <div class="totals-row">
+            <span class="total-label">SGST (9%):</span>
+            <span class="total-value">{{ formatCurrency(invoice.sgst) }}</span>
+          </div>
+          <div class="totals-row">
+            <span class="total-label">CGST (9%):</span>
+            <span class="total-value">{{ formatCurrency(invoice.cgst) }}</span>
+          </div>
+          <div class="totals-row total-final">
+            <span class="total-label">Total Amount:</span>
+            <span class="total-value">{{ formatCurrency(invoice.total) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="invoice-footer">
+        <div class="footer-section">
+          <h4>Payment Terms</h4>
+          <p>Payment due upon receipt</p>
+        </div>
+        <div class="footer-section">
+          <h4>Thank You</h4>
+          <p>Thank you for your business!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div class="loading-container" *ngIf="loading">
+  <div class="loading-spinner">
+    <span class="material-icons">refresh</span>
+    <p>Loading invoice...</p>
+  </div>
+</div>
+
+<!-- Error State -->
+<div class="error-container" *ngIf="error">
+  <div class="error-message">
+    <span class="material-icons">error</span>
+    <h3>Error Loading Invoice</h3>
+    <p>{{ error }}</p>
+    <button class="btn btn-primary" (click)="goBack()">
+      <span class="material-icons">arrow_back</span>
+      Back to Invoices
+    </button>
+  </div>
+</div>
+
+<!-- Print Styles -->
+<style>
+@media print {
+  .invoice-header,
+  .header-actions {
+    display: none !important;
+  }
+  
+  .invoice-view-container {
+    padding: 0 !important;
+    background: white !important;
+  }
+  
+  .invoice-document {
+    box-shadow: none !important;
+    border: none !important;
+  }
+}
+</style>

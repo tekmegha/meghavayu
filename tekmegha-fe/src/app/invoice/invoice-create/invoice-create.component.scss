@@ -1,0 +1,389 @@
+// Mobile-First Invoice Creation Styles
+.invoice-create-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f8fafc;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  .invoice-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 0 10px;
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: #007AFF;
+      cursor: pointer;
+      padding: 8px;
+      margin-right: 16px;
+      border-radius: 8px;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background: rgba(0, 122, 255, 0.1);
+      }
+
+      .material-icons {
+        font-size: 24px;
+      }
+    }
+
+    h1 {
+      margin: 0;
+      color: #1d1d1f;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+  }
+
+  .invoice-form {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+
+    .form-section {
+      margin-bottom: 24px;
+
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #1d1d1f;
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 16px;
+        border: 1px solid #d1d1d6;
+        border-radius: 12px;
+        font-size: 1rem;
+        background: #f9f9f9;
+        transition: all 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #007AFF;
+          background: white;
+          box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        &.error {
+          border-color: #ff3b30;
+          background: #fff5f5;
+        }
+
+        &::placeholder {
+          color: #8e8e93;
+        }
+      }
+
+      .form-textarea {
+        width: 100%;
+        padding: 16px;
+        border: 1px solid #d1d1d6;
+        border-radius: 12px;
+        font-size: 1rem;
+        background: #f9f9f9;
+        resize: vertical;
+        min-height: 80px;
+        transition: all 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #007AFF;
+          background: white;
+          box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        &::placeholder {
+          color: #8e8e93;
+        }
+      }
+
+      .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+
+        .qty-btn {
+          background: #f2f2f7;
+          border: none;
+          border-radius: 8px;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: #e5e5ea;
+          }
+
+          .material-icons {
+            font-size: 20px;
+            color: #007AFF;
+          }
+        }
+
+        .qty-input {
+          width: 60px;
+          padding: 12px;
+          border: 1px solid #d1d1d6;
+          border-radius: 8px;
+          text-align: center;
+          font-size: 1rem;
+          background: white;
+
+          &:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.1);
+          }
+        }
+      }
+
+      .price-display,
+      .total-display {
+        display: flex;
+        align-items: center;
+        padding: 16px;
+        background: #f2f2f7;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+
+        .currency {
+          color: #007AFF;
+          margin-right: 4px;
+        }
+
+        .price-value,
+        .total-value {
+          color: #1d1d1f;
+        }
+      }
+
+      .total-display {
+        background: #e8f4fd;
+        border: 1px solid #007AFF;
+
+        .currency,
+        .total-value {
+          color: #007AFF;
+        }
+      }
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+
+    .btn-clear {
+      background: #ff3b30;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 16px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #d70015;
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    .btn-save-draft {
+      background: #007AFF;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 16px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #0056b3;
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    .btn-submit {
+      background: white;
+      color: #007AFF;
+      border: 2px solid #007AFF;
+      border-radius: 12px;
+      padding: 16px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #007AFF;
+        color: white;
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+    }
+  }
+
+  .error-message {
+    background: #ff3b30;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+
+    .material-icons {
+      font-size: 20px;
+    }
+  }
+
+  .debug-info {
+    margin: 16px 0;
+
+    .debug-message {
+      background: #ff9500;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      font-size: 0.9rem;
+
+      .material-icons {
+        font-size: 20px;
+      }
+
+      .debug-btn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        margin-left: 8px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
+      }
+    }
+  }
+
+  .store-info-display {
+    margin: 16px 0;
+
+    .store-info-card {
+      background: #e8f4fd;
+      border: 1px solid #007AFF;
+      border-radius: 12px;
+      padding: 16px;
+      
+      h3 {
+        margin: 0 0 12px 0;
+        color: #007AFF;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      .store-details {
+        .store-detail {
+          margin-bottom: 8px;
+          font-size: 0.9rem;
+          color: #1d1d1f;
+
+          strong {
+            color: #007AFF;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Add customer button styling
+.add-customer-btn {
+  background: #007AFF;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+  }
+
+  .material-icons {
+    font-size: 20px;
+    color: white;
+  }
+}
+
+// Responsive design
+@media (max-width: 480px) {
+  .invoice-create-container {
+    padding: 16px;
+    max-width: 100%;
+
+    .invoice-form {
+      padding: 20px;
+    }
+
+    .quantity-controls {
+      justify-content: center;
+    }
+  }
+}

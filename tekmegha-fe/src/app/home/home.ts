@@ -364,9 +364,11 @@ export class Home implements OnInit, OnDestroy {
         return 'cctv-device';
       case 'royalfoods':
         return 'royalfoods';
+      case 'megha':
+        return 'megha';
       default:
         console.warn(`Unknown store code: ${storeCode}, using default brand`);
-        return 'brewbuddy'; // Default fallback
+        return 'megha'; // Default fallback to megha
     }
   }
 }

@@ -24,9 +24,14 @@ export class StoreSessionService {
     this.initializeStoreSession();
   }
 
+  // Alias for backward compatibility
+  getCurrentStore() {
+    return this.selectedStore$;
+  }
+
   private async initializeStoreSession() {
     // Always determine store from URL (URL-driven approach)
-    const currentStore = this.supabaseService.getCurrentStore();
+    const currentStore = this.detectStoreFromUrl();
     if (currentStore) {
       await this.loadStoreByCode(currentStore);
       return;
@@ -35,6 +40,21 @@ export class StoreSessionService {
     // No store detected from URL - this is normal for global routes
     console.log('No store detected from URL - using global context');
     this.selectedStoreSubject.next(null);
+  }
+
+  private detectStoreFromUrl(): string | null {
+    const path = window.location.pathname;
+    const segments = path.split('/').filter(segment => segment);
+    
+    if (segments.length > 0) {
+      const potentialStoreCode = segments[0];
+      // Check if it's not a known global route
+      const globalRoutes = ['inventory-login', 'tekmegha-clients'];
+      if (!globalRoutes.includes(potentialStoreCode)) {
+        return potentialStoreCode;
+      }
+    }
+    return null;
   }
 
   async loadStoreByCode(storeCode: string): Promise<StoreSession | null> {
@@ -208,8 +228,16 @@ export class StoreSessionService {
   updateUrlForStore(storeCode: string): void {
     const currentPath = window.location.pathname;
     
-    // Remove existing store prefix
-    const pathWithoutStore = currentPath.replace(/^\/(brew-buddy|little-ducks|majili|royalfoods)/, '');
+    // Remove existing store prefix by finding the first segment that's not a global route
+    const segments = currentPath.split('/').filter(segment => segment);
+    const globalRoutes = ['inventory-login', 'tekmegha-clients'];
+    
+    let pathWithoutStore = currentPath;
+    if (segments.length > 0 && !globalRoutes.includes(segments[0])) {
+      // Remove the first segment (store code) and reconstruct the path
+      const remainingSegments = segments.slice(1);
+      pathWithoutStore = remainingSegments.length > 0 ? `/${remainingSegments.join('/')}` : '';
+    }
     
     // Add new store prefix
     const newPath = `/${storeCode}${pathWithoutStore}`;

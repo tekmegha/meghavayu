@@ -12,7 +12,7 @@ export interface BrandConfig {
   accentColor: string;
   backgroundGradient: string;
   navbarGradient: string;
-      theme: 'coffee' | 'toys' | 'fashion' | 'digitalsecurity' | 'food' | 'insurance';
+      theme: 'coffee' | 'toys' | 'fashion' | 'digitalsecurity' | 'food' | 'insurance' | 'silver-jewelry';
   domain: string;
   features: {
     inventory: boolean;
@@ -87,7 +87,7 @@ export class BrandService {
           { icon: 'restaurant_menu', label: 'Menu', route: '/menu' },
           { icon: 'shopping_cart', label: 'Cart', route: '/cart' },
           { icon: 'inventory', label: 'Inventory', route: '/inventory' },
-          { icon: 'location_on', label: 'Stores', route: '/stores' },
+          { icon: 'receipt', label: 'Bill', route: '/invoices' },
           { icon: 'person', label: 'Profile', route: '/profile' }
         ]
       },
@@ -268,7 +268,7 @@ export class BrandService {
           { icon: 'restaurant', label: 'Menu', route: '/menu' },
           { icon: 'shopping_cart', label: 'Cart', route: '/cart' },
           { icon: 'inventory', label: 'Inventory', route: '/inventory' },
-          { icon: 'location_on', label: 'Stores', route: '/stores' },
+          { icon: 'receipt', label: 'Bill', route: '/invoices' },
           { icon: 'person', label: 'Profile', route: '/profile' }
         ]
       },
@@ -329,12 +329,104 @@ export class BrandService {
           { name: 'Renewals', icon: 'autorenew', route: '/menu?category=renewals' }
         ]
       }
-    }
-  ];
+    },
+    {
+      id: 'visakha-vendi',
+      name: 'visakha-vendi',
+      displayName: 'Visakha Vendi',
+      description: 'Silver Exchange Service',
+      logo: 'assets/images/visakha-vendi/logo.png',
+      primaryColor: '#C0C0C0',
+      secondaryColor: '#FF69B4',
+      accentColor: '#1B365D',
+      backgroundGradient: 'linear-gradient(135deg, #C0C0C0 0%, #E5E7EB 50%, #FF69B4 100%)',
+      navbarGradient: 'linear-gradient(135deg, #C0C0C0 0%, #FF69B4 100%)',
+      theme: 'silver-jewelry',
+      domain: 'visakhavendi.com',
+      features: {
+        inventory: true,
+        delivery: false,
+        multiStore: true,
+        userRoles: true,
+        payment: true
+      },
+      navigation: {
+        topNavbar: [
+          { icon: 'menu_book', position: 'left', action: 'toggleMenu' },
+          { icon: 'account_circle', position: 'right', action: 'openLogin', route: '/login' },
+          { icon: 'shopping_cart', position: 'right', action: 'openCart', route: '/cart' }
+        ],
+        bottomNavbar: [
+          { icon: 'home', label: 'Home', route: '/home', active: true },
+          { icon: 'calculate', label: 'Calculator', route: '/home#price-calculator' },
+          { icon: 'receipt', label: 'Bill', route: '/invoices' },
+          { icon: 'phone', label: 'Contact', route: '/home#contact' },
+          { icon: 'person', label: 'Profile', route: '/profile' }
+        ]
+      },
+      content: {
+        heroTitle: 'Visakha Vendi - Silver Exchange Service',
+        heroSubtitle: 'Transform your old silver jewelry into cash or exchange for beautiful new pieces',
+        heroImage: 'assets/images/visakha-vendi/hero-silver-exchange.jpg',
+        categories: [
+          { name: 'Sell Silver', icon: 'sell', route: '/home#services' },
+          { name: 'Exchange Jewelry', icon: 'swap_horiz', route: '/home#services' },
+          { name: 'Price Calculator', icon: 'calculate', route: '/home#price-calculator' },
+          { name: 'Store Locator', icon: 'location_on', route: '/home#store-locations' }
+        ]
+      }
+    },
+    {
+      id: 'megha',
+      name: 'megha',
+      displayName: 'Megha',
+      description: 'Multi-Store Management Platform',
+      logo: 'assets/images/megha/logo.png',
+      primaryColor: '#1e40af',
+      secondaryColor: '#3b82f6',
+      accentColor: '#10b981',
+      backgroundGradient: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #0ea5e9 100%)',
+      navbarGradient: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
+      theme: 'coffee',
+      domain: 'megha.com',
+      features: {
+        inventory: true,
+        delivery: true,
+        multiStore: true,
+        userRoles: true,
+        payment: true
+      },
+      navigation: {
+        topNavbar: [
+          { icon: 'menu_book', position: 'left', action: 'toggleMenu' },
+          { label: 'Megha', position: 'center' },
+          { icon: 'account_circle', position: 'right', action: 'openLogin', route: '/megha/login' },
+          { icon: 'shopping_cart', position: 'right', action: 'openCart', route: '/megha/cart' }
+        ],
+        bottomNavbar: [
+          { icon: 'home', label: 'Home', route: '/megha/home', active: true },
+          { icon: 'restaurant_menu', label: 'Menu', route: '/megha/menu' },
+          { icon: 'shopping_cart', label: 'Cart', route: '/megha/cart' },
+          { icon: 'inventory', label: 'Inventory', route: '/megha/inventory' },
+          { icon: 'receipt', label: 'Bill', route: '/megha/invoices' },
+          { icon: 'person', label: 'Profile', route: '/megha/profile' }
+        ]
+      },
+      content: {
+        heroTitle: 'Multi-Store Management Platform',
+        heroSubtitle: 'Manage all your stores from one place',
+        heroImage: 'assets/images/megha/hero-megha.jpg',
+        categories: [
+          { name: 'Store Management', icon: 'store', route: '/menu?category=stores' },
+          { name: 'Inventory', icon: 'inventory', route: '/menu?category=inventory' },
+          { name: 'Billing', icon: 'receipt', route: '/menu?category=billing' }
+        ]
+      }
+    }  ];
 
   constructor() {
-    // Initialize with default brand (BrewBuddy)
-    this.setCurrentBrand('brewbuddy');
+    // Initialize with default brand (Megha)
+    this.setCurrentBrand('megha');
   }
 
   getBrands(): BrandConfig[] {
@@ -388,6 +480,8 @@ export class BrandService {
       return 'royalfoods';
     } else if (hostname.includes('dkassociates') || hostname.includes('automobile-insurance') || hostname.includes('autoinsurance') || hostname.includes('insurance')) {
       return 'automobile-insurance';
+    } else if (hostname.includes('megha') || hostname.includes('tekmegha')) {
+      return 'megha';
     } else {
       return 'brewbuddy';
     }

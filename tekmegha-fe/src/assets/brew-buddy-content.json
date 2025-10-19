@@ -45,9 +45,9 @@
       "route": "/inventory"
     },
     {
-      "icon": "location_on",
-      "label": "Stores",
-      "route": "/stores"
+      "icon": "receipt",
+      "label": "Bill",
+      "route": "/invoices"
     },
     {
       "icon": "person",

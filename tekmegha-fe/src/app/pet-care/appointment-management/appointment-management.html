@@ -1,0 +1,324 @@
+<div class="appointment-management-container">
+  <div class="header">
+    <h2>Appointment Management</h2>
+    <button class="btn btn-primary" (click)="addAppointment()">
+      <i class="icon-plus"></i>
+      Book Appointment
+    </button>
+  </div>
+
+  <!-- Filters and Search -->
+  <div class="filters-section">
+    <div class="filter-row">
+      <div class="filter-group">
+        <label for="search">Search Appointments</label>
+        <input 
+          type="text" 
+          id="search" 
+          [(ngModel)]="searchTerm"
+          placeholder="Search by pet name, appointment number, or phone">
+      </div>
+
+      <div class="filter-group">
+        <label for="status">Status</label>
+        <select id="status" [(ngModel)]="filterStatus">
+          <option value="all">All Status</option>
+          <option *ngFor="let status of statusOptions" [value]="status.value">
+            {{ status.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="date">Date</label>
+        <input 
+          type="date" 
+          id="date" 
+          [(ngModel)]="filterDate">
+      </div>
+    </div>
+  </div>
+
+  <!-- Appointment Form -->
+  <div class="appointment-form" *ngIf="isAddingAppointment || isEditingAppointment">
+    <h3>{{ isAddingAppointment ? 'Book New Appointment' : 'Edit Appointment' }}</h3>
+    
+    <form [formGroup]="appointmentForm" (ngSubmit)="saveAppointment()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pet_name">Pet Name *</label>
+          <input 
+            type="text" 
+            id="pet_name" 
+            formControlName="pet_name"
+            placeholder="Enter pet name"
+            [class.error]="appointmentForm.get('pet_name')?.invalid && appointmentForm.get('pet_name')?.touched">
+          <div class="error-message" *ngIf="appointmentForm.get('pet_name')?.invalid && appointmentForm.get('pet_name')?.touched">
+            Pet name is required (minimum 2 characters)
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="pet_type">Pet Type *</label>
+          <select 
+            id="pet_type" 
+            formControlName="pet_type"
+            [class.error]="appointmentForm.get('pet_type')?.invalid && appointmentForm.get('pet_type')?.touched">
+            <option value="">Select Pet Type</option>
+            <option *ngFor="let type of petTypes" [value]="type.value">
+              {{ type.label }}
+            </option>
+          </select>
+          <div class="error-message" *ngIf="appointmentForm.get('pet_type')?.invalid && appointmentForm.get('pet_type')?.touched">
+            Pet type is required
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="pet_breed">Pet Breed</label>
+          <input 
+            type="text" 
+            id="pet_breed" 
+            formControlName="pet_breed"
+            placeholder="Enter pet breed">
+        </div>
+
+        <div class="form-group">
+          <label for="pet_age_months">Age (months)</label>
+          <input 
+            type="number" 
+            id="pet_age_months" 
+            formControlName="pet_age_months"
+            placeholder="Enter age in months"
+            min="0">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="appointment_date">Appointment Date *</label>
+          <input 
+            type="date" 
+            id="appointment_date" 
+            formControlName="appointment_date"
+            [class.error]="appointmentForm.get('appointment_date')?.invalid && appointmentForm.get('appointment_date')?.touched">
+          <div class="error-message" *ngIf="appointmentForm.get('appointment_date')?.invalid && appointmentForm.get('appointment_date')?.touched">
+            Appointment date is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="appointment_time">Appointment Time *</label>
+          <input 
+            type="time" 
+            id="appointment_time" 
+            formControlName="appointment_time"
+            [class.error]="appointmentForm.get('appointment_time')?.invalid && appointmentForm.get('appointment_time')?.touched">
+          <div class="error-message" *ngIf="appointmentForm.get('appointment_time')?.invalid && appointmentForm.get('appointment_time')?.touched">
+            Appointment time is required
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="appointment_type">Appointment Type *</label>
+          <select 
+            id="appointment_type" 
+            formControlName="appointment_type"
+            [class.error]="appointmentForm.get('appointment_type')?.invalid && appointmentForm.get('appointment_type')?.touched">
+            <option value="">Select Type</option>
+            <option *ngFor="let type of appointmentTypes" [value]="type.value">
+              {{ type.label }}
+            </option>
+          </select>
+          <div class="error-message" *ngIf="appointmentForm.get('appointment_type')?.invalid && appointmentForm.get('appointment_type')?.touched">
+            Appointment type is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="doctor_id">Doctor</label>
+          <select 
+            id="doctor_id" 
+            formControlName="doctor_id">
+            <option value="">Select Doctor</option>
+            <option *ngFor="let doctor of doctors" [value]="doctor.id">
+              {{ doctor.full_name }} - {{ doctor.specialization }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="phone">Phone *</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            formControlName="phone"
+            placeholder="Enter phone number"
+            [class.error]="appointmentForm.get('phone')?.invalid && appointmentForm.get('phone')?.touched">
+          <div class="error-message" *ngIf="appointmentForm.get('phone')?.invalid && appointmentForm.get('phone')?.touched">
+            Valid phone number is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email"
+            placeholder="Enter email address"
+            [class.error]="appointmentForm.get('email')?.invalid && appointmentForm.get('email')?.touched">
+          <div class="error-message" *ngIf="appointmentForm.get('email')?.invalid && appointmentForm.get('email')?.touched">
+            Valid email address is required
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="total_amount">Total Amount *</label>
+          <input 
+            type="number" 
+            id="total_amount" 
+            formControlName="total_amount"
+            placeholder="Enter total amount"
+            min="0"
+            step="0.01"
+            [class.error]="appointmentForm.get('total_amount')?.invalid && appointmentForm.get('total_amount')?.touched">
+          <div class="error-message" *ngIf="appointmentForm.get('total_amount')?.invalid && appointmentForm.get('total_amount')?.touched">
+            Valid amount is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="payment_status">Payment Status *</label>
+          <select 
+            id="payment_status" 
+            formControlName="payment_status"
+            [class.error]="appointmentForm.get('payment_status')?.invalid && appointmentForm.get('payment_status')?.touched">
+            <option *ngFor="let status of paymentStatusOptions" [value]="status.value">
+              {{ status.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="symptoms">Symptoms</label>
+        <textarea 
+          id="symptoms" 
+          formControlName="symptoms"
+          placeholder="Describe pet symptoms"
+          rows="3"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea 
+          id="notes" 
+          formControlName="notes"
+          placeholder="Additional notes"
+          rows="2"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="appointmentForm.invalid">
+          {{ isAddingAppointment ? 'Book Appointment' : 'Update Appointment' }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="cancelEdit()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Appointments List -->
+  <div class="appointments-list">
+    <div class="appointments-grid">
+      <div class="appointment-card" *ngFor="let appointment of getFilteredAppointments()">
+        <div class="appointment-header">
+          <h4>{{ appointment.pet_name }}</h4>
+          <div class="appointment-status">
+            <span class="status-badge" [class]="getStatusClass(appointment.status)">
+              {{ getStatusLabel(appointment.status) }}
+            </span>
+            <span class="payment-badge" [class]="getPaymentStatusClass(appointment.payment_status)">
+              {{ getPaymentStatusLabel(appointment.payment_status) }}
+            </span>
+          </div>
+        </div>
+
+        <div class="appointment-details">
+          <div class="detail-item">
+            <strong>Appointment #:</strong> {{ appointment.appointment_number }}
+          </div>
+          <div class="detail-item">
+            <strong>Pet Type:</strong> {{ getPetTypeLabel(appointment.pet_type) }}
+          </div>
+          <div class="detail-item" *ngIf="appointment.pet_breed">
+            <strong>Breed:</strong> {{ appointment.pet_breed }}
+          </div>
+          <div class="detail-item">
+            <strong>Date & Time:</strong> {{ appointment.appointment_date | date:'mediumDate' }} at {{ appointment.appointment_time }}
+          </div>
+          <div class="detail-item">
+            <strong>Type:</strong> {{ appointment.appointment_type | titlecase }}
+          </div>
+          <div class="detail-item" *ngIf="appointment.doctor_id">
+            <strong>Doctor:</strong> {{ getDoctorName(appointment.doctor_id) }}
+          </div>
+          <div class="detail-item">
+            <strong>Phone:</strong> {{ appointment.phone }}
+          </div>
+          <div class="detail-item" *ngIf="appointment.email">
+            <strong>Email:</strong> {{ appointment.email }}
+          </div>
+          <div class="detail-item">
+            <strong>Amount:</strong> ₹{{ appointment.total_amount | number:'1.2-2' }}
+          </div>
+        </div>
+
+        <div class="appointment-actions">
+          <button class="btn btn-sm btn-primary" (click)="editAppointment(appointment)">
+            <i class="icon-edit"></i>
+            Edit
+          </button>
+          <button class="btn btn-sm btn-secondary" (click)="updateAppointmentStatus(appointment, 'confirmed')">
+            <i class="icon-confirm"></i>
+            Confirm
+          </button>
+          <button class="btn btn-sm btn-success" (click)="updateAppointmentStatus(appointment, 'completed')">
+            <i class="icon-complete"></i>
+            Complete
+          </button>
+          <button class="btn btn-sm btn-warning" (click)="updatePaymentStatus(appointment, 'paid')">
+            <i class="icon-payment"></i>
+            Mark Paid
+          </button>
+          <button class="btn btn-sm btn-danger" (click)="deleteAppointment(appointment)">
+            <i class="icon-delete"></i>
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="getFilteredAppointments().length === 0">
+      <div class="empty-icon">
+        <i class="icon-appointment"></i>
+      </div>
+      <h3>No Appointments</h3>
+      <p>Book your first appointment to get started with pet care services.</p>
+      <button class="btn btn-primary" (click)="addAppointment()">
+        <i class="icon-plus"></i>
+        Book Appointment
+      </button>
+    </div>
+  </div>
+</div>

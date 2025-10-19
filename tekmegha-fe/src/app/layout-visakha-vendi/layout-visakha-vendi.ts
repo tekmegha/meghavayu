@@ -1,36 +1,35 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { TopNavbar } from '../top-navbar/top-navbar';
 import { BottomStickyNavbar } from '../bottom-sticky-navbar/bottom-sticky-navbar';
 import { CheckoutBannerComponent } from '../shared/checkout-banner/checkout-banner';
 import { NetworkStatusComponent } from '../shared/network-status/network-status';
 import { LocationBarComponent } from '../shared/location-bar/location-bar';
-import { NavbarItem } from '../shared/interfaces/navbar-item.interface';
 import { BrandService, BrandConfig } from '../shared/services/brand.service';
 import { StoreSessionService } from '../shared/services/store-session.service';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
-interface LayoutConfig {
-  topNavbar: NavbarItem[];
-  bottomNavbar: NavbarItem[];
-}
-
 @Component({
-  selector: 'app-layout',
-  imports: [RouterOutlet, TopNavbar, BottomStickyNavbar, CheckoutBannerComponent, NetworkStatusComponent, LocationBarComponent],
-  templateUrl: './layout.html',
-  styleUrl: './layout.scss'
+  selector: 'app-layout-visakha-vendi',
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    TopNavbar,
+    BottomStickyNavbar,
+    CheckoutBannerComponent,
+    NetworkStatusComponent,
+    LocationBarComponent
+  ],
+  templateUrl: './layout-visakha-vendi.html',
+  styleUrl: './layout-visakha-vendi.scss'
 })
-export class Layout implements OnInit, OnDestroy {
-  topNavbarConfig: NavbarItem[] = [];
-  bottomNavbarConfig: NavbarItem[] = [];
+export class LayoutVisakhaVendi implements OnInit, OnDestroy {
   currentBrand: BrandConfig | null = null;
   private subscription: Subscription = new Subscription();
 
   constructor(
-    private http: HttpClient, 
     private router: Router,
     private brandService: BrandService,
     private storeSessionService: StoreSessionService
@@ -41,14 +40,8 @@ export class Layout implements OnInit, OnDestroy {
     this.subscription.add(
       this.brandService.currentBrand$.subscribe(brand => {
         this.currentBrand = brand;
-        if (brand) {
-          this.topNavbarConfig = brand.navigation.topNavbar;
-          this.bottomNavbarConfig = brand.navigation.bottomNavbar;
-        }
       })
     );
-
-    // Brand will be initialized by home component based on store selection
 
     // Handle route changes
     this.subscription.add(
@@ -64,44 +57,20 @@ export class Layout implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  onMenuToggle() {
-    console.log('Menu Toggled!');
-    // Implement actual menu toggle logic here (e.g., open a side navigation)
-  }
-
-  onSearchOpen() {
-    console.log('Search Opened!');
-    // Implement actual search opening logic here (e.g., open a search overlay)
-  }
-
   onLoginOpen() {
-    console.log('Login Opened!');
-    // Navigate to login page with store context
-    const currentStore = this.storeSessionService.getSelectedStore();
-    if (currentStore) {
-      this.router.navigate([`/${currentStore.storeCode}/login`]);
-    } else {
-      this.router.navigate(['/megha/login']);
-    }
+    this.router.navigate(['/login']);
   }
 
   onCartOpen() {
-    console.log('Cart Opened!');
-    // Navigate to cart page with store context
-    const currentStore = this.storeSessionService.getSelectedStore();
-    if (currentStore) {
-      this.router.navigate([`/${currentStore.storeCode}/cart`]);
-    } else {
-      this.router.navigate(['/megha/cart']);
-    }
+    this.router.navigate(['/cart']);
   }
 
   onExitApp() {
     console.log('Exit App clicked!');
     // Clear store session to show app selector
     this.storeSessionService.clearSelectedStore();
-    // Navigate to megha home page to show app selector
-    this.router.navigate(['/megha/home']);
+    // Navigate to home page to show app selector
+    this.router.navigate(['/home']);
   }
 
   private updateActiveNavItem(url: string) {
@@ -111,5 +80,13 @@ export class Layout implements OnInit, OnDestroy {
         item.active = url === item.route || (item.route === '/home' && url === '/');
       });
     }
+  }
+
+  getTopNavbarItems() {
+    return this.currentBrand?.navigation.topNavbar || [];
+  }
+
+  getBottomNavbarItems() {
+    return this.currentBrand?.navigation.bottomNavbar || [];
   }
 }

@@ -1,0 +1,476 @@
+<div class="invoice-container">
+  <div class="invoice-header">
+    <div class="header-left">
+      <button class="btn btn-secondary" (click)="goBack()">
+        <span class="material-icons">arrow_back</span>
+        Back to Invoices
+      </button>
+      <h1>Edit Invoice</h1>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="previewInvoice()">
+        <span class="material-icons">visibility</span>
+        Preview
+      </button>
+      <button class="btn btn-primary" (click)="updateInvoice()" [disabled]="loading">
+        <span class="material-icons">save</span>
+        {{ loading ? 'Updating...' : 'Update Invoice' }}
+      </button>
+    </div>
+  </div>
+
+  <form [formGroup]="invoiceForm" class="invoice-form">
+    <!-- Tab Navigation -->
+    <div class="tab-navigation">
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="isTabActive('items')"
+        (click)="setActiveTab('items')"
+      >
+        <span class="material-icons">inventory</span>
+        Items
+      </button>
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="isTabActive('invoice')"
+        (click)="setActiveTab('invoice')"
+      >
+        <span class="material-icons">receipt</span>
+        Invoice Details
+      </button>
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="isTabActive('store')"
+        (click)="setActiveTab('store')"
+      >
+        <span class="material-icons">store</span>
+        Store Info
+      </button>
+      <button 
+        type="button" 
+        class="tab-btn" 
+        [class.active]="isTabActive('buyer')"
+        (click)="setActiveTab('buyer')"
+      >
+        <span class="material-icons">person</span>
+        Customer
+      </button>
+    </div>
+
+    <div class="tab-content">
+      <!-- Items Tab -->
+      <div class="tab-panel" [class.active]="isTabActive('items')">
+        <div class="items-section">
+          <div class="section-header">
+            <h3>Invoice Items</h3>
+            <div class="header-actions">
+              <div class="discount-toggle">
+                <label class="checkbox-label">
+                  <input 
+                    type="checkbox" 
+                    [checked]="showDiscountColumn"
+                    (change)="toggleDiscountColumn()"
+                  >
+                  <span class="checkmark"></span>
+                  Show Discount Column
+                </label>
+              </div>
+              <button type="button" class="btn btn-primary" (click)="addItem()">
+                <span class="material-icons">add</span>
+                Add Item
+              </button>
+            </div>
+          </div>
+          
+          <!-- Items Table -->
+          <div class="items-table compact" formArrayName="items">
+            <div class="table-header">
+              <div class="col-serial">#</div>
+              <div class="col-item">Item</div>
+              <div class="col-qty">Qty</div>
+              <div class="col-rate">Rate</div>
+              <div class="col-discount" *ngIf="showDiscountColumn">Disc%</div>
+              <div class="col-actions">Actions</div>
+            </div>
+            
+            <div 
+              *ngFor="let itemGroup of items.controls; let i = index" 
+              class="table-row"
+              [formGroupName]="i"
+            >
+              <div class="col-serial">{{ i + 1 }}</div>
+              
+              <div class="col-item">
+                <input 
+                  type="text" 
+                  formControlName="itemName" 
+                  class="form-control compact-input"
+                  placeholder="Item name"
+                  [class.error]="itemGroup.get('itemName')?.invalid && itemGroup.get('itemName')?.touched"
+                >
+              </div>
+              
+              <div class="col-qty">
+                <input 
+                  type="number" 
+                  formControlName="quantity" 
+                  class="form-control compact-input"
+                  min="1"
+                  step="1"
+                  (input)="calculateItemTotal(i)"
+                  [class.error]="itemGroup.get('quantity')?.invalid && itemGroup.get('quantity')?.touched"
+                >
+              </div>
+              
+              <div class="col-rate">
+                <input 
+                  type="number" 
+                  formControlName="rate" 
+                  class="form-control compact-input"
+                  min="0"
+                  step="0.01"
+                  (input)="calculateItemTotal(i)"
+                  [class.error]="itemGroup.get('rate')?.invalid && itemGroup.get('rate')?.touched"
+                >
+              </div>
+              
+              <div class="col-discount" *ngIf="showDiscountColumn">
+                <input 
+                  type="number" 
+                  formControlName="discount" 
+                  class="form-control compact-input"
+                  min="0"
+                  max="100"
+                  step="0.01"
+                  (input)="calculateItemTotal(i)"
+                >
+              </div>
+              
+              <div class="col-actions">
+                <button 
+                  type="button" 
+                  class="btn btn-xs btn-secondary" 
+                  (click)="duplicateItem(i)"
+                  title="Duplicate"
+                >
+                  <span class="material-icons">content_copy</span>
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-xs btn-danger" 
+                  (click)="removeItem(i)"
+                  [disabled]="items.length <= 1"
+                  title="Delete"
+                >
+                  <span class="material-icons">delete</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Summary -->
+          <div class="items-summary">
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span>₹{{ subtotal | number:'1.2-2' }}</span>
+            </div>
+            <div class="summary-row" *ngIf="discountAmount > 0">
+              <span>Discount:</span>
+              <span>-₹{{ discountAmount | number:'1.2-2' }}</span>
+            </div>
+            <div class="summary-row">
+              <span>SGST (9%):</span>
+              <span>₹{{ sgstAmount | number:'1.2-2' }}</span>
+            </div>
+            <div class="summary-row">
+              <span>CGST (9%):</span>
+              <span>₹{{ cgstAmount | number:'1.2-2' }}</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total:</span>
+              <span>₹{{ totalAmount | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invoice Details Tab -->
+      <div class="tab-panel" [class.active]="isTabActive('invoice')">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="invoiceNumber">Invoice Number *</label>
+            <input 
+              type="text" 
+              id="invoiceNumber"
+              formControlName="invoiceNumber" 
+              class="form-control"
+              placeholder="Auto-generated"
+              readonly
+            >
+          </div>
+          <div class="form-group">
+            <label for="date">Date *</label>
+            <input 
+              type="date" 
+              id="date"
+              formControlName="date" 
+              class="form-control"
+            >
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="paymentMode">Payment Mode *</label>
+            <select 
+              id="paymentMode"
+              formControlName="paymentMode" 
+              class="form-control"
+            >
+              <option value="Cash">Cash</option>
+              <option value="Card">Card</option>
+              <option value="UPI">UPI</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="Cheque">Cheque</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Store Information Tab -->
+      <div class="tab-panel" [class.active]="isTabActive('store')">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="storeName">Store Name *</label>
+            <input 
+              type="text" 
+              id="storeName"
+              formControlName="storeName" 
+              class="form-control"
+              placeholder="Enter store name"
+            >
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="storeAddress">Store Address *</label>
+            <textarea 
+              id="storeAddress"
+              formControlName="storeAddress" 
+              class="form-control"
+              placeholder="Enter store address"
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="storeContact">Contact Number *</label>
+            <input 
+              type="tel" 
+              id="storeContact"
+              formControlName="storeContact" 
+              class="form-control"
+              placeholder="Enter contact number"
+            >
+          </div>
+          <div class="form-group">
+            <label for="storeGstin">GSTIN</label>
+            <input 
+              type="text" 
+              id="storeGstin"
+              formControlName="storeGstin" 
+              class="form-control"
+              placeholder="Enter GSTIN number"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Information Tab -->
+      <div class="tab-panel" [class.active]="isTabActive('buyer')">
+        <div class="form-row">
+          <div class="form-group full-width" [class.has-error]="invoiceForm.get('buyerName')?.invalid && invoiceForm.get('buyerName')?.touched">
+            <label for="buyerName">
+              Customer Name
+              <span class="required">*</span>
+            </label>
+            <div class="input-with-button">
+              <input 
+                type="text" 
+                id="buyerName" 
+                formControlName="buyerName" 
+                class="form-control"
+                placeholder="Enter customer name"
+                [class.error]="invoiceForm.get('buyerName')?.invalid && invoiceForm.get('buyerName')?.touched"
+              >
+              <button type="button" class="btn btn-outline-primary btn-sm" (click)="openCustomerModal()">
+                <span class="material-icons">person_add</span>
+                Add Customer
+              </button>
+            </div>
+            <div class="error-text" *ngIf="invoiceForm.get('buyerName')?.invalid && invoiceForm.get('buyerName')?.touched">
+              <span class="material-icons">error</span>
+              Customer name is required
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group full-width" [class.has-error]="invoiceForm.get('buyerAddress')?.invalid && invoiceForm.get('buyerAddress')?.touched">
+            <label for="buyerAddress">
+              Address
+              <span class="required">*</span>
+            </label>
+            <textarea 
+              id="buyerAddress"
+              formControlName="buyerAddress" 
+              class="form-control"
+              placeholder="Enter customer address"
+              rows="3"
+              [class.error]="invoiceForm.get('buyerAddress')?.invalid && invoiceForm.get('buyerAddress')?.touched"
+            ></textarea>
+            <div class="error-text" *ngIf="invoiceForm.get('buyerAddress')?.invalid && invoiceForm.get('buyerAddress')?.touched">
+              <span class="material-icons">error</span>
+              Address is required
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group full-width" [class.has-error]="invoiceForm.get('buyerContact')?.invalid && invoiceForm.get('buyerContact')?.touched">
+            <label for="buyerContact">
+              Contact Number
+              <span class="required">*</span>
+            </label>
+            <input 
+              type="tel" 
+              id="buyerContact"
+              formControlName="buyerContact" 
+              class="form-control"
+              placeholder="Enter contact number"
+              [class.error]="invoiceForm.get('buyerContact')?.invalid && invoiceForm.get('buyerContact')?.touched"
+            >
+            <div class="error-text" *ngIf="invoiceForm.get('buyerContact')?.invalid && invoiceForm.get('buyerContact')?.touched">
+              <span class="material-icons">error</span>
+              Contact number is required
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Error Display -->
+  <div class="error-message" *ngIf="error">
+    <span class="material-icons">error</span>
+    {{ error }}
+  </div>
+</div>
+
+<!-- Customer Details Popup Modal -->
+<div class="modal-overlay" *ngIf="showCustomerModal" (click)="closeCustomerModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Customer Details</h3>
+      <button class="close-btn" (click)="closeCustomerModal()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <form [formGroup]="customerForm" class="customer-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="customerName">Customer Name *</label>
+            <input 
+              type="text" 
+              id="customerName"
+              formControlName="customerName" 
+              class="form-control"
+              placeholder="Enter customer name"
+              [class.error]="customerForm.get('customerName')?.invalid && customerForm.get('customerName')?.touched"
+            >
+            <div class="error-message" *ngIf="customerForm.get('customerName')?.invalid && customerForm.get('customerName')?.touched">
+              Customer name is required
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="customerPhone">Phone Number</label>
+            <input 
+              type="tel" 
+              id="customerPhone"
+              formControlName="customerPhone" 
+              class="form-control"
+              placeholder="Enter phone number"
+            >
+          </div>
+          <div class="form-group">
+            <label for="customerEmail">Email</label>
+            <input 
+              type="email" 
+              id="customerEmail"
+              formControlName="customerEmail" 
+              class="form-control"
+              placeholder="Enter email address"
+            >
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group full-width">
+            <label for="customerAddress">Address</label>
+            <textarea 
+              id="customerAddress"
+              formControlName="customerAddress" 
+              class="form-control"
+              placeholder="Enter customer address"
+              rows="3"
+            ></textarea>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="customerGstin">GSTIN (Optional)</label>
+            <input 
+              type="text" 
+              id="customerGstin"
+              formControlName="customerGstin" 
+              class="form-control"
+              placeholder="Enter GSTIN number"
+            >
+          </div>
+          <div class="form-group">
+            <label for="customerCity">City</label>
+            <input 
+              type="text" 
+              id="customerCity"
+              formControlName="customerCity" 
+              class="form-control"
+              placeholder="Enter city"
+            >
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeCustomerModal()">
+        Cancel
+      </button>
+      <button type="button" class="btn btn-primary" (click)="saveCustomerDetails()" [disabled]="customerForm.invalid">
+        <span class="material-icons">save</span>
+        Save & Continue
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+{
+  "topNavbar": [
+    {
+      "icon": "menu_book",
+      "position": "left",
+      "action": "toggleMenu"
+    },
+    {
+      "label": "Megha",
+      "position": "center"
+    },
+    {
+      "icon": "account_circle",
+      "position": "right",
+      "action": "openLogin",
+      "route": "/megha/login"
+    },
+    {
+      "icon": "shopping_cart",
+      "position": "right",
+      "action": "openCart",
+      "route": "/megha/cart"
+    }
+  ],
+  "bottomNavbar": [
+    {
+      "icon": "home",
+      "label": "Home",
+      "route": "/megha/home",
+      "active": true
+    },
+    {
+      "icon": "restaurant_menu",
+      "label": "Menu",
+      "route": "/megha/menu"
+    },
+    {
+      "icon": "shopping_cart",
+      "label": "Cart",
+      "route": "/megha/cart"
+    },
+    {
+      "icon": "inventory",
+      "label": "Inventory",
+      "route": "/megha/inventory"
+    },
+    {
+      "icon": "receipt",
+      "label": "Bill",
+      "route": "/megha/invoices"
+    },
+    {
+      "icon": "person",
+      "label": "Profile",
+      "route": "/megha/profile"
+    }
+  ],
+  "stores": [
+    {
+      "id": "megha-main",
+      "name": "Megha Main Store",
+      "address": "123 Business District, Hyderabad, Telangana 500032",
+      "phone": "+91 40 1234 5678",
+      "hours": "Mon-Sun: 9 AM - 9 PM"
+    },
+    {
+      "id": "megha-branch1",
+      "name": "Megha Branch 1",
+      "address": "456 Commercial Street, Secunderabad, Telangana 500003",
+      "phone": "+91 40 2345 6789",
+      "hours": "Mon-Sat: 10 AM - 8 PM, Sun: 11 AM - 7 PM"
+    },
+    {
+      "id": "megha-branch2",
+      "name": "Megha Branch 2",
+      "address": "789 Tech Park, Gachibowli, Hyderabad, Telangana 500032",
+      "phone": "+91 40 3456 7890",
+      "hours": "Mon-Fri: 9 AM - 7 PM, Sat-Sun: 10 AM - 6 PM"
+    }
+  ]
+}

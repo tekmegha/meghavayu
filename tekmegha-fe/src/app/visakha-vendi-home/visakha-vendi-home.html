@@ -1,0 +1,521 @@
+<!-- Hero Section -->
+<section class="hero-section" id="hero">
+  <div class="hero-container">
+    <div class="hero-content" [class.animate]="heroAnimationComplete">
+      <h1 class="hero-title">
+        <span class="title-main">Visakha Vendi</span>
+        <span class="title-subtitle">Silver Exchange Service</span>
+      </h1>
+      
+      <p class="hero-description">
+        Transform your old silver jewelry into cash or exchange for beautiful new pieces. 
+        Get instant price estimates and fair market rates.
+      </p>
+      
+      <div class="hero-actions">
+        <button class="btn-primary" (click)="scrollToSection('price-calculator')">
+          <i class="icon-calculator"></i>
+          Get Price Estimate
+        </button>
+        <button class="btn-secondary" (click)="scrollToSection('store-locations')">
+          <i class="icon-store"></i>
+          Visit Store
+        </button>
+      </div>
+    </div>
+    
+    <div class="hero-animation" [class.animate]="heroAnimationComplete">
+      <div class="jewelry-transformation">
+        <div class="old-jewelry">
+          <div class="jewelry-piece silver-ring"></div>
+          <div class="jewelry-piece silver-chain"></div>
+          <div class="jewelry-piece silver-bracelet"></div>
+        </div>
+        
+        <div class="transformation-arrow">
+          <i class="icon-arrow-right"></i>
+        </div>
+        
+        <div class="new-items">
+          <div class="cash-bills">
+            <div class="bill bill-1"></div>
+            <div class="bill bill-2"></div>
+            <div class="bill bill-3"></div>
+          </div>
+          <div class="new-jewelry">
+            <div class="diamond-ring"></div>
+            <div class="gold-chain"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services Section -->
+<section class="services-section" id="services" #servicesSection>
+  <div class="container">
+    <h2 class="section-title">Our Services</h2>
+    <div class="services-grid" [class.visible]="servicesVisible">
+      
+      <!-- Service 1: Sell Your Old Silver -->
+      <div class="service-card" [class.fade-in]="serviceCardsVisible[0]">
+        <div class="service-icon">
+          <i class="icon-sell"></i>
+        </div>
+        <h3 class="service-title">Sell Your Old Silver</h3>
+        <p class="service-description">
+          Get instant cash for your old silver jewelry at competitive market rates. 
+          Quick and transparent pricing process.
+        </p>
+        <button class="service-btn">Learn More</button>
+      </div>
+      
+      <!-- Service 2: Exchange with New Items -->
+      <div class="service-card slide-left" [class.slide-in]="serviceCardsVisible[1]">
+        <div class="service-icon">
+          <i class="icon-exchange"></i>
+        </div>
+        <h3 class="service-title">Exchange with New Items</h3>
+        <p class="service-description">
+          Trade your old silver for stunning new jewelry pieces. 
+          Wide collection of modern and traditional designs.
+        </p>
+        <button class="service-btn">Browse Collection</button>
+      </div>
+      
+      <!-- Service 3: Get Cash with Estimated Price -->
+      <div class="service-card slide-right" [class.slide-in]="serviceCardsVisible[2]">
+        <div class="service-icon">
+          <i class="icon-cash"></i>
+        </div>
+        <h3 class="service-title">Get Cash with Estimated Price</h3>
+        <p class="service-description">
+          Know your silver's value before visiting. 
+          Use our price calculator for instant estimates.
+        </p>
+        <button class="service-btn" (click)="scrollToSection('price-calculator')">Calculate Price</button>
+      </div>
+      
+      <!-- Service 4: Pick Up from Our Stores -->
+      <div class="service-card fade-bottom" [class.fade-in]="serviceCardsVisible[3]">
+        <div class="service-icon">
+          <i class="icon-pickup"></i>
+        </div>
+        <h3 class="service-title">Pick Up from Our Stores</h3>
+        <p class="service-description">
+          Convenient store locations across the city. 
+          Professional staff and secure transactions.
+        </p>
+        <button class="service-btn" (click)="scrollToSection('store-locations')">Find Store</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Price Calculator Section -->
+<section class="price-calculator-section" id="price-calculator">
+  <div class="container">
+    <h2 class="section-title">Silver Price Calculator</h2>
+    <div class="calculator-container">
+      <div class="calculator-form">
+        <div class="form-group">
+          <label for="weight">Silver Weight (grams)</label>
+          <input 
+            type="number" 
+            id="weight" 
+            [(ngModel)]="silverWeight" 
+            (input)="onWeightChange()"
+            placeholder="Enter weight in grams"
+            class="form-input">
+        </div>
+        
+        <div class="form-group">
+          <label for="purity">Silver Purity (%)</label>
+          <select 
+            id="purity" 
+            [(ngModel)]="silverPurity" 
+            (change)="onPurityChange()"
+            class="form-select">
+            <option value="92.5">92.5% (Sterling Silver)</option>
+            <option value="99.9">99.9% (Fine Silver)</option>
+            <option value="80">80% (Coin Silver)</option>
+            <option value="70">70% (German Silver)</option>
+          </select>
+        </div>
+        
+        <div class="current-rate">
+          <span class="rate-label">Current Silver Rate:</span>
+          <span class="rate-value">₹{{ currentSilverRate }} per gram</span>
+        </div>
+        
+        <div class="estimated-value" *ngIf="estimatedValue > 0">
+          <h3>Estimated Value: ₹{{ estimatedValue | number:'1.2-2' }}</h3>
+        </div>
+      </div>
+      
+      <div class="photo-upload">
+        <h3>Upload Photos for Assessment</h3>
+        <div class="upload-area">
+          <input 
+            type="file" 
+            id="photo-upload" 
+            (change)="onPhotoUpload($event)"
+            accept="image/*"
+            multiple
+            class="upload-input">
+          <label for="photo-upload" class="upload-label">
+            <i class="icon-camera"></i>
+            <span>Click to upload jewelry photos</span>
+            <small>Get more accurate assessment</small>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Key Features Section -->
+<section class="features-section" id="features">
+  <div class="container">
+    <h2 class="section-title">Why Choose Visakha Vendi?</h2>
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-icon">
+          <i class="icon-shield"></i>
+        </div>
+        <h3>Trusted & Secure</h3>
+        <p>Licensed and certified silver exchange with secure transactions</p>
+      </div>
+      
+      <div class="feature-item">
+        <div class="feature-icon">
+          <i class="icon-clock"></i>
+        </div>
+        <h3>Quick Process</h3>
+        <p>Fast assessment and instant payment within minutes</p>
+      </div>
+      
+      <div class="feature-item">
+        <div class="feature-icon">
+          <i class="icon-rate"></i>
+        </div>
+        <h3>Best Rates</h3>
+        <p>Competitive market rates with transparent pricing</p>
+      </div>
+      
+      <div class="feature-item">
+        <div class="feature-icon">
+          <i class="icon-support"></i>
+        </div>
+        <h3>Expert Support</h3>
+        <p>Professional staff to guide you through the process</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Store Locations Section -->
+<section class="store-locations-section" id="store-locations">
+  <div class="container">
+    <h2 class="section-title">Our Store Locations</h2>
+    <div class="stores-grid">
+      <div class="store-card" *ngFor="let store of storeLocations">
+        <div class="store-header">
+          <h3 class="store-name">{{ store.name }}</h3>
+          <div class="store-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">5.0 (127 reviews)</span>
+          </div>
+        </div>
+        
+        <div class="store-details">
+          <div class="store-address">
+            <i class="icon-location"></i>
+            <span>{{ store.address }}</span>
+          </div>
+          
+          <div class="store-phone">
+            <i class="icon-phone"></i>
+            <span>{{ store.phone }}</span>
+          </div>
+          
+          <div class="store-timings">
+            <i class="icon-clock"></i>
+            <span>{{ store.timings }}</span>
+          </div>
+        </div>
+        
+        <div class="store-services">
+          <h4>Available Services:</h4>
+          <ul>
+            <li *ngFor="let service of store.services">{{ service }}</li>
+          </ul>
+        </div>
+        
+        <div class="store-actions">
+          <button class="btn-primary" (click)="selectStore(store)">Select Store</button>
+          <button class="btn-secondary">Get Directions</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Customer Testimonials Section -->
+<section class="testimonials-section" id="testimonials">
+  <div class="container">
+    <h2 class="section-title">What Our Customers Say</h2>
+    <div class="testimonial-container">
+      <div class="testimonial-card">
+        <div class="testimonial-content">
+          <div class="testimonial-rating">
+            <span *ngFor="let star of generateStars(currentTestimonial.rating)" class="star">{{ star }}</span>
+          </div>
+          <p class="testimonial-text">"{{ currentTestimonial.comment }}"</p>
+          <div class="testimonial-author">
+            <h4>{{ currentTestimonial.name }}</h4>
+            <span class="testimonial-location">{{ currentTestimonial.location }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="testimonial-navigation">
+        <button class="nav-btn" (click)="previousTestimonial()">
+          <i class="icon-arrow-left"></i>
+        </button>
+        <div class="testimonial-dots">
+          <span 
+            *ngFor="let testimonial of testimonials; let i = index"
+            class="dot"
+            [class.active]="i === currentTestimonialIndex">
+          </span>
+        </div>
+        <button class="nav-btn" (click)="nextTestimonial()">
+          <i class="icon-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section class="about-section" id="about">
+  <div class="container">
+    <div class="about-content">
+      <div class="about-text">
+        <h2 class="section-title">About Visakha Vendi</h2>
+        <p class="about-description">
+          Visakha Vendi is your trusted partner for silver exchange services. With years of experience 
+          in the jewelry industry, we balance tradition with modern convenience to provide you with 
+          the best silver exchange experience.
+        </p>
+        
+        <div class="about-features">
+          <div class="about-feature">
+            <i class="icon-certificate"></i>
+            <div>
+              <h4>Certified & Licensed</h4>
+              <p>Fully licensed silver exchange with government certification</p>
+            </div>
+          </div>
+          
+          <div class="about-feature">
+            <i class="icon-experience"></i>
+            <div>
+              <h4>15+ Years Experience</h4>
+              <p>Decades of expertise in silver valuation and exchange</p>
+            </div>
+          </div>
+          
+          <div class="about-feature">
+            <i class="icon-customer"></i>
+            <div>
+              <h4>10,000+ Happy Customers</h4>
+              <p>Trusted by thousands of satisfied customers</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="about-stats">
+        <div class="stat-item">
+          <div class="stat-number">₹2.5Cr+</div>
+          <div class="stat-label">Silver Exchanged</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">10K+</div>
+          <div class="stat-label">Happy Customers</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">15+</div>
+          <div class="stat-label">Years Experience</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">5★</div>
+          <div class="stat-label">Average Rating</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works-section" id="how-it-works">
+  <div class="container">
+    <h2 class="section-title">How It Works</h2>
+    <div class="steps-container">
+      <div class="step-item">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>Bring Your Silver</h3>
+          <p>Visit our store with your old silver jewelry items</p>
+        </div>
+      </div>
+      
+      <div class="step-item">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>Get Assessment</h3>
+          <p>Our experts will assess the purity and weight of your silver</p>
+        </div>
+      </div>
+      
+      <div class="step-item">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>Receive Quote</h3>
+          <p>Get instant quote based on current market rates</p>
+        </div>
+      </div>
+      
+      <div class="step-item">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <h3>Choose Option</h3>
+          <p>Decide to take cash or exchange for new jewelry</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section" id="contact">
+  <div class="container">
+    <h2 class="section-title">Contact Us</h2>
+    <div class="contact-container">
+      <div class="contact-form">
+        <form (ngSubmit)="onSubmitContactForm()">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Name *</label>
+              <input 
+                type="text" 
+                id="name" 
+                [(ngModel)]="contactForm.name" 
+                name="name"
+                required
+                class="form-input">
+            </div>
+            
+            <div class="form-group">
+              <label for="phone">Phone *</label>
+              <input 
+                type="tel" 
+                id="phone" 
+                [(ngModel)]="contactForm.phone" 
+                name="phone"
+                required
+                class="form-input">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input 
+              type="email" 
+              id="email" 
+              [(ngModel)]="contactForm.email" 
+              name="email"
+              class="form-input">
+          </div>
+          
+          <div class="form-group">
+            <label for="preferredStore">Preferred Store</label>
+            <select 
+              id="preferredStore" 
+              [(ngModel)]="contactForm.preferredStore" 
+              name="preferredStore"
+              class="form-select">
+              <option value="">Select a store</option>
+              <option *ngFor="let store of storeLocations" [value]="store.name">
+                {{ store.name }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="appointmentDate">Preferred Appointment Date</label>
+            <input 
+              type="date" 
+              id="appointmentDate" 
+              [(ngModel)]="contactForm.appointmentDate" 
+              name="appointmentDate"
+              class="form-input">
+          </div>
+          
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea 
+              id="message" 
+              [(ngModel)]="contactForm.message" 
+              name="message"
+              rows="4"
+              class="form-textarea"
+              placeholder="Tell us about your silver items..."></textarea>
+          </div>
+          
+          <button type="submit" class="btn-primary">Send Message</button>
+        </form>
+      </div>
+      
+      <div class="contact-info">
+        <div class="contact-item">
+          <i class="icon-phone"></i>
+          <div>
+            <h4>Call Us</h4>
+            <p>+91-9876543210</p>
+            <p>+91-9876543211</p>
+          </div>
+        </div>
+        
+        <div class="contact-item">
+          <i class="icon-whatsapp"></i>
+          <div>
+            <h4>WhatsApp</h4>
+            <button class="whatsapp-btn" (click)="openWhatsApp()">Chat with Us</button>
+          </div>
+        </div>
+        
+        <div class="contact-item">
+          <i class="icon-clock"></i>
+          <div>
+            <h4>Business Hours</h4>
+            <p>Monday - Saturday: 10:00 AM - 8:00 PM</p>
+            <p>Sunday: 11:00 AM - 6:00 PM</p>
+          </div>
+        </div>
+        
+        <div class="contact-item">
+          <i class="icon-location"></i>
+          <div>
+            <h4>Visit Us</h4>
+            <p>123 Silver Street, Downtown</p>
+            <p>456 Mall Road, Shopping District</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -40,6 +40,9 @@ export class SupabaseService {
           headers: {
             'X-Client-Info': 'brewbuddy-app'
           }
+        },
+        db: {
+          schema: 'public'
         }
       });
       this.initializeAuth();
@@ -1176,6 +1179,78 @@ export class SupabaseService {
 
   async canShowReports(storeCode: string): Promise<boolean> {
     return this.isStoreFeatureEnabled(storeCode, 'reports');
+  }
+
+  // Generic CRUD methods for pet care
+  getData(table: string, filters: any = {}): Observable<any[]> {
+    return new Observable(observer => {
+      this.supabase
+        .from(table)
+        .select('*')
+        .match(filters)
+        .then(({ data, error }) => {
+          if (error) {
+            observer.error(error);
+          } else {
+            observer.next(data || []);
+            observer.complete();
+          }
+        });
+    });
+  }
+
+  createData(table: string, data: any): Observable<any> {
+    return new Observable(observer => {
+      this.supabase
+        .from(table)
+        .insert(data)
+        .select()
+        .single()
+        .then(({ data: result, error }) => {
+          if (error) {
+            observer.error(error);
+          } else {
+            observer.next(result);
+            observer.complete();
+          }
+        });
+    });
+  }
+
+  updateData(table: string, id: string, data: any): Observable<any> {
+    return new Observable(observer => {
+      this.supabase
+        .from(table)
+        .update(data)
+        .eq('id', id)
+        .select()
+        .single()
+        .then(({ data: result, error }) => {
+          if (error) {
+            observer.error(error);
+          } else {
+            observer.next(result);
+            observer.complete();
+          }
+        });
+    });
+  }
+
+  deleteData(table: string, id: string): Observable<void> {
+    return new Observable(observer => {
+      this.supabase
+        .from(table)
+        .delete()
+        .eq('id', id)
+        .then(({ error }) => {
+          if (error) {
+            observer.error(error);
+          } else {
+            observer.next();
+            observer.complete();
+          }
+        });
+    });
   }
 }
  
