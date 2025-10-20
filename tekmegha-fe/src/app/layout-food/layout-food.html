@@ -6,7 +6,9 @@
     (exitApp)="onExitApp()">
   </app-top-navbar>
 
-  <app-location-bar></app-location-bar>
+  @if (showLocationBar) {
+    <app-location-bar></app-location-bar>
+  }
 
   <main class="main-content-wrapper">
     <router-outlet></router-outlet>

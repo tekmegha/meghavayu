@@ -48,6 +48,16 @@
         </div>
       }
 
+      @if (showLogoutOption) {
+        <div class="logout-option">
+          <p>You are currently logged in but don't have access to this store.</p>
+          <button type="button" class="logout-button" (click)="onLogout()">
+            <span class="material-icons">logout</span>
+            <span>Logout and Try Different Account</span>
+          </button>
+        </div>
+      }
+
       @if (successMessage) {
         <div class="success-message">
           <span class="material-icons">check_circle</span>

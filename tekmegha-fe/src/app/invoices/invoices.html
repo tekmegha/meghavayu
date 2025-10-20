@@ -10,75 +10,79 @@
     </div>
   </div>
 
-  <!-- Filters Section -->
-  <div class="filters-section">
-    <div class="filters-grid">
-      <div class="filter-group">
-        <label for="search">Search</label>
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="search-container">
+      <div class="search-input-group">
         <input 
           type="text" 
-          id="search"
           [(ngModel)]="searchTerm" 
           placeholder="Search by invoice number or buyer name..."
-          class="form-control"
+          class="search-input"
+          (keyup.enter)="searchInvoices()"
         >
-      </div>
-      
-      <div class="filter-group">
-        <label for="dateFrom">Date From</label>
-        <input 
-          type="date" 
-          id="dateFrom"
-          [(ngModel)]="dateFrom" 
-          class="form-control"
-        >
-      </div>
-      
-      <div class="filter-group">
-        <label for="dateTo">Date To</label>
-        <input 
-          type="date" 
-          id="dateTo"
-          [(ngModel)]="dateTo" 
-          class="form-control"
-        >
-      </div>
-      
-      <div class="filter-group">
-        <label for="status">Status</label>
-        <select 
-          id="status"
-          [(ngModel)]="statusFilter" 
-          class="form-control"
-        >
-          <option value="all">All</option>
-          <option value="paid">Paid</option>
-          <option value="unpaid">Unpaid</option>
-        </select>
-      </div>
-      
-      <div class="filter-actions">
-        <button class="btn btn-secondary" (click)="applyFilters()">
-          Apply Filters
+        <button class="btn btn-primary search-btn" (click)="searchInvoices()">
+          <i class="icon-search"></i>
+          Search
         </button>
-        <button class="btn btn-outline" (click)="clearFilters()">
-          Clear
+      </div>
+      
+      <div class="filter-toggle">
+        <button class="btn btn-outline" (click)="toggleFilters()">
+          <i class="icon-filter"></i>
+          {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
         </button>
+      </div>
+    </div>
+    
+    <!-- Advanced Filters (Hidden by default) -->
+    <div class="filters-section" *ngIf="showFilters">
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label for="dateFrom">Date From</label>
+          <input 
+            type="date" 
+            id="dateFrom"
+            [(ngModel)]="dateFrom" 
+            class="form-control"
+          >
+        </div>
+        
+        <div class="filter-group">
+          <label for="dateTo">Date To</label>
+          <input 
+            type="date" 
+            id="dateTo"
+            [(ngModel)]="dateTo" 
+            class="form-control"
+          >
+        </div>
+        
+        <div class="filter-group">
+          <label for="status">Status</label>
+          <select 
+            id="status"
+            [(ngModel)]="statusFilter" 
+            class="form-control"
+          >
+            <option value="all">All</option>
+            <option value="paid">Paid</option>
+            <option value="unpaid">Unpaid</option>
+          </select>
+        </div>
+        
+        <div class="filter-actions">
+          <button class="btn btn-secondary" (click)="applyFilters()">
+            Apply Filters
+          </button>
+          <button class="btn btn-outline" (click)="clearFilters()">
+            Clear
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Debug Information -->
-  <div *ngIf="true" class="debug-info" style="background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 4px; font-family: monospace; font-size: 12px;">
-    <strong>Debug Info:</strong><br>
-    Loading: {{ loading }}<br>
-    Error: {{ error }}<br>
-    Current Store: {{ currentStore?.storeName || 'None' }}<br>
-    Invoices Count: {{ invoices.length }}<br>
-    Total Items: {{ totalItems }}<br>
-    Current Page: {{ currentPage }}<br>
-    Total Pages: {{ totalPages }}
-  </div>
 
   <!-- Error Message -->
   <div *ngIf="error" class="alert alert-error">

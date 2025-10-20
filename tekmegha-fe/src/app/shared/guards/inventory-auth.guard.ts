@@ -101,7 +101,30 @@ export class InventoryAuthGuard implements CanActivate {
 
   private isGlobalRoute(url: string): boolean {
     // Check if the URL is a global route without store context
+    // Store-specific routes like /jsicare/invoices should NOT be considered global
     const globalRoutes = ['/invoices', '/invoice', '/inventory'];
-    return globalRoutes.some(route => url.startsWith(route));
+    
+    // Only consider it global if it's exactly the route or starts with the route followed by /
+    // But NOT if it's a store-specific route like /jsicare/invoices
+    for (const route of globalRoutes) {
+      if (url === route || (url.startsWith(route + '/') && !this.isStoreSpecificRoute(url))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private isStoreSpecificRoute(url: string): boolean {
+    // Check if the URL is store-specific (e.g., /jsicare/invoices, /megha/invoices)
+    const pathSegments = url.split('/').filter(segment => segment);
+    
+    // If there are at least 2 segments and the first one is not a known global route
+    if (pathSegments.length >= 2) {
+      const firstSegment = pathSegments[0];
+      const globalRoutes = ['inventory-login', 'tekmegha-clients', 'stores', 'home', 'menu', 'cart', 'profile', 'login'];
+      return !globalRoutes.includes(firstSegment);
+    }
+    
+    return false;
   }
 }

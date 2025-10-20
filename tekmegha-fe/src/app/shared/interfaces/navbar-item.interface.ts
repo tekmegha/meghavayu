@@ -4,5 +4,6 @@ export interface NavbarItem {
   route?: string;
   position?: 'left' | 'center' | 'right';
   active?: boolean;
+  disabled?: boolean;
   action?: 'toggleMenu' | 'openSearch' | 'openLogin' | 'openCart';
 }

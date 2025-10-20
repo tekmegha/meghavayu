@@ -12,7 +12,7 @@ export interface BrandConfig {
   accentColor: string;
   backgroundGradient: string;
   navbarGradient: string;
-      theme: 'coffee' | 'toys' | 'fashion' | 'digitalsecurity' | 'food' | 'insurance' | 'silver-jewelry';
+      theme: any
   domain: string;
   features: {
     inventory: boolean;
@@ -420,6 +420,53 @@ export class BrandService {
           { name: 'Store Management', icon: 'store', route: '/menu?category=stores' },
           { name: 'Inventory', icon: 'inventory', route: '/menu?category=inventory' },
           { name: 'Billing', icon: 'receipt', route: '/menu?category=billing' }
+        ]
+      }
+    },
+    {
+      id: 'jsicare',
+      name: 'jsicare',
+      displayName: 'JSICare',
+      description: 'Mobile Care and Repair Services',
+      logo: 'assets/images/jsicare/logo.png',
+      primaryColor: '#1e40af',
+      secondaryColor: '#3b82f6',
+      accentColor: '#10b981',
+      backgroundGradient: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #0ea5e9 100%)',
+      navbarGradient: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
+      theme: 'mobilecare',
+      domain: 'jsicare.com',
+      features: {
+        inventory: true,
+        delivery: true,
+        multiStore: true,
+        userRoles: true,
+        payment: true
+      },
+      navigation: {
+        topNavbar: [
+          { icon: 'menu_book', position: 'left', action: 'toggleMenu' },
+          { label: 'JSICare', position: 'center' },
+          { icon: 'account_circle', position: 'right', action: 'openLogin', route: '/jsicare/login' },
+          { icon: 'shopping_cart', position: 'right', action: 'openCart', route: '/jsicare/cart' }
+        ],
+        bottomNavbar: [
+          { icon: 'home', label: 'Home', route: '/jsicare/home', active: true },
+          { icon: 'restaurant_menu', label: 'Menu', route: '/jsicare/menu' },
+          { icon: 'shopping_cart', label: 'Cart', route: '/jsicare/cart' },
+          { icon: 'inventory', label: 'Inventory', route: '/jsicare/inventory' },
+          { icon: 'receipt', label: 'Bill', route: '/jsicare/invoices' },
+          { icon: 'person', label: 'Profile', route: '/jsicare/profile' }
+        ]
+      },
+      content: {
+        heroTitle: 'Mobile Care and Repair Services',
+        heroSubtitle: 'Professional mobile device repair and care services',
+        heroImage: 'assets/images/jsicare/hero-jsicare.jpg',
+        categories: [
+          { name: 'Mobile Repair', icon: 'phone_android', route: '/menu?category=repair' },
+          { name: 'Screen Replacement', icon: 'screen_rotation', route: '/menu?category=screen' },
+          { name: 'Battery Service', icon: 'battery_charging_full', route: '/menu?category=battery' }
         ]
       }
     }  ];

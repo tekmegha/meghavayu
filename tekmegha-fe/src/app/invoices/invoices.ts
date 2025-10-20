@@ -31,6 +31,7 @@ export class InvoicesComponent implements OnInit {
   dateFrom = '';
   dateTo = '';
   statusFilter = 'all';
+  showFilters = false;
 
   constructor(
     private supabase: SupabaseService,
@@ -44,16 +45,12 @@ export class InvoicesComponent implements OnInit {
   }
 
   private loadStoreInfo() {
-    console.log('Subscribing to store session...');
     this.storeSession.selectedStore$.subscribe(store => {
-      console.log('Store session updated:', store);
       if (store) {
         this.currentStore = store;
-        console.log('Store loaded successfully:', store.storeName, store.storeCode);
         this.loadTemplateConfig();
         this.loadInvoices(); // Load invoices when store is available
       } else {
-        console.log('No store found in session');
         this.error = 'No store selected. Please select a store first.';
         this.loading = false;
       }
@@ -258,6 +255,16 @@ export class InvoicesComponent implements OnInit {
     this.statusFilter = 'all';
     this.currentPage = 1;
     this.loadInvoices();
+  }
+
+  // Search functionality
+  searchInvoices() {
+    this.currentPage = 1;
+    this.loadInvoices();
+  }
+
+  toggleFilters() {
+    this.showFilters = !this.showFilters;
   }
 
   goToPage(page: number) {

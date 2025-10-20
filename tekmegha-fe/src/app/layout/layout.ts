@@ -9,6 +9,7 @@ import { LocationBarComponent } from '../shared/location-bar/location-bar';
 import { NavbarItem } from '../shared/interfaces/navbar-item.interface';
 import { BrandService, BrandConfig } from '../shared/services/brand.service';
 import { StoreSessionService } from '../shared/services/store-session.service';
+import { NavbarConfigService } from '../shared/services/navbar-config.service';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
@@ -27,28 +28,40 @@ export class Layout implements OnInit, OnDestroy {
   topNavbarConfig: NavbarItem[] = [];
   bottomNavbarConfig: NavbarItem[] = [];
   currentBrand: BrandConfig | null = null;
+  showLocationBar: boolean = true;
   private subscription: Subscription = new Subscription();
 
   constructor(
     private http: HttpClient, 
     private router: Router,
     private brandService: BrandService,
-    private storeSessionService: StoreSessionService
+    private storeSessionService: StoreSessionService,
+    private navbarConfigService: NavbarConfigService
   ) {}
 
   ngOnInit() {
-    // Subscribe to brand changes
+    // Load navbar configuration from database
+    this.loadNavbarConfig();
+
+    // Subscribe to navbar configuration changes
     this.subscription.add(
-      this.brandService.currentBrand$.subscribe(brand => {
-        this.currentBrand = brand;
-        if (brand) {
-          this.topNavbarConfig = brand.navigation.topNavbar;
-          this.bottomNavbarConfig = brand.navigation.bottomNavbar;
-        }
+      this.navbarConfigService.topNavbar$.subscribe(items => {
+        this.topNavbarConfig = items;
       })
     );
 
-    // Brand will be initialized by home component based on store selection
+    this.subscription.add(
+      this.navbarConfigService.bottomNavbar$.subscribe(items => {
+        this.bottomNavbarConfig = items;
+      })
+    );
+
+    // Subscribe to brand changes (for theme and other brand-specific features)
+    this.subscription.add(
+      this.brandService.currentBrand$.subscribe(brand => {
+        this.currentBrand = brand;
+      })
+    );
 
     // Handle route changes
     this.subscription.add(
@@ -56,8 +69,17 @@ export class Layout implements OnInit, OnDestroy {
         .pipe(filter(event => event instanceof NavigationEnd))
         .subscribe((event: NavigationEnd) => {
           this.updateActiveNavItem(event.urlAfterRedirects);
+          this.updateLocationBarVisibility(event.urlAfterRedirects);
         })
     );
+  }
+
+  private async loadNavbarConfig() {
+    try {
+      await this.navbarConfigService.loadNavbarConfig();
+    } catch (error) {
+      console.error('Error loading navbar config:', error);
+    }
   }
 
   ngOnDestroy() {
@@ -111,5 +133,17 @@ export class Layout implements OnInit, OnDestroy {
         item.active = url === item.route || (item.route === '/home' && url === '/');
       });
     }
+  }
+
+  private updateLocationBarVisibility(url: string) {
+    // Hide location bar for invoice and inventory pages
+    const hideLocationBarRoutes = ['/invoices', '/inventory'];
+    
+    // Check if current URL contains any of the routes that should hide location bar
+    this.showLocationBar = !hideLocationBarRoutes.some(route => 
+      url.includes(route) || url.endsWith(route)
+    );
+    
+    console.log('Location bar visibility:', { url, showLocationBar: this.showLocationBar });
   }
 }

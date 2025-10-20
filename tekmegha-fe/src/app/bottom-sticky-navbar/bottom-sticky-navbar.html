@@ -1,8 +1,18 @@
 <nav class="bottom-navbar">
   @for (item of navbarItems; track item.label) {
-    <a class="nav-item" [routerLink]="item.route" [class.active]="item.active">
+    <button 
+      class="nav-item" 
+      [class.active]="item.active"
+      [class.disabled]="item.disabled"
+      [disabled]="item.disabled"
+      (click)="onNavItemClick(item)"
+      [title]="item.disabled ? 'This feature is disabled for this store' : item.label"
+    >
       <span class="material-icons">{{ item.icon }}</span>
       <span class="label">{{ item.label }}</span>
-    </a>
+      @if (item.disabled) {
+        <span class="disabled-indicator" title="Disabled">🚫</span>
+      }
+    </button>
   }
 </nav>

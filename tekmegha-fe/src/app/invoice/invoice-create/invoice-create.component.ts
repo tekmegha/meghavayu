@@ -198,13 +198,13 @@ export class InvoiceCreateComponent implements OnInit {
           return;
         }
 
-        if (storeData && storeData.store_name && storeData.store_address && storeData.store_contact) {
+        if (storeData && storeData.store_name && storeData.address && storeData.support_phone) {
           console.log('Store data loaded successfully:', storeData);
           this.invoiceForm.patchValue({
             storeName: storeData.store_name,
-            storeAddress: storeData.store_address,
-            storeContact: storeData.store_contact,
-            storeGstin: storeData.store_gstin || ''
+            storeAddress: storeData.address,
+            storeContact: storeData.support_phone,
+            storeGstin: storeData.tax_id || ''
           });
         } else {
           console.log('Store data incomplete or missing, using dummy data');

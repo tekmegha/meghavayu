@@ -46,9 +46,22 @@ CREATE TABLE IF NOT EXISTS megha_stores (
   -- Settings
   settings JSONB, -- Store-specific settings and configurations
   
+  -- Invoice functionality
+  invoice_template_id BIGINT,
+  
+  -- Feature toggles
+  enable_products BOOLEAN DEFAULT true,
+  enable_cart BOOLEAN DEFAULT true,
+  enable_payments BOOLEAN DEFAULT true,
+  enable_inventory BOOLEAN DEFAULT true,
+  enable_invoices BOOLEAN DEFAULT true,
+  enable_customers BOOLEAN DEFAULT true,
+  enable_reports BOOLEAN DEFAULT true,
+  
   -- Status
   is_active BOOLEAN DEFAULT true,
   is_verified BOOLEAN DEFAULT false,
+  is_prod_ready BOOLEAN DEFAULT false,
   
   -- Timestamps
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -61,6 +74,13 @@ CREATE INDEX IF NOT EXISTS idx_megha_stores_store_code ON megha_stores(store_cod
 CREATE INDEX IF NOT EXISTS idx_megha_stores_store_type ON megha_stores(store_type);
 CREATE INDEX IF NOT EXISTS idx_megha_stores_is_active ON megha_stores(is_active);
 CREATE INDEX IF NOT EXISTS idx_megha_stores_domain ON megha_stores(domain);
+CREATE INDEX IF NOT EXISTS idx_megha_stores_city ON megha_stores(city);
+CREATE INDEX IF NOT EXISTS idx_megha_stores_state ON megha_stores(state);
+CREATE INDEX IF NOT EXISTS idx_megha_stores_tax_id ON megha_stores(tax_id);
+CREATE INDEX IF NOT EXISTS idx_megha_stores_is_verified ON megha_stores(is_verified);
+CREATE INDEX IF NOT EXISTS idx_megha_stores_invoice_template_id ON megha_stores(invoice_template_id);
+CREATE INDEX IF NOT EXISTS idx_megha_stores_enable_invoices ON megha_stores(enable_invoices);
+CREATE INDEX IF NOT EXISTS idx_megha_stores_is_prod_ready ON megha_stores(is_prod_ready);
 
 -- Create function to automatically update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_megha_stores_updated_at()
@@ -78,6 +98,11 @@ CREATE TRIGGER update_megha_stores_updated_at_trigger
     FOR EACH ROW
     EXECUTE FUNCTION update_megha_stores_updated_at();
 
+-- Add foreign key constraint for invoice template
+ALTER TABLE megha_stores 
+ADD CONSTRAINT IF NOT EXISTS megha_stores_invoice_template_id_fkey 
+    FOREIGN KEY (invoice_template_id) REFERENCES invoice_templates(id);
+
 -- Add comments for documentation
 COMMENT ON TABLE megha_stores IS 'Master registry table for all TekMegha store brands';
 COMMENT ON COLUMN megha_stores.store_code IS 'Unique identifier code for the store (e.g., brewbuddy, royalfoods, dkassociates)';
@@ -87,6 +112,25 @@ COMMENT ON COLUMN megha_stores.business_hours IS 'JSON object with opening hours
 COMMENT ON COLUMN megha_stores.features IS 'JSON object defining enabled features like inventory, delivery, multiStore, etc.';
 COMMENT ON COLUMN megha_stores.social_links IS 'JSON object with social media URLs';
 COMMENT ON COLUMN megha_stores.settings IS 'JSON object for store-specific settings and configurations';
+COMMENT ON COLUMN megha_stores.description IS 'Store description and additional information';
+COMMENT ON COLUMN megha_stores.address IS 'Physical address of the store';
+COMMENT ON COLUMN megha_stores.city IS 'City where the store is located';
+COMMENT ON COLUMN megha_stores.state IS 'State where the store is located';
+COMMENT ON COLUMN megha_stores.postal_code IS 'Postal/ZIP code of the store';
+COMMENT ON COLUMN megha_stores.country IS 'Country where the store is located (default: India)';
+COMMENT ON COLUMN megha_stores.tax_id IS 'GST number or tax identification number';
+COMMENT ON COLUMN megha_stores.pan_number IS 'PAN number for tax purposes';
+COMMENT ON COLUMN megha_stores.business_registration_number IS 'Business registration number';
+COMMENT ON COLUMN megha_stores.invoice_template_id IS 'Reference to invoice template for this store';
+COMMENT ON COLUMN megha_stores.enable_products IS 'Whether product management is enabled for this store';
+COMMENT ON COLUMN megha_stores.enable_cart IS 'Whether shopping cart is enabled for this store';
+COMMENT ON COLUMN megha_stores.enable_payments IS 'Whether payment processing is enabled for this store';
+COMMENT ON COLUMN megha_stores.enable_inventory IS 'Whether inventory management is enabled for this store';
+COMMENT ON COLUMN megha_stores.enable_invoices IS 'Whether invoice generation is enabled for this store';
+COMMENT ON COLUMN megha_stores.enable_customers IS 'Whether customer management is enabled for this store';
+COMMENT ON COLUMN megha_stores.enable_reports IS 'Whether reporting is enabled for this store';
+COMMENT ON COLUMN megha_stores.is_verified IS 'Whether the store has been verified';
+COMMENT ON COLUMN megha_stores.is_prod_ready IS 'Whether the store is ready for production use';
 
 -- ============================================
 -- Example theme_config structure:
@@ -177,3 +221,39 @@ COMMENT ON COLUMN megha_stores.settings IS 'JSON object for store-specific setti
 -- Soft delete a store
 -- UPDATE megha_stores SET deleted_at = NOW(), is_active = false WHERE store_code = 'storecode';
 
+create table public.megha_stores (
+  id uuid not null default gen_random_uuid (),
+  store_code character varying(50) not null,
+  store_name character varying(255) not null,
+  store_type character varying(100) not null,
+  domain character varying(255) null,
+  theme_config jsonb null,
+  business_hours jsonb null,
+  contact_email character varying(255) null,
+  support_phone character varying(20) null,
+  is_active boolean null default true,
+  created_at timestamp with time zone null default now(),
+  updated_at timestamp with time zone null default now(),
+  invoice_template_id bigint null,
+  enable_products boolean null default true,
+  enable_cart boolean null default true,
+  enable_payments boolean null default true,
+  enable_inventory boolean null default true,
+  enable_invoices boolean null default true,
+  enable_customers boolean null default true,
+  enable_reports boolean null default true,
+  is_prod_ready boolean null default false,
+  constraint megha_stores_pkey primary key (id),
+  constraint megha_stores_store_code_key unique (store_code),
+  constraint megha_stores_invoice_template_id_fkey foreign KEY (invoice_template_id) references invoice_templates (id)
+) TABLESPACE pg_default;
+
+create index IF not exists idx_megha_stores_code on public.megha_stores using btree (store_code) TABLESPACE pg_default;
+
+create index IF not exists idx_megha_stores_active on public.megha_stores using btree (is_active) TABLESPACE pg_default;
+
+create index IF not exists idx_megha_stores_type on public.megha_stores using btree (store_type) TABLESPACE pg_default;
+
+create trigger update_megha_stores_updated_at BEFORE
+update on megha_stores for EACH row
+execute FUNCTION update_updated_at_column ();

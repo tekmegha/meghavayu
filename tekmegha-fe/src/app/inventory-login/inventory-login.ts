@@ -16,6 +16,7 @@ export class InventoryLogin implements OnInit {
   isLoading = false;
   errorMessage = '';
   successMessage = '';
+  showLogoutOption = false;
 
   constructor(
     private supabaseService: SupabaseService,
@@ -34,9 +35,12 @@ export class InventoryLogin implements OnInit {
       // Check if user has inventory access
       const hasAccess = await this.checkInventoryAccess(user.id);
       if (hasAccess) {
-        // Check if there's a return URL, otherwise go to inventory
-        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/inventory';
+        // Check if there's a return URL, otherwise go to current store's inventory
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || this.getDefaultInventoryRoute();
         this.router.navigateByUrl(returnUrl);
+      } else {
+        // User doesn't have access, show logout option
+        this.showAccessDeniedWithLogout();
       }
     }
   }
@@ -62,16 +66,15 @@ export class InventoryLogin implements OnInit {
         const hasAccess = await this.checkInventoryAccess(data.user.id);
         
         if (hasAccess) {
-          // Check if there's a return URL, otherwise go to inventory
-          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/inventory';
+          // Check if there's a return URL, otherwise go to current store's inventory
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || this.getDefaultInventoryRoute();
           this.successMessage = 'Login successful! Redirecting...';
           setTimeout(() => {
             this.router.navigateByUrl(returnUrl);
           }, 1500);
         } else {
-          this.errorMessage = 'Access denied. You do not have permission to access the inventory module.';
-          // Sign out the user since they don't have access
-          await this.supabaseService.signOut();
+          // User doesn't have access, show logout option
+          this.showAccessDeniedWithLogout();
         }
       }
     } catch (error) {
@@ -151,5 +154,36 @@ export class InventoryLogin implements OnInit {
 
   goToCustomerLogin() {
     this.router.navigate(['/login']);
+  }
+
+  private getDefaultInventoryRoute(): string {
+    // Get the current store from the URL or service
+    const currentStore = this.supabaseService.getCurrentStore();
+    if (currentStore) {
+      return `/${currentStore}/inventory`;
+    }
+    // Fallback to global inventory route
+    return '/inventory';
+  }
+
+  private showAccessDeniedWithLogout() {
+    this.errorMessage = 'Access denied. You do not have permission to access the inventory module for this store.';
+    this.showLogoutOption = true;
+  }
+
+  async onLogout() {
+    try {
+      await this.supabaseService.signOut();
+      this.errorMessage = '';
+      this.successMessage = 'You have been logged out. Please try logging in with different credentials.';
+      this.showLogoutOption = false;
+      
+      // Clear form
+      this.email = '';
+      this.password = '';
+    } catch (error) {
+      console.error('Logout error:', error);
+      this.errorMessage = 'Error during logout. Please try again.';
+    }
   }
 }

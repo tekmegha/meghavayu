@@ -53,61 +53,63 @@ export class SupabaseService {
   getCurrentStore(): string {
     const path = window.location.pathname;
     
-    // Check specific known routes first
-    if (path.startsWith('/fashion') || path.startsWith('/majili')) {
-      return 'majili';
-    } else if (path.startsWith('/toys') || path.startsWith('/little-ducks')) {
-      return 'little-ducks';
-    } else if (path.startsWith('/food') || path.startsWith('/royalfoods')) {
-      return 'royalfoods';
-    } else if (path.startsWith('/clients') || path.startsWith('/tekmegha-clients')) {
-      return 'tekmegha-clients';
-    } else if (path.startsWith('/brew-buddy')) {
-      return 'brew-buddy';
-    } else if (path.startsWith('/cctv-device')) {
-      return 'cctv-device';
-    } else if (path.startsWith('/dkassociates')) {
-      return 'dkassociates';
-    } else if (path.startsWith('/automobile-insurance')) {
-      return 'automobile-insurance';
-    } else if (path.startsWith('/insurance')) {
-      return 'automobile-insurance';
-    } else if (path === '/inventory-login' || path === '/login') {
-      // Special case for login pages - check returnUrl parameter
+    console.log('getCurrentStore - analyzing path:', path);
+    
+    // Special case for login pages - check returnUrl parameter
+    if (path === '/inventory-login' || path === '/login') {
       const urlParams = new URLSearchParams(window.location.search);
       const returnUrl = urlParams.get('returnUrl');
       if (returnUrl) {
         const storeCode = this.extractStoreCodeFromPath(returnUrl);
         if (storeCode) {
+          console.log('getCurrentStore - from returnUrl:', storeCode);
           return storeCode;
         }
       }
-    } else {
-      // Check if path starts with a store code pattern (e.g., /any-store-code/...)
-      const pathSegments = path.split('/').filter(segment => segment);
-      if (pathSegments.length > 0) {
-        const potentialStoreCode = pathSegments[0];
-        // Check if it's not a known global route
-        const globalRoutes = ['home', 'menu', 'cart', 'stores', 'profile', 'login', 'inventory', 'invoice', 'insurances', 'tekmegha-clients', 'inventory-login'];
-        if (!globalRoutes.includes(potentialStoreCode)) {
-          return potentialStoreCode;
-        }
+    }
+    
+    // Extract store code from URL path
+    const pathSegments = path.split('/').filter(segment => segment);
+    console.log('getCurrentStore - path segments:', pathSegments);
+    
+    if (pathSegments.length > 0) {
+      const potentialStoreCode = pathSegments[0];
+      console.log('getCurrentStore - potential store code:', potentialStoreCode);
+      
+      // Check if it's not a known global route
+      const globalRoutes = ['home', 'menu', 'cart', 'stores', 'profile', 'login', 'inventory', 'invoice', 'insurances', 'tekmegha-clients', 'inventory-login', 'fashion', 'toys', 'food', 'clients'];
+      
+      if (!globalRoutes.includes(potentialStoreCode)) {
+        console.log('getCurrentStore - returning store code:', potentialStoreCode);
+        return potentialStoreCode;
       }
     }
+    
+    console.log('getCurrentStore - no store detected, returning empty string');
     return ''; // No default store - let user choose
   }
 
   private extractStoreCodeFromPath(path: string): string | null {
+    console.log('extractStoreCodeFromPath - analyzing path:', path);
+    
     // Remove leading slash and split by '/'
     const segments = path.replace(/^\//, '').split('/');
+    console.log('extractStoreCodeFromPath - segments:', segments);
+    
     if (segments.length > 0) {
       const potentialStoreCode = segments[0];
+      console.log('extractStoreCodeFromPath - potential store code:', potentialStoreCode);
+      
       // Check if it's not a known global route
-      const globalRoutes = ['home', 'menu', 'cart', 'stores', 'profile', 'login', 'inventory', 'invoice', 'insurances', 'tekmegha-clients'];
+      const globalRoutes = ['home', 'menu', 'cart', 'stores', 'profile', 'login', 'inventory', 'invoice', 'insurances', 'tekmegha-clients', 'inventory-login', 'fashion', 'toys', 'food', 'clients'];
+      
       if (!globalRoutes.includes(potentialStoreCode)) {
+        console.log('extractStoreCodeFromPath - returning store code:', potentialStoreCode);
         return potentialStoreCode;
       }
     }
+    
+    console.log('extractStoreCodeFromPath - no store code found');
     return null;
   }
 
@@ -143,6 +145,50 @@ export class SupabaseService {
     } catch (error) {
       console.error('Error getting store ID from URL:', error);
       return null;
+    }
+  }
+
+  // Get navbar configuration for current store
+  async getStoreNavbarConfig(): Promise<{ data: any; error: any }> {
+    try {
+      const storeCode = this.getCurrentStore();
+      if (!storeCode) {
+        return { data: null, error: { message: 'No store code detected' } };
+      }
+
+      console.log('Fetching navbar config for store:', storeCode);
+
+      const { data, error } = await this.supabase
+        .from('megha_stores')
+        .select(`
+          store_code,
+          store_name,
+          navbar_config,
+          enable_navbar_home,
+          enable_navbar_menu,
+          enable_navbar_cart,
+          enable_navbar_inventory,
+          enable_navbar_invoices,
+          enable_navbar_profile,
+          enable_products,
+          enable_cart,
+          enable_inventory,
+          enable_invoices
+        `)
+        .eq('store_code', storeCode)
+        .eq('is_active', true)
+        .single();
+
+      if (error) {
+        console.error('Error fetching navbar config:', error);
+        return { data: null, error };
+      }
+
+      console.log('Navbar config fetched:', data);
+      return { data, error: null };
+    } catch (error) {
+      console.error('Error getting navbar config:', error);
+      return { data: null, error };
     }
   }
 

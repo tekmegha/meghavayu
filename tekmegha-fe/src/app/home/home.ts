@@ -326,6 +326,8 @@ export class Home implements OnInit, OnDestroy {
         return 'Digital security and surveillance solutions';
       case 'royalfoods':
         return 'Fresh Indian breads specialist';
+      case 'rragency':
+        return 'Paint dealer - Automotive and industrial paints';
       default:
         return 'Business application';
     }
@@ -366,6 +368,8 @@ export class Home implements OnInit, OnDestroy {
         return 'royalfoods';
       case 'megha':
         return 'megha';
+      case 'jsicare':
+        return 'jsicare';
       default:
         console.warn(`Unknown store code: ${storeCode}, using default brand`);
         return 'megha'; // Default fallback to megha
