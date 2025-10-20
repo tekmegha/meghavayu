@@ -83,23 +83,7 @@
       </div>
     </div>
   </form>
-
-  <!-- Debug Info -->
-  <div class="debug-info" *ngIf="!hasRequiredStoreData()">
-    <div class="debug-message">
-      <span class="material-icons">warning</span>
-      Store information not loaded. 
-      <button type="button" class="debug-btn" (click)="debugStoreStatus()">
-        Debug Store Status
-      </button>
-      <button type="button" class="debug-btn" (click)="refreshStoreData()">
-        Refresh Store Data
-      </button>
-      <button type="button" class="debug-btn" (click)="setStoreDataManually()">
-        Set Manual Store
-      </button>
-    </div>
-  </div>
+ 
 
   <!-- Store Info Display -->
   <div class="store-info-display" *ngIf="hasRequiredStoreData()">
