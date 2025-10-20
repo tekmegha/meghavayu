@@ -70,6 +70,7 @@ export class InvoiceCreateComponent implements OnInit {
       { itemName: 'Coffee', rate: 82, quantity: 1 }
     ]
   };
+  storeCode: string='';
 
   constructor(
     private fb: FormBuilder,
@@ -108,19 +109,13 @@ export class InvoiceCreateComponent implements OnInit {
   }
 
   async ngOnInit() {
-    console.log('Initializing invoice create component...');
     await this.loadStoreConfig();
     this.generateInvoiceNumber();
     this.prefillWithDummyData();
     
     // Check and fill missing store data after initialization
     setTimeout(() => {
-      const wasMissing = this.checkAndFillMissingStoreData();
-      if (wasMissing) {
-        console.log('Store data was missing and has been filled with dummy values');
-      }
-      console.log('Form state after initialization:', this.invoiceForm.value);
-      this.debugStoreStatus();
+      this.checkAndFillMissingStoreData();
     }, 1000);
   }
 
@@ -180,7 +175,7 @@ export class InvoiceCreateComponent implements OnInit {
   async loadStoreConfig() {
     try {
       const storeCode = this.supabase.getCurrentStore();
-      console.log('Current store code:', storeCode);
+      this.storeCode = storeCode;
       
       if (storeCode) {
         // Get store details from Supabase directly
@@ -192,14 +187,11 @@ export class InvoiceCreateComponent implements OnInit {
           .single();
 
         if (error) {
-          console.error('Error loading store config:', error);
-          console.log('Using dummy store data due to database error');
           this.setDummyStoreData();
           return;
         }
 
         if (storeData && storeData.store_name && storeData.address && storeData.support_phone) {
-          console.log('Store data loaded successfully:', storeData);
           this.invoiceForm.patchValue({
             storeName: storeData.store_name,
             storeAddress: storeData.address,
@@ -207,23 +199,17 @@ export class InvoiceCreateComponent implements OnInit {
             storeGstin: storeData.tax_id || ''
           });
         } else {
-          console.log('Store data incomplete or missing, using dummy data');
-          console.log('Store data received:', storeData);
           this.setDummyStoreData();
         }
       } else {
-        console.log('No store code found, using dummy data');
         this.setDummyStoreData();
       }
     } catch (error) {
-      console.error('Error loading store config:', error);
-      console.log('Using dummy store data due to exception');
       this.setDummyStoreData();
     }
   }
 
   private setDummyStoreData() {
-    console.log('Setting dummy store data...');
     const dummyStoreData = {
       storeName: 'Megha Store',
       storeAddress: '456 Business District, Commercial Area, Mumbai - 400002',
@@ -232,20 +218,11 @@ export class InvoiceCreateComponent implements OnInit {
     };
     
     this.invoiceForm.patchValue(dummyStoreData);
-    console.log('Dummy store data set:', dummyStoreData);
-    console.log('Form store fields after dummy data:', {
-      storeName: this.invoiceForm.get('storeName')?.value,
-      storeAddress: this.invoiceForm.get('storeAddress')?.value,
-      storeContact: this.invoiceForm.get('storeContact')?.value,
-      storeGstin: this.invoiceForm.get('storeGstin')?.value
-    });
   }
 
   // Force refresh store data
   async refreshStoreData() {
-    console.log('Refreshing store data...');
     await this.loadStoreConfig();
-    this.debugStoreStatus();
   }
 
   // Invoice Number Generation
@@ -407,14 +384,6 @@ export class InvoiceCreateComponent implements OnInit {
       balanceDue: total // Explicitly set balanceDue
     });
 
-    console.log('Totals calculated:', {
-      subtotal,
-      discountAmount,
-      sgst,
-      cgst,
-      total,
-      balanceDue: total
-    });
   }
 
   get subtotal(): number {
@@ -465,8 +434,6 @@ export class InvoiceCreateComponent implements OnInit {
     const storeContact = this.invoiceForm.get('storeContact')?.value;
     
     if (!storeName || !storeAddress || !storeContact) {
-      console.log('Missing store data detected, filling with dummy values');
-      console.log('Current store data:', { storeName, storeAddress, storeContact });
       this.setDummyStoreData();
       return true; // Data was missing and filled
     }
@@ -491,10 +458,7 @@ export class InvoiceCreateComponent implements OnInit {
   // Save Invoice
   async saveInvoice() {
     // Check and fill missing store data before validation
-    const wasMissing = this.checkAndFillMissingStoreData();
-    if (wasMissing) {
-      console.log('Store data was missing and has been filled with dummy values before saving');
-    }
+    this.checkAndFillMissingStoreData();
     
     // Check form validation status
     const validationStatus = this.getFormValidationStatus();
@@ -579,8 +543,6 @@ export class InvoiceCreateComponent implements OnInit {
         payment_mode: invoiceData.paymentMode
       };
 
-      console.log('Saving invoice data:', dbInvoiceData);
-      
       const { data, error } = await supabaseClient
         .from('invoices')
         .insert([dbInvoiceData])
@@ -633,8 +595,6 @@ export class InvoiceCreateComponent implements OnInit {
         };
       });
 
-      console.log('Saving invoice items:', invoiceItems);
-
       const { error } = await supabaseClient
         .from('invoice_items')
         .insert(invoiceItems);
@@ -653,7 +613,8 @@ export class InvoiceCreateComponent implements OnInit {
 
   // Simplified Interface Methods
   goBack() {
-    this.router.navigate(['/invoices']);
+    // add storeCode 
+    this.router.navigate([`/${this.storeCode}/invoices`]);
   }
 
   clearForm() {
@@ -668,25 +629,6 @@ export class InvoiceCreateComponent implements OnInit {
     this.calculateTotals();
   }
 
-  // Debug method to check store status
-  debugStoreStatus() {
-    const storeCode = this.supabase.getCurrentStore();
-    const storeId = this.supabase.getCurrentStoreId();
-    const storeName = this.invoiceForm.get('storeName')?.value;
-    const storeAddress = this.invoiceForm.get('storeAddress')?.value;
-    const storeContact = this.invoiceForm.get('storeContact')?.value;
-    
-    console.log('=== Store Debug Info ===');
-    console.log('Store Code:', storeCode);
-    console.log('Store ID:', storeId);
-    console.log('Store Name:', storeName);
-    console.log('Store Address:', storeAddress);
-    console.log('Store Contact:', storeContact);
-    console.log('Has Required Store Data:', this.hasRequiredStoreData());
-    console.log('Form Valid:', this.invoiceForm.valid);
-    console.log('Full Form Value:', this.invoiceForm.value);
-    console.log('========================');
-  }
 
   // Manual store data setter
   setStoreDataManually() {
@@ -696,7 +638,6 @@ export class InvoiceCreateComponent implements OnInit {
       storeContact: '+91 99999 99999',
       storeGstin: '27MANUAL1234M1N2'
     });
-    console.log('Manual store data set:', this.invoiceForm.value);
   }
 
   // Get different dummy store options
@@ -734,7 +675,6 @@ export class InvoiceCreateComponent implements OnInit {
       storeContact: selectedStore.contact,
       storeGstin: selectedStore.gstin
     });
-    console.log('Specific dummy store set:', selectedStore);
   }
 
   decreaseQuantity() {
@@ -757,7 +697,6 @@ export class InvoiceCreateComponent implements OnInit {
   updateBalanceDue() {
     const total = this.invoiceForm.get('total')?.value || 0;
     this.invoiceForm.patchValue({ balanceDue: total });
-    console.log('Balance due updated to:', total);
   }
 
   getItemPrice(): number {
@@ -780,7 +719,6 @@ export class InvoiceCreateComponent implements OnInit {
 
   saveDraft() {
     // Save as draft functionality
-    console.log('Saving draft...');
     // Implement draft saving logic
   }
 
@@ -807,16 +745,6 @@ export class InvoiceCreateComponent implements OnInit {
     
     // Calculate totals and ensure balanceDue is set
     this.calculateTotals();
-    
-    // Log the calculated values for debugging
-    console.log('Invoice totals before saving:', {
-      subtotal: this.subtotal,
-      discount: this.discountAmount,
-      sgst: this.sgstAmount,
-      cgst: this.cgstAmount,
-      total: this.totalAmount,
-      balanceDue: this.balanceDue
-    });
 
     // Save the invoice
     this.saveInvoice();
