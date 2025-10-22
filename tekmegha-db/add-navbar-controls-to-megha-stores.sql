@@ -170,6 +170,39 @@ SET
   enable_navbar_profile = true
 WHERE store_code = 'rragency';
 
+//add navbar config for paws_nexus brand 
+-- Add navbar config for paws_nexus brand
+UPDATE megha_stores 
+SET 
+  navbar_config = '{
+    "bottomNavbar": {
+      "enabled": true,
+      "items": {
+        "home":     { "enabled": true, "label": "Home",       "icon": "home",         "route": "/home" },
+        "services": { "enabled": true, "label": "Services",   "icon": "pets",         "route": "/services" },
+        "shop":     { "enabled": true, "label": "Shop",       "icon": "shopping_bag", "route": "/shop" },
+        "invoices": { "enabled": true, "label": "Bill",       "icon": "receipt",      "route": "/invoices" },
+        "profile":  { "enabled": true, "label": "Profile",    "icon": "person",       "route": "/profile" }
+      }
+    },
+    "topNavbar": {
+      "enabled": true,
+      "items": {
+        "search": { "enabled": true, "label": "Search", "icon": "search", "action": "openSearch" },
+        "login":  { "enabled": true, "label": "Login",  "icon": "account_circle", "action": "openLogin" },
+        "cart":   { "enabled": true, "label": "Cart",   "icon": "shopping_cart", "action": "openCart" }
+      }
+    }
+  }'::jsonb,
+  enable_navbar_home = true,
+  enable_navbar_menu = false,
+  enable_navbar_cart = true,
+  enable_navbar_inventory = false,
+  enable_navbar_invoices = true,
+  enable_navbar_profile = true
+WHERE store_code = 'paws_nexus';
+
+
 
 
 -- Update RR Agency store with specific navbar configuration
@@ -180,6 +213,7 @@ SET
       "enabled": true,
       "items": {
         "home": {"enabled": true, "label": "Home", "icon": "home", "route": "/home"},
+        "services": {"enabled": true, "label": "Services", "icon": "services", "route": "/services"},
         "invoices": {"enabled": true, "label": "Bill", "icon": "receipt", "route": "/invoices"},
         "profile": {"enabled": true, "label": "Profile", "icon": "person", "route": "/profile"}
       }
