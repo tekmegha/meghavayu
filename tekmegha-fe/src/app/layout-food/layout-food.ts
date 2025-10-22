@@ -8,6 +8,7 @@ import { LocationBarComponent } from '../shared/location-bar/location-bar';
 import { NavbarItem } from '../shared/interfaces/navbar-item.interface';
 import { BrandService, BrandConfig } from '../shared/services/brand.service';
 import { StoreSessionService } from '../shared/services/store-session.service';
+import { NavbarConfigService } from '../shared/services/navbar-config.service';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
@@ -32,7 +33,8 @@ export class LayoutFood implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private brandService: BrandService,
-    private storeSessionService: StoreSessionService
+    private storeSessionService: StoreSessionService,
+    private navbarConfigService: NavbarConfigService
   ) {}
 
   ngOnInit() {
@@ -65,8 +67,7 @@ export class LayoutFood implements OnInit, OnDestroy {
   }
 
   getBottomNavbarItems(): NavbarItem[] {
-    const brand = this.brandService.getCurrentBrand();
-    return brand?.navigation.bottomNavbar || [];
+    return this.navbarConfigService.getBottomNavbarItems();
   }
 
   onLoginOpen() {

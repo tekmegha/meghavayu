@@ -2,7 +2,8 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { NavbarItem } from '../shared/interfaces/navbar-item.interface';
-import { SupabaseService } from '../shared/services/supabase.service';
+import { StoreSessionService } from '../shared/services/store-session.service';
+import { NavbarConfigService } from '../shared/services/navbar-config.service';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
@@ -19,12 +20,23 @@ export class BottomStickyNavbar implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private supabaseService: SupabaseService
+    private storeSessionService: StoreSessionService,
+    private navbarConfigService: NavbarConfigService
   ) {}
 
   ngOnInit() {
     // Debug: Log the navbar items being passed to this component
     console.log('BottomStickyNavbar - navbarItems received:', this.navbarItems);
+    
+    // Subscribe to store session changes to reload navbar configuration
+    this.subscription.add(
+      this.storeSessionService.selectedStore$.subscribe(store => {
+        if (store) {
+          console.log('BottomStickyNavbar - Store changed, reloading navbar config for:', store.storeCode);
+          this.reloadNavbarConfig();
+        }
+      })
+    );
     
     // Handle route changes to update active state
     this.subscription.add(
@@ -47,13 +59,13 @@ export class BottomStickyNavbar implements OnInit, OnDestroy {
       return;
     }
 
-    // Handle store-specific routing
-    const currentStore = this.supabaseService.getCurrentStore();
+    // Get current store from store session service
+    const currentStore = this.storeSessionService.getSelectedStore();
     const currentPath = window.location.pathname;
     
     console.log('Bottom navbar click:', {
       itemRoute: item.route,
-      currentStore: currentStore,
+      currentStore: currentStore?.storeCode,
       currentPath: currentPath,
       itemLabel: item.label,
       disabled: item.disabled
@@ -68,7 +80,7 @@ export class BottomStickyNavbar implements OnInit, OnDestroy {
       console.log('Route analysis:', {
         targetRoute: targetRoute,
         isStoreSpecific: isStoreSpecific,
-        currentStore: currentStore
+        currentStore: currentStore?.storeCode
       });
       
       // If route is already store-specific, use it as-is
@@ -79,17 +91,42 @@ export class BottomStickyNavbar implements OnInit, OnDestroy {
       }
       
       // If route is not store-specific and we have a current store, make it store-specific
-      if (!isStoreSpecific && currentStore) {
+      if (!isStoreSpecific && currentStore?.storeCode) {
         if (targetRoute.startsWith('/')) {
-          targetRoute = `/${currentStore}${targetRoute}`;
+          targetRoute = `/${currentStore.storeCode}${targetRoute}`;
         } else {
-          targetRoute = `/${currentStore}/${targetRoute}`;
+          targetRoute = `/${currentStore.storeCode}/${targetRoute}`;
         }
         console.log('Transformed route:', targetRoute);
       }
       
       console.log('Final navigation to:', targetRoute);
       this.router.navigateByUrl(targetRoute);
+    }
+  }
+
+  private async reloadNavbarConfig() {
+    try {
+      console.log('BottomStickyNavbar - Reloading navbar configuration...');
+      
+      // Get current store from store session service
+      const currentStore = this.storeSessionService.getSelectedStore();
+      
+      if (currentStore) {
+        // Store data is already available from store session service
+        // No need to make additional API calls
+        console.log('BottomStickyNavbar - Using store data from store session:', currentStore);
+        await this.navbarConfigService.loadNavbarConfig();
+      } else {
+        // No store selected, use default config
+        await this.navbarConfigService.loadNavbarConfig();
+      }
+      
+      // Update navbar items from the service
+      this.navbarItems = this.navbarConfigService.getBottomNavbarItems();
+      console.log('BottomStickyNavbar - Navbar items updated:', this.navbarItems);
+    } catch (error) {
+      console.error('BottomStickyNavbar - Error reloading navbar config:', error);
     }
   }
 

@@ -23,7 +23,7 @@ export class Home implements OnInit, OnDestroy {
   products: Product[] = [];
   isOnline = true;
   selectedStore: StoreSession | null = null;
-  showStoreSelector = false;
+  showStoreSelector = true;
   private subscription = new Subscription();
   
   coffeeCategories: { name: string; icon: string; route: string; slug: string }[] = [];
@@ -334,45 +334,28 @@ export class Home implements OnInit, OnDestroy {
   }
 
   private initializeBrandForStore(store: StoreSession) {
-    // Map store code to brand ID
-    const brandId = this.mapStoreCodeToBrandId(store.storeCode);
-    console.log('Home component setting brand:', { storeCode: store.storeCode, brandId });
+    console.log('Home component - Store selected:', { storeCode: store.storeCode, storeName: store.storeName });
     
-    // Set the brand based on the mapped brand ID
-    this.brandService.setCurrentBrand(brandId);
+    // Brand service now automatically handles brand detection from store session
+    // No need to manually set brand - it's handled by the brand service initialization
     
     // Apply store-specific theme to body
     document.body.className = document.body.className.replace(/-\w+-theme/g, '');
     document.body.classList.add(`${store.storeCode}-theme`);
     
-    // Update URL to include store code if not already present
+    // Only redirect if we're not on the global home route
     const currentPath = window.location.pathname;
+    if (currentPath === '/home') {
+      // Stay on global home route - don't redirect
+      console.log('Home component - Staying on global home route for store selector');
+      return;
+    }
+    
+    // For store-specific routes, navigate to store root (empty path)
     if (!currentPath.includes(`/${store.storeCode}`)) {
-      const newPath = `/${store.storeCode}${currentPath}`;
-      this.router.navigateByUrl(newPath, { replaceUrl: true });
+      // Navigate to store root (empty path)
+      this.router.navigateByUrl(`/${store.storeCode}`, { replaceUrl: true });
     }
   }
 
-  private mapStoreCodeToBrandId(storeCode: string): string {
-    // Map store codes to brand service IDs
-    switch (storeCode) {
-      case 'brew-buddy':
-        return 'brewbuddy';
-      case 'little-ducks':
-        return 'littleducks';
-      case 'majili':
-        return 'majili';
-      case 'cctv-device':
-        return 'cctv-device';
-      case 'royalfoods':
-        return 'royalfoods';
-      case 'megha':
-        return 'megha';
-      case 'jsicare':
-        return 'jsicare';
-      default:
-        console.warn(`Unknown store code: ${storeCode}, using default brand`);
-        return 'megha'; // Default fallback to megha
-    }
-  }
 }

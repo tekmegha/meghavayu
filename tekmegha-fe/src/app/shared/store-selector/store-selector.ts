@@ -105,8 +105,12 @@ export class StoreSelectorComponent implements OnInit, OnDestroy {
     this.selectedStore = store;
     this.storeSessionService.setSelectedStore(store);
     
-    // Navigate to the selected store's home page
-    this.router.navigate([`/${store.storeCode}/home`]);
+    // Navigate to the selected store's root (empty path is home)
+    this.router.navigate([`/${store.storeCode}`]);
+    
+    // Optional: Reload the page to ensure all components get the new store context
+    // Uncomment the line below if you want to force a page reload when store changes
+    // window.location.reload();
   }
 
   isStoreSelected(store: StoreSession): boolean {

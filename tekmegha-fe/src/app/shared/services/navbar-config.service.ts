@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SupabaseService } from './supabase.service';
+import { StoreSessionService } from './store-session.service';
 import { NavbarItem } from '../interfaces/navbar-item.interface';
 
 export interface NavbarConfig {
@@ -29,8 +30,11 @@ export interface NavbarConfig {
 }
 
 export interface StoreNavbarData {
+  id: string;
   store_code: string;
   store_name: string;
+  store_type: string;
+  is_active: boolean;
   navbar_config: NavbarConfig;
   enable_navbar_home: boolean;
   enable_navbar_menu: boolean;
@@ -56,25 +60,50 @@ export class NavbarConfigService {
   public topNavbar$ = this.topNavbarSubject.asObservable();
   public storeNavbarData$ = this.storeNavbarDataSubject.asObservable();
 
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(
+    private supabaseService: SupabaseService,
+    private storeSessionService: StoreSessionService
+  ) {}
 
-  async loadNavbarConfig(): Promise<void> {
+  async loadNavbarConfig(storeData?: StoreNavbarData): Promise<void> {
     try {
-      const { data, error } = await this.supabaseService.getStoreNavbarConfig();
-      
-      if (error) {
-        console.error('Error loading navbar config:', error);
-        this.setDefaultNavbarConfig();
-        return;
-      }
-
-      if (data) {
-        console.log('Navbar config loaded:', data);
-        this.storeNavbarDataSubject.next(data);
-        this.processNavbarConfig(data);
+      if (storeData) {
+        console.log('Navbar config loaded from provided store data:', storeData);
+        this.storeNavbarDataSubject.next(storeData);
+        this.processNavbarConfig(storeData);
       } else {
-        console.log('No navbar config data, using defaults');
-        this.setDefaultNavbarConfig();
+        // Get store data from store session service
+        const currentStore = this.storeSessionService.getSelectedStore();
+        
+        if (currentStore && currentStore.navbar_config) {
+          console.log('Navbar config loaded from store session:', currentStore);
+          
+          // Convert StoreSession to StoreNavbarData format
+          const storeNavbarData: StoreNavbarData = {
+            id: currentStore.storeId,
+            store_code: currentStore.storeCode,
+            store_name: currentStore.storeName,
+            store_type: currentStore.storeType,
+            is_active: currentStore.isActive,
+            navbar_config: currentStore.navbar_config,
+            enable_navbar_home: currentStore.enable_navbar_home || false,
+            enable_navbar_menu: currentStore.enable_navbar_menu || false,
+            enable_navbar_cart: currentStore.enable_navbar_cart || false,
+            enable_navbar_inventory: currentStore.enable_navbar_inventory || false,
+            enable_navbar_invoices: currentStore.enable_navbar_invoices || false,
+            enable_navbar_profile: currentStore.enable_navbar_profile || false,
+            enable_products: currentStore.enable_products || false,
+            enable_cart: currentStore.enable_cart || false,
+            enable_inventory: currentStore.enable_inventory || false,
+            enable_invoices: currentStore.enable_invoices || false
+          };
+          
+          this.storeNavbarDataSubject.next(storeNavbarData);
+          this.processNavbarConfig(storeNavbarData);
+        } else {
+          console.log('No store data or navbar config available, using defaults');
+          this.setDefaultNavbarConfig();
+        }
       }
     } catch (error) {
       console.error('Error loading navbar config:', error);
@@ -89,6 +118,8 @@ export class NavbarConfigService {
     console.log('NavbarConfigService - processing config for store:', storeCode);
     console.log('NavbarConfigService - storeData:', storeData);
     console.log('NavbarConfigService - navbarConfig:', navbarConfig);
+    
+    // Store session is already set by store-selector, no need to set it again
 
     // Process bottom navbar
     if (navbarConfig?.bottomNavbar?.enabled) {
@@ -96,10 +127,12 @@ export class NavbarConfigService {
       
       // Add home item
       if (navbarConfig.bottomNavbar.items['home']?.enabled) {
+        // Home route is now the store root (empty path)
+        const homeRoute = navbarConfig.bottomNavbar.items['home'].route === '/home' ? '' : navbarConfig.bottomNavbar.items['home'].route;
         bottomNavbarItems.push({
           icon: navbarConfig.bottomNavbar.items['home'].icon,
           label: navbarConfig.bottomNavbar.items['home'].label,
-          route: `/${storeCode}${navbarConfig.bottomNavbar.items['home'].route}`,
+          route: `/${storeCode}${homeRoute}`,
           active: false,
           disabled: !storeData.enable_navbar_home
         });
@@ -214,10 +247,12 @@ export class NavbarConfigService {
   }
 
   private setDefaultNavbarConfig(): void {
-    const storeCode = this.supabaseService.getCurrentStore() || 'megha';
+    // Get current store from store session service (already set by store-selector)
+    const currentStore = this.storeSessionService.getSelectedStore();
+    const storeCode = currentStore?.storeCode || 'megha';
     
     console.log('NavbarConfigService - using default config for store:', storeCode);
-    console.log('NavbarConfigService - getCurrentStore() returned:', this.supabaseService.getCurrentStore());
+    console.log('NavbarConfigService - currentStore:', currentStore);
     
     // Default bottom navbar
     const defaultBottomNavbar: NavbarItem[] = [

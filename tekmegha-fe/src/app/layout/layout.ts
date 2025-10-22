@@ -63,6 +63,16 @@ export class Layout implements OnInit, OnDestroy {
       })
     );
 
+    // Subscribe to store session changes to reload navbar configuration
+    this.subscription.add(
+      this.storeSessionService.selectedStore$.subscribe(store => {
+        if (store) {
+          console.log('Layout - Store changed, reloading navbar config for:', store.storeCode);
+          this.loadNavbarConfig();
+        }
+      })
+    );
+
     // Handle route changes
     this.subscription.add(
       this.router.events
@@ -76,7 +86,18 @@ export class Layout implements OnInit, OnDestroy {
 
   private async loadNavbarConfig() {
     try {
-      await this.navbarConfigService.loadNavbarConfig();
+      // Get current store from store session service
+      const currentStore = this.storeSessionService.getSelectedStore();
+      
+      if (currentStore) {
+        // Store data is already available from store session service
+        // No need to make additional API calls
+        console.log('Layout - Using store data from store session:', currentStore);
+        await this.navbarConfigService.loadNavbarConfig();
+      } else {
+        // No store selected, use default config
+        await this.navbarConfigService.loadNavbarConfig();
+      }
     } catch (error) {
       console.error('Error loading navbar config:', error);
     }
@@ -122,17 +143,16 @@ export class Layout implements OnInit, OnDestroy {
     console.log('Exit App clicked!');
     // Clear store session to show app selector
     this.storeSessionService.clearSelectedStore();
-    // Navigate to megha home page to show app selector
-    this.router.navigate(['/megha/home']);
+    // Navigate to home page to show app selector
+    this.router.navigate(['/home']);
   }
 
   private updateActiveNavItem(url: string) {
     // Update active state for bottom navbar items
-    if (this.currentBrand?.navigation.bottomNavbar) {
-      this.currentBrand.navigation.bottomNavbar.forEach(item => {
-        item.active = url === item.route || (item.route === '/home' && url === '/');
-      });
-    }
+    const bottomNavbarItems = this.navbarConfigService.getBottomNavbarItems();
+    bottomNavbarItems.forEach(item => {
+      item.active = url === item.route || (item.route === '/home' && url === '/');
+    });
   }
 
   private updateLocationBarVisibility(url: string) {

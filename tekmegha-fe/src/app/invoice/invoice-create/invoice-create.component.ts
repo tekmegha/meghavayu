@@ -64,6 +64,7 @@ export class InvoiceCreateComponent implements OnInit {
   error: string | null = null;
   showPreview = false;
 
+
   // Sample data for development
   sampleData = {
     items: [
@@ -273,6 +274,41 @@ export class InvoiceCreateComponent implements OnInit {
 
     this.items.push(newItem);
     this.setupItemListeners(newItem, this.items.length - 1);
+  }
+
+  // Add current form item to invoice
+  addCurrentItem() {
+    const itemDescription = this.invoiceForm.get('itemDescription')?.value;
+    const quantity = this.invoiceForm.get('quantity')?.value;
+    const rate = this.invoiceForm.get('rate')?.value;
+
+    if (!itemDescription || !quantity || !rate) {
+      this.error = 'Please fill in all item details before adding.';
+      return;
+    }
+
+    const newItem = this.fb.group({
+      itemName: [itemDescription, Validators.required],
+      rate: [rate, [Validators.required, Validators.min(0)]],
+      quantity: [quantity, [Validators.required, Validators.min(1)]],
+      amount: [quantity * rate],
+      discount: [0, [Validators.min(0), Validators.max(100)]],
+      finalAmount: [quantity * rate]
+    });
+
+    this.items.push(newItem);
+    this.setupItemListeners(newItem, this.items.length - 1);
+    
+    // Clear the form fields
+    this.invoiceForm.patchValue({
+      itemDescription: '',
+      quantity: 1,
+      rate: 0
+    });
+    
+    // Calculate totals
+    this.calculateTotals();
+    this.error = null; // Clear any previous errors
   }
 
   addSampleItem() {
@@ -626,6 +662,10 @@ export class InvoiceCreateComponent implements OnInit {
       buyerAddress: '',
       buyerContact: ''
     });
+    
+    // Clear all items
+    this.items.clear();
+    
     this.calculateTotals();
   }
 
@@ -723,26 +763,12 @@ export class InvoiceCreateComponent implements OnInit {
   }
 
   submitInvoice() {
-    // Convert simple form to full invoice format
-    const itemDescription = this.invoiceForm.get('itemDescription')?.value;
-    const quantity = this.invoiceForm.get('quantity')?.value;
-    const rate = this.invoiceForm.get('rate')?.value;
-    
-    // Create item from simple form
-    const item = this.fb.group({
-      itemName: [itemDescription, Validators.required],
-      rate: [rate, [Validators.required, Validators.min(0)]],
-      quantity: [quantity, [Validators.required, Validators.min(1)]],
-      amount: [quantity * rate],
-      discount: [0, [Validators.min(0), Validators.max(100)]],
-      finalAmount: [quantity * rate]
-    });
+    // Check if there are any items
+    if (this.items.length === 0) {
+      this.error = 'Please add at least one item to the invoice.';
+      return;
+    }
 
-    // Clear existing items and add the new one
-    this.items.clear();
-    this.items.push(item);
-    this.setupItemListeners(item, 0);
-    
     // Calculate totals and ensure balanceDue is set
     this.calculateTotals();
 

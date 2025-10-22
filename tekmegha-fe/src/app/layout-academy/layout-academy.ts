@@ -8,6 +8,7 @@ import { NetworkStatusComponent } from '../shared/network-status/network-status'
 import { LocationBarComponent } from '../shared/location-bar/location-bar';
 import { BrandService, BrandConfig } from '../shared/services/brand.service';
 import { StoreSessionService } from '../shared/services/store-session.service';
+import { NavbarConfigService } from '../shared/services/navbar-config.service';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
@@ -32,7 +33,8 @@ export class LayoutAcademy implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private brandService: BrandService,
-    private storeSessionService: StoreSessionService
+    private storeSessionService: StoreSessionService,
+    private navbarConfigService: NavbarConfigService
   ) {}
 
   ngOnInit() {
@@ -77,11 +79,10 @@ export class LayoutAcademy implements OnInit, OnDestroy {
 
   private updateActiveNavItem(url: string) {
     // Update active state for bottom navbar items
-    if (this.currentBrand?.navigation.bottomNavbar) {
-      this.currentBrand.navigation.bottomNavbar.forEach(item => {
-        item.active = url === item.route || (item.route === '/home' && url === '/');
-      });
-    }
+    const bottomNavbarItems = this.navbarConfigService.getBottomNavbarItems();
+    bottomNavbarItems.forEach(item => {
+      item.active = url === item.route || (item.route === '/home' && url === '/');
+    });
   }
 
   getTopNavbarItems() {
@@ -89,6 +90,6 @@ export class LayoutAcademy implements OnInit, OnDestroy {
   }
 
   getBottomNavbarItems() {
-    return this.currentBrand?.navigation.bottomNavbar || [];
+    return this.navbarConfigService.getBottomNavbarItems();
   }
 }

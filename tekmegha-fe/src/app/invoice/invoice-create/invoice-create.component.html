@@ -4,7 +4,31 @@
     <button class="back-btn" (click)="goBack()">
       <span class="material-icons">arrow_back</span>
     </button>
-    <h1>Invoice Creation</h1>
+    <h1>New Bill</h1>
+    <div class="header-actions">
+      <button style="display: none;"
+        type="button" 
+        class="btn-clear" 
+        (click)="clearForm()"
+      >
+        New Bill
+      </button>
+      <button style="display: none;"
+        type="button" 
+        class="btn-save-draft" 
+        (click)="saveDraft()"
+      >
+        Save Draft
+      </button>
+      <button 
+        type="button" 
+        class="btn-submit" 
+        (click)="submitInvoice()"
+        [disabled]="loading"
+      >
+        {{ loading ? 'Submitting...' : 'Save' }}
+      </button>
+    </div>
   </div>
 
   <!-- Main Form -->
@@ -69,19 +93,65 @@
       <div class="price-display">
         <span class="currency">₹</span>
         <span class="price-value">{{ getItemPrice() | number:'1.2-2' }}</span>
+        <span class="total-label">Total: ₹{{ getTotalAmount() | number:'1.2-2' }}</span>
       </div>
     </div>
 
-    <!-- Total -->
+    <!-- Add Item Button -->
     <div class="form-section">
-      <label class="form-label">Total</label>
-      <div class="total-display">
-        <span class="currency">₹</span>
-        <span class="total-value">{{ getTotalAmount() | number:'1.2-2' }}</span>
-      </div>
+      <button 
+        type="button" 
+        class="btn-add-item" 
+        (click)="addCurrentItem()"
+        [disabled]="!invoiceForm.get('itemDescription')?.value || !invoiceForm.get('rate')?.value"
+      >
+        <span class="material-icons">add</span>
+        Add Item to Invoice
+      </button>
     </div>
   </form>
- 
+ <!-- Added Items Table -->
+ <div class="added-items-section" *ngIf="items.length > 0">
+  <h3>Invoice Items</h3>
+  <div class="items-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>Rate</th>
+          <th>Amount</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items.controls; let i = index">
+          <td>{{ item.get('itemName')?.value }}</td>
+          <td>{{ item.get('quantity')?.value }}</td>
+          <td>₹{{ item.get('rate')?.value | number:'1.2-2' }}</td>
+          <td>₹{{ item.get('amount')?.value | number:'1.2-2' }}</td>
+          <td>
+            <button 
+              type="button" 
+              class="btn-remove" 
+              (click)="removeItem(i)"
+              title="Remove item"
+            >
+              <span class="material-icons">delete</span>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr class="total-row">
+          <td colspan="3"><strong>Total:</strong></td>
+          <td><strong>₹{{ totalAmount | number:'1.2-2' }}</strong></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
 
   <!-- Store Info Display -->
   <div class="store-info-display" *ngIf="hasRequiredStoreData()">
@@ -104,31 +174,8 @@
     </div>
   </div>
 
-  <!-- Action Buttons -->
-  <div class="action-buttons">
-    <button 
-      type="button" 
-      class="btn-clear" 
-      (click)="clearForm()"
-    >
-      Clear Form
-    </button>
-    <button 
-      type="button" 
-      class="btn-save-draft" 
-      (click)="saveDraft()"
-    >
-      Save Draft
-    </button>
-    <button 
-      type="button" 
-      class="btn-submit" 
-      (click)="submitInvoice()"
-      [disabled]="loading"
-    >
-      {{ loading ? 'Submitting...' : 'Submit Invoice' }}
-    </button>
-  </div>
+  
+
 
   <!-- Error Display -->
   <div class="error-message" *ngIf="error">

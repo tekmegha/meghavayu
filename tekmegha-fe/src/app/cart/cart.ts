@@ -5,6 +5,7 @@ import { SkeletonLoaderComponent } from '../shared/skeleton-loader/skeleton-load
 import { CartService, CartState } from '../shared/services/cart-service';
 import { SupabaseService } from '../shared/services/supabase.service';
 import { BrandService } from '../shared/services/brand.service';
+import { PhonePePaymentService } from '../shared/services/phonepe-payment.service';
 import { Observable, Subscription } from 'rxjs';
 
 @Component({
@@ -24,7 +25,8 @@ export class Cart implements OnInit, OnDestroy {
     private cartService: CartService,
     private supabaseService: SupabaseService,
     public router: Router,
-    private brandService: BrandService
+    private brandService: BrandService,
+    private phonePePaymentService: PhonePePaymentService
   ) {
     this.cartState$ = this.cartService.cartState$;
   }
@@ -138,7 +140,7 @@ export class Cart implements OnInit, OnDestroy {
     }
   }
 
-  async payWithRazorpay() {
+  async payWithPhonePe() {
     // Check if user is logged in
     if (!this.isLoggedIn) {
       const shouldLogin = confirm('You need to be logged in to proceed with checkout. Would you like to login now?');
@@ -148,12 +150,6 @@ export class Cart implements OnInit, OnDestroy {
       } else {
         return;
       }
-    }
-
-    // Check if Razorpay is loaded
-    if (typeof (window as any).Razorpay === 'undefined') {
-      alert('Razorpay SDK not loaded. Please refresh the page and try again.');
-      return;
     }
 
     // Get current cart state
@@ -166,52 +162,27 @@ export class Cart implements OnInit, OnDestroy {
       return;
     }
 
-    const options = {
-      "key": "rzp_test_1DP5mmOlF5G5ag", // Updated test key
-      "amount": (totalAmount * 100).toString(), // Convert to paise (₹1 = 100 paise)
-      "currency": "INR",
-      "name": "BrewBuddy",
-      "description": "Coffee Order Payment",
-      "image": "assets/images/brew-buddy/hero-brewbuddy.jpg",
-      "order_id": "", // Remove order_id for direct payment
-      "handler": (response: any) => {
-        console.log('Payment successful:', response);
-        alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
-        // Clear cart after successful payment
-        this.cartService.clearCart();
-        // Here you would typically send this response to your backend for verification
-        // and then redirect to success page or update order status
-      },
-      "prefill": {
-        "name": "BrewBuddy Customer",
-        "email": "customer@brewbuddy.com",
-        "contact": "+919876543210"
-      },
-      "notes": {
-        "address": "BrewBuddy Coffee Shop",
-        "order_type": "Coffee Delivery",
-        "items_count": cartState.items.length.toString()
-      },
-      "theme": {
-        "color": "#003366" // Updated to German blue theme
-      },
-      "modal": {
-        "ondismiss": () => {
-          console.log('Payment modal dismissed');
-        }
-      }
-    };
-
     try {
-      const rzp1 = new (window as any).Razorpay(options);
-      rzp1.on('payment.failed', (response: any) => {
-        console.error('Payment failed:', response.error);
-        alert('Payment failed: ' + response.error.description);
-      });
-      rzp1.open();
+      // Generate unique transaction ID
+      const merchantTransactionId = this.phonePePaymentService.generateTransactionId();
+      const merchantUserId = this.supabaseService.getCurrentUser()?.id || 'guest_user';
+      
+      // Get user's mobile number (you might want to get this from user profile)
+      const mobileNumber = '+919876543210'; // Replace with actual user mobile number
+      
+      // Generate payment URL using V2 API
+      const paymentUrl = await this.phonePePaymentService.createPaymentAndGetUrl(
+        totalAmount,
+        `${window.location.origin}/payment/success`, // Success redirect URL
+        `Payment for order ${merchantTransactionId}`
+      );
+
+      // Redirect to PhonePe payment page
+      window.location.href = paymentUrl;
+      
     } catch (error) {
-      console.error('Error initializing Razorpay:', error);
-      alert('Error initializing payment. Please try again.');
+      console.error('Error initiating PhonePe payment:', error);
+      alert('Error initiating payment. Please try again.');
     }
   }
 }

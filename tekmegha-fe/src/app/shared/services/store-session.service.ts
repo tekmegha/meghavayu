@@ -8,6 +8,18 @@ export interface StoreSession {
   storeCode: string;
   storeType: string;
   isActive: boolean;
+  // Add complete store data including navbar config
+  navbar_config?: any;
+  enable_navbar_home?: boolean;
+  enable_navbar_menu?: boolean;
+  enable_navbar_cart?: boolean;
+  enable_navbar_inventory?: boolean;
+  enable_navbar_invoices?: boolean;
+  enable_navbar_profile?: boolean;
+  enable_products?: boolean;
+  enable_cart?: boolean;
+  enable_inventory?: boolean;
+  enable_invoices?: boolean;
 }
 
 @Injectable({
@@ -21,6 +33,10 @@ export class StoreSessionService {
     private supabaseService: SupabaseService
   ) {
     // Initialize with stored session or default
+    //skip for global routes
+    if (window.location.pathname === '/home' || window.location.pathname === '/tekmegha-clients') {
+      return;
+    }
     this.initializeStoreSession();
   }
 
@@ -49,7 +65,7 @@ export class StoreSessionService {
     if (segments.length > 0) {
       const potentialStoreCode = segments[0];
       // Check if it's not a known global route
-      const globalRoutes = ['inventory-login', 'tekmegha-clients'];
+      const globalRoutes = ['home', 'tekmegha-clients'];
       if (!globalRoutes.includes(potentialStoreCode)) {
         return potentialStoreCode;
       }
@@ -200,7 +216,19 @@ export class StoreSessionService {
         storeName: store.store_name,
         storeCode: store.store_code,
         storeType: store.store_type,
-        isActive: store.is_active
+        isActive: store.is_active,
+        // Include complete store data for navbar configuration
+        navbar_config: store.navbar_config,
+        enable_navbar_home: store.enable_navbar_home,
+        enable_navbar_menu: store.enable_navbar_menu,
+        enable_navbar_cart: store.enable_navbar_cart,
+        enable_navbar_inventory: store.enable_navbar_inventory,
+        enable_navbar_invoices: store.enable_navbar_invoices,
+        enable_navbar_profile: store.enable_navbar_profile,
+        enable_products: store.enable_products,
+        enable_cart: store.enable_cart,
+        enable_inventory: store.enable_inventory,
+        enable_invoices: store.enable_invoices
       }));
     } catch (error) {
       console.error('Error loading available stores:', error);
@@ -218,8 +246,8 @@ export class StoreSessionService {
   }
 
   // Navigate to store-specific URL
-  navigateToStore(storeCode: string, path: string = 'home'): void {
-    const storeUrl = `/${storeCode}/${path}`;
+  navigateToStore(storeCode: string, path: string = ''): void {
+    const storeUrl = path ? `/${storeCode}/${path}` : `/${storeCode}`;
     window.location.href = storeUrl;
     console.log('Navigating to store URL:', storeUrl);
   }

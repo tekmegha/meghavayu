@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 import { Home } from './home/home';
+import { HomeMegha } from './home-megha/home-megha';
+import { HomeFashion } from './home-fashion/home-fashion';
+import { HomeFood } from './home-food/home-food';
 import { Menu } from './menu/menu';
 import { Cart } from './cart/cart';
 import { Stores } from './stores/stores';
@@ -26,18 +29,24 @@ import { LayoutFood } from './layout-food/layout-food';
 import { LayoutPetCare } from './layout-pet-care/layout-pet-care';
 import { LayoutAcademy } from './layout-academy/layout-academy';
 import { LayoutVisakhaVendi } from './layout-visakha-vendi/layout-visakha-vendi';
+import { PaymentSuccessComponent } from './payment-success/payment-success';
+import { PaymentCallbackComponent } from './payment-callback/payment-callback';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/megha/home', pathMatch: 'full' },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
   
   // Global routes that don't require store context
+  { path: 'home', component: Home }, // Global home route for store selector
   { path: 'inventory-login', component: InventoryLogin },
   { path: 'tekmegha-clients', component: TekMeghaClientsComponent},
   
+  // Payment routes
+  { path: 'payment/success', component: PaymentSuccessComponent },
+  { path: 'payment/callback', component: PaymentCallbackComponent },
+  
   // Store-specific routes with dynamic layout
   { path: 'megha', component: Layout, children: [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: Home },
+    { path: '', component: HomeMegha }, // Empty path is home for this store
     { path: 'menu', component: Menu },
     { path: 'cart', component: Cart },
     { path: 'stores', component: Stores },
@@ -52,8 +61,7 @@ export const routes: Routes = [
     { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
   ]},
   { path: 'brew-buddy', component: Layout, children: [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: Home },
+    { path: '', component: Home }, // Empty path is home for this store
     { path: 'menu', component: Menu },
     { path: 'cart', component: Cart },
     { path: 'stores', component: Stores },
@@ -68,8 +76,7 @@ export const routes: Routes = [
     { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
   ]},
   { path: 'little-ducks', component: LayoutToys, children: [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: Home },
+    { path: '', component: Home }, // Empty path is home for this store
     { path: 'menu', component: Menu },
     { path: 'cart', component: Cart },
     { path: 'stores', component: Stores },
@@ -84,8 +91,7 @@ export const routes: Routes = [
     { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
   ]},
   { path: 'majili', component: LayoutFashion, children: [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: Home },
+    { path: '', component: HomeFashion }, // Empty path is home for this store
     { path: 'menu', component: Menu },
     { path: 'cart', component: Cart },
     { path: 'stores', component: Stores },
@@ -100,8 +106,7 @@ export const routes: Routes = [
     { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
   ]},
   { path: 'cctv-device', component: LayoutDigitalSecurity, children: [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: Home },
+    { path: '', component: Home }, // Empty path is home for this store
     { path: 'menu', component: Menu },
     { path: 'cart', component: Cart },
     { path: 'stores', component: Stores },
@@ -116,8 +121,7 @@ export const routes: Routes = [
     { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
   ]},
   { path: 'royalfoods', component: LayoutFood, children: [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: Home },
+    { path: '', component: HomeFood }, // Empty path is home for this store
     { path: 'menu', component: Menu },
     { path: 'cart', component: Cart },
     { path: 'stores', component: Stores },
@@ -132,8 +136,7 @@ export const routes: Routes = [
     { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
   ]},
   { path: 'automobile-insurance', component: Layout, children: [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: Home },
+    { path: '', component: Home }, // Empty path is home for this store
     { path: 'menu', component: InsurancesComponent, canActivate: [CustomerAuthGuard] },
     { path: 'insurances', component: InsurancesComponent, canActivate: [CustomerAuthGuard] },
     { path: 'cart', component: Cart },
@@ -149,8 +152,7 @@ export const routes: Routes = [
     { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
   ]},
   { path: 'dkassociates', component: Layout, children: [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: Home },
+    { path: '', component: Home }, // Empty path is home for this store
     { path: 'menu', component: InsurancesComponent, canActivate: [CustomerAuthGuard] },
     { path: 'insurances', component: InsurancesComponent, canActivate: [CustomerAuthGuard] },
     { path: 'cart', component: Cart },
@@ -166,8 +168,7 @@ export const routes: Routes = [
     { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
   ]},
   { path: 'paws-nexus', component: LayoutPetCare, children: [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: Home },
+    { path: '', component: Home }, // Empty path is home for this store
     { path: 'menu', component: PetCareServicesComponent },
     { path: 'services', component: PetCareServicesComponent },
     { path: 'doctors', component: PetCareServicesComponent },
@@ -191,8 +192,7 @@ export const routes: Routes = [
   
   // Visakha Vendi routes (Silver Exchange)
   { path: 'visakha-vendi', component: LayoutVisakhaVendi, children: [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: VisakhaVendiHomeComponent },
+    { path: '', component: VisakhaVendiHomeComponent }, // Empty path is home for this store
     { path: 'menu', component: Menu },
     { path: 'cart', component: Cart },
     { path: 'stores', component: Stores },
@@ -210,8 +210,7 @@ export const routes: Routes = [
   // Wildcard route for any store code that doesn't have a specific route
   // This allows stores from the database to be accessible via /store-code/invoice, /store-code/inventory, etc.
   { path: ':storeCode', component: Layout, children: [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'home', component: Home },
+    { path: '', component: Home }, // Empty path is home for this store
     { path: 'menu', component: Menu },
     { path: 'cart', component: Cart },
     { path: 'stores', component: Stores },
@@ -227,6 +226,5 @@ export const routes: Routes = [
     { path: 'tekmegha-clients', component: TekMeghaClientsComponent }
   ]},
   
-  // Catch-all route for undefined paths
-  { path: '**', redirectTo: '/megha/home' }
+ 
 ];

@@ -10,8 +10,16 @@
   .invoice-header {
     display: flex;
     align-items: center;
-    margin-bottom: 30px;
-    padding: 0 10px;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding: 8px 10px;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
 
     .back-btn {
       background: none;
@@ -35,8 +43,84 @@
     h1 {
       margin: 0;
       color: #1d1d1f;
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+
+      .btn-clear {
+        background: #ff3b30;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #d70015;
+          transform: translateY(-1px);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+
+      .btn-save-draft {
+        background: #007AFF;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #0056b3;
+          transform: translateY(-1px);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+
+      .btn-submit {
+        background: white;
+        color: #007AFF;
+        border: 2px solid #007AFF;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #007AFF;
+          color: white;
+          transform: translateY(-1px);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          transform: none;
+        }
+      }
     }
   }
 
@@ -152,10 +236,10 @@
         }
       }
 
-      .price-display,
-      .total-display {
+      .price-display {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         padding: 16px;
         background: #f2f2f7;
         border-radius: 12px;
@@ -167,100 +251,23 @@
           margin-right: 4px;
         }
 
-        .price-value,
-        .total-value {
+        .price-value {
           color: #1d1d1f;
         }
-      }
 
-      .total-display {
-        background: #e8f4fd;
-        border: 1px solid #007AFF;
-
-        .currency,
-        .total-value {
+        .total-label {
           color: #007AFF;
+          font-size: 0.9rem;
+          font-weight: 700;
+          background: #e8f4fd;
+          padding: 4px 8px;
+          border-radius: 6px;
+          border: 1px solid #007AFF;
         }
       }
     }
   }
 
-  .action-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 20px;
-
-    .btn-clear {
-      background: #ff3b30;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 16px 24px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background: #d70015;
-        transform: translateY(-1px);
-      }
-
-      &:active {
-        transform: translateY(0);
-      }
-    }
-
-    .btn-save-draft {
-      background: #007AFF;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 16px 24px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background: #0056b3;
-        transform: translateY(-1px);
-      }
-
-      &:active {
-        transform: translateY(0);
-      }
-    }
-
-    .btn-submit {
-      background: white;
-      color: #007AFF;
-      border: 2px solid #007AFF;
-      border-radius: 12px;
-      padding: 16px 24px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background: #007AFF;
-        color: white;
-        transform: translateY(-1px);
-      }
-
-      &:active {
-        transform: translateY(0);
-      }
-
-      &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-      }
-    }
-  }
 
   .error-message {
     background: #ff3b30;
@@ -344,6 +351,118 @@
       }
     }
   }
+
+  // Add Item Button
+  .btn-add-item {
+    background: #007AFF;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    width: 100%;
+
+    &:hover:not(:disabled) {
+      background: #0056b3;
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .material-icons {
+      font-size: 20px;
+    }
+  }
+
+  // Added Items Section
+  .added-items-section {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin: 20px 0;
+
+    h3 {
+      margin: 0 0 16px 0;
+      color: #1d1d1f;
+      font-size: 1.2rem;
+      font-weight: 600;
+      border-bottom: 2px solid #f2f2f7;
+      padding-bottom: 8px;
+    }
+
+    .items-table {
+      overflow-x: auto;
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+
+        th, td {
+          padding: 12px 8px;
+          text-align: left;
+          border-bottom: 1px solid #f2f2f7;
+        }
+
+        th {
+          background: #f8f9fa;
+          font-weight: 600;
+          color: #1d1d1f;
+          font-size: 0.85rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        td {
+          color: #1d1d1f;
+        }
+
+        .btn-remove {
+          background: none;
+          border: none;
+          color: #ff3b30;
+          cursor: pointer;
+          padding: 4px;
+          border-radius: 4px;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:hover {
+            background: rgba(255, 59, 48, 0.1);
+          }
+
+          .material-icons {
+            font-size: 18px;
+          }
+        }
+
+        .total-row {
+          background: #f8f9ff;
+          border-top: 2px solid #007AFF;
+          font-weight: 700;
+
+          td {
+            color: #007AFF;
+            font-size: 1rem;
+          }
+        }
+      }
+    }
+  }
 }
 
 // Add customer button styling
@@ -372,11 +491,215 @@
   }
 }
 
+// Customer Modal Styling
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+
+  .modal-content {
+    background: white;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      border-bottom: 1px solid #f2f2f7;
+
+      h3 {
+        margin: 0;
+        color: #1d1d1f;
+        font-size: 1.3rem;
+        font-weight: 600;
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        color: #8e8e93;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: #f2f2f7;
+          color: #1d1d1f;
+        }
+
+        .material-icons {
+          font-size: 24px;
+        }
+      }
+    }
+
+    .modal-body {
+      padding: 24px;
+
+      .customer-form {
+        .form-row {
+          display: flex;
+          gap: 16px;
+          margin-bottom: 20px;
+
+          .form-group {
+            flex: 1;
+
+            &.full-width {
+              flex: 1 1 100%;
+            }
+
+            label {
+              display: block;
+              margin-bottom: 8px;
+              color: #1d1d1f;
+              font-weight: 500;
+              font-size: 0.9rem;
+            }
+
+            .form-control {
+              width: 100%;
+              padding: 12px 16px;
+              border: 1px solid #d1d1d6;
+              border-radius: 8px;
+              font-size: 1rem;
+              background: #f9f9f9;
+              transition: all 0.2s ease;
+
+              &:focus {
+                outline: none;
+                border-color: #007AFF;
+                background: white;
+                box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+              }
+
+              &.error {
+                border-color: #ff3b30;
+                background: #fff5f5;
+              }
+
+              &::placeholder {
+                color: #8e8e93;
+              }
+            }
+
+            textarea.form-control {
+              resize: vertical;
+              min-height: 80px;
+            }
+
+            .error-message {
+              color: #ff3b30;
+              font-size: 0.8rem;
+              margin-top: 4px;
+              display: flex;
+              align-items: center;
+              gap: 4px;
+            }
+          }
+        }
+      }
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 20px 24px;
+      border-top: 1px solid #f2f2f7;
+
+      .btn {
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        &.btn-secondary {
+          background: #f2f2f7;
+          color: #1d1d1f;
+          border: none;
+
+          &:hover {
+            background: #e5e5ea;
+          }
+        }
+
+        &.btn-primary {
+          background: #007AFF;
+          color: white;
+          border: none;
+
+          &:hover:not(:disabled) {
+            background: #0056b3;
+            transform: translateY(-1px);
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+          }
+
+          .material-icons {
+            font-size: 18px;
+          }
+        }
+      }
+    }
+  }
+}
+
 // Responsive design
 @media (max-width: 480px) {
   .invoice-create-container {
     padding: 16px;
     max-width: 100%;
+
+    .invoice-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding: 4px 8px;
+
+      h1 {
+        font-size: 1.1rem;
+        text-align: center;
+      }
+
+      .header-actions {
+        justify-content: center;
+        width: 100%;
+        gap: 6px;
+
+        button {
+          flex: 1;
+          min-width: 0;
+          padding: 4px 8px;
+          font-size: 0.75rem;
+        }
+      }
+    }
 
     .invoice-form {
       padding: 20px;
@@ -384,6 +707,56 @@
 
     .quantity-controls {
       justify-content: center;
+    }
+
+    .added-items-section {
+      padding: 16px;
+
+      .items-table {
+        table {
+          font-size: 0.8rem;
+
+          th, td {
+            padding: 8px 4px;
+          }
+        }
+      }
+    }
+  }
+
+  // Modal responsive styling
+  .modal-overlay {
+    padding: 10px;
+
+    .modal-content {
+      max-height: 95vh;
+
+      .modal-body {
+        padding: 16px;
+
+        .customer-form {
+          .form-row {
+            flex-direction: column;
+            gap: 12px;
+
+            .form-group {
+              &.full-width {
+                flex: none;
+              }
+            }
+          }
+        }
+      }
+
+      .modal-footer {
+        padding: 16px;
+        flex-direction: column;
+
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+      }
     }
   }
 }

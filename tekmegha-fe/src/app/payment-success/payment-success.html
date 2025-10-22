@@ -1,0 +1,54 @@
+<div class="payment-success-container">
+  <div class="payment-card">
+    @if (isLoading) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Verifying payment...</p>
+      </div>
+    } @else {
+      @switch (paymentStatus) {
+        @case ('success') {
+          <div class="success">
+            <div class="success-icon">✓</div>
+            <h2>Payment Successful!</h2>
+            <p>Your payment has been processed successfully.</p>
+            <div class="payment-details">
+              <p><strong>Transaction ID:</strong> {{ transactionId }}</p>
+              <p><strong>Amount:</strong> ₹{{ amount | number:'1.2-2' }}</p>
+            </div>
+            <div class="action-buttons">
+              <button class="primary-button" (click)="goToHome()">Go to Home</button>
+              <button class="secondary-button" (click)="goToOrders()">View Orders</button>
+            </div>
+          </div>
+        }
+        @case ('failed') {
+          <div class="failed">
+            <div class="failed-icon">✗</div>
+            <h2>Payment Failed</h2>
+            <p>Your payment could not be processed. Please try again.</p>
+            @if (transactionId) {
+              <div class="payment-details">
+                <p><strong>Transaction ID:</strong> {{ transactionId }}</p>
+              </div>
+            }
+            <div class="action-buttons">
+              <button class="primary-button" (click)="goToHome()">Go to Home</button>
+              <button class="secondary-button" (click)="goToCart()">Try Again</button>
+            </div>
+          </div>
+        }
+        @default {
+          <div class="pending">
+            <div class="pending-icon">⏳</div>
+            <h2>Payment Pending</h2>
+            <p>Your payment is being processed. Please wait...</p>
+            <div class="action-buttons">
+              <button class="primary-button" (click)="goToHome()">Go to Home</button>
+            </div>
+          </div>
+        }
+      }
+    }
+  </div>
+</div>

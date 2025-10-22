@@ -1,0 +1,57 @@
+<div class="home-container">
+  <!-- Store Selector (shown when no store is selected) -->
+  <div *ngIf="showStoreSelector" class="store-selector-section">
+    <app-store-selector></app-store-selector>
+  </div>
+
+  <!-- Store Content (shown when store is selected) -->
+  <div *ngIf="!showStoreSelector && selectedStore" class="store-content">
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-content">
+        <h1 class="hero-title">{{ selectedStore.storeName }}</h1>
+        <p class="hero-subtitle">{{ getStoreDescription(selectedStore.storeCode) }}</p>
+      </div>
+    </div>
+
+    <!-- Categories Section -->
+    <div class="categories-section">
+      <h2 class="section-title">Shop by Category</h2>
+      <div class="categories-grid">
+        <div *ngFor="let category of fashionCategories" class="category-card">
+          <a [routerLink]="category.route" class="category-link">
+            <div class="category-icon">
+              <span class="material-icons">{{ category.icon }}</span>
+            </div>
+            <div class="category-info">
+              <h3 class="category-name">{{ category.name }}</h3>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Section -->
+    <div class="products-section">
+      <h2 class="section-title">Trending Now</h2>
+      <div *ngIf="isLoading" class="loading-container">
+        <app-skeleton-loader></app-skeleton-loader>
+      </div>
+      <div *ngIf="!isLoading && products.length > 0" class="products-grid">
+        <app-product-tile 
+          *ngFor="let product of products" 
+          [product]="product">
+        </app-product-tile>
+      </div>
+      <div *ngIf="!isLoading && products.length === 0" class="no-products">
+        <p>No products available at the moment.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Network Status -->
+  <div *ngIf="!isOnline" class="network-status offline">
+    <span class="material-icons">wifi_off</span>
+    <span>You're offline. Some features may not be available.</span>
+  </div>
+</div>
