@@ -157,7 +157,7 @@ export class Layout implements OnInit, OnDestroy {
 
   private updateLocationBarVisibility(url: string) {
     // Hide location bar for invoice and inventory pages
-    const hideLocationBarRoutes = ['/invoices', '/inventory'];
+    const hideLocationBarRoutes = ['/invoices', '/invoice-create', '/inventory'];
     
     // Check if current URL contains any of the routes that should hide location bar
     this.showLocationBar = !hideLocationBarRoutes.some(route => 

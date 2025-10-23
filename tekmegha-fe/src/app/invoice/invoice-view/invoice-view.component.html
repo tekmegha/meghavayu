@@ -4,28 +4,23 @@
     <div class="header-left">
       <button class="btn btn-secondary" (click)="goBack()">
         <span class="material-icons">arrow_back</span>
-        Back to Invoices
       </button>
-      <h1>Invoice #{{ invoice.invoiceNumber }}</h1>
-    </div>
-    <div class="header-actions">
-      <button class="btn btn-outline-primary" (click)="shareInvoice()">
+      
+      <button class="btn-icon" (click)="shareInvoice()" title="Share">
         <span class="material-icons">share</span>
-        Share
       </button>
-      <button class="btn btn-outline-secondary" (click)="printInvoice()">
+      <button class="btn-icon" (click)="printInvoice()" title="Print">
         <span class="material-icons">print</span>
-        Print
       </button>
-      <button class="btn btn-primary" (click)="editInvoice()">
-        <span class="material-icons">edit</span>
-        Edit Invoice
+      <button class="btn-icon" (click)="screenShotInvoice()" title="Screenshot">
+        <span class="material-icons">screenshot</span>
       </button>
     </div>
   </div>
 
   <!-- Invoice Content -->
   <div class="invoice-content">
+    <h1>Invoice #{{ invoice.invoiceNumber }}</h1>
     <div class="invoice-document">
       <!-- Invoice Header -->
       <div class="invoice-doc-header">
@@ -150,8 +145,7 @@
 <!-- Print Styles -->
 <style>
 @media print {
-  .invoice-header,
-  .header-actions {
+  .invoice-header {
     display: none !important;
   }
   

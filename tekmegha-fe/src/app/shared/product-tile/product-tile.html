@@ -2,31 +2,39 @@
   <div class="product-tile-card">
     <div class="image-wrapper">
       <img [src]="product.imageUrl" [alt]="product.name" class="product-image" (error)="onImageError($event)">
-      @if (product.discountPercentage) {
-        <div class="discount-badge">{{ product.discountPercentage }}% OFF</div>
-      }
-      <div class="favorite-icon"><span class="material-icons">star</span></div>
-    </div>
-    <div class="product-info">
-      <h3 class="product-name">{{ product.name }}</h3>
-      <p class="product-description">{{ product.description }}</p>
-      <div class="price-and-add">
-        <div class="prices">
-          <span class="current-price">₹{{ product.price | number:'1.2-2' }}</span>
-          @if (product.oldPrice) {
-            <span class="old-price">₹{{ product.oldPrice | number:'1.2-2' }}</span>
-          }
-        </div>
-        @if (quantity === 0) {
-          <button class="add-to-cart-button" (click)="onAdd()">Add</button>
-        } @else {
-          <div class="quantity-controls">
-            <button class="quantity-btn minus" (click)="onDecrement()">-</button>
-            <span class="quantity-display">{{ quantity }}</span>
-            <button class="quantity-btn plus" (click)="onIncrement()">+</button>
-          </div>
-        }
+      <!-- Bookmark icon in top left -->
+      <div class="bookmark-icon">
+        <span class="material-icons">bookmark_border</span>
       </div>
+      <!-- Add to cart button in top right -->
+      @if (quantity === 0) {
+        <button class="add-to-cart-icon" (click)="onAdd()">
+          <span class="material-icons">add</span>
+        </button>
+      } @else {
+        <div class="cart-counter-icon" (click)="onCartCounterClick()">
+          <span class="counter-number">{{ quantity }}</span>
+        </div>
+      }
+      <!-- Vegetarian badge in bottom left -->
+      <div class="vegetarian-badge">
+        <span class="material-icons">eco</span>
+      </div>
+    </div>
+    <!-- Weight/Quantity box -->
+    <div class="weight-box">500 g</div>
+    <!-- Product Name -->
+    <h3 class="product-name">{{ product.name }}</h3>
+    <!-- Discount Percentage -->
+    @if (product.discountPercentage) {
+      <div class="discount-percentage">{{ product.discountPercentage }}% OFF</div>
+    }
+    <!-- Pricing -->
+    <div class="prices">
+      <span class="current-price">₹{{ product.price | number:'1.0-0' }}</span>
+      @if (product.oldPrice) {
+        <span class="old-price">₹{{ product.oldPrice | number:'1.0-0' }}</span>
+      }
     </div>
   </div>
 </div>

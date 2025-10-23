@@ -85,9 +85,9 @@ export class InvoiceCreateComponent implements OnInit {
     this.initializeCustomerForm();
     this.invoiceForm = this.fb.group({
       buyerName: ['', Validators.required],
-      itemDescription: ['', Validators.required],
-      quantity: [1, [Validators.required, Validators.min(1)]],
-      rate: [0, [Validators.required, Validators.min(0)]],
+      itemDescription: [''], // Not required - only items array is validated
+      quantity: [1], // Not required - only items array is validated
+      rate: [0], // Not required - only items array is validated
       // Hidden fields for backend
       invoiceNumber: ['', Validators.required],
       date: [this.getCurrentDate(), Validators.required],
@@ -282,13 +282,32 @@ export class InvoiceCreateComponent implements OnInit {
     const quantity = this.invoiceForm.get('quantity')?.value;
     const rate = this.invoiceForm.get('rate')?.value;
 
+    // Validate all fields are filled
     if (!itemDescription || !quantity || !rate) {
       this.error = 'Please fill in all item details before adding.';
       return;
     }
 
+    // Validate item name is not empty
+    if (itemDescription.trim() === '') {
+      this.error = 'Item description cannot be empty.';
+      return;
+    }
+
+    // Validate quantity is greater than 0
+    if (quantity <= 0) {
+      this.error = 'Quantity must be greater than 0.';
+      return;
+    }
+
+    // Validate rate is greater than 0
+    if (rate <= 0) {
+      this.error = 'Price must be greater than 0.';
+      return;
+    }
+
     const newItem = this.fb.group({
-      itemName: [itemDescription, Validators.required],
+      itemName: [itemDescription.trim(), Validators.required],
       rate: [rate, [Validators.required, Validators.min(0)]],
       quantity: [quantity, [Validators.required, Validators.min(1)]],
       amount: [quantity * rate],
@@ -480,14 +499,14 @@ export class InvoiceCreateComponent implements OnInit {
   getFormValidationStatus() {
     const storeValid = this.hasRequiredStoreData();
     const customerValid = this.invoiceForm.get('buyerName')?.valid;
-    const itemValid = this.invoiceForm.get('itemDescription')?.valid && 
-                     this.invoiceForm.get('rate')?.valid;
+    // Check if there are items added to the invoice
+    const hasItems = this.items.length > 0;
     
     return {
       store: storeValid,
       customer: customerValid,
-      item: itemValid,
-      overall: storeValid && customerValid && itemValid
+      hasItems: hasItems,
+      overall: storeValid && customerValid && hasItems
     };
   }
 
@@ -509,14 +528,14 @@ export class InvoiceCreateComponent implements OnInit {
       return;
     }
     
-    if (!validationStatus.item) {
-      this.error = 'Item information is required. Please enter item description and rate.';
+    if (!validationStatus.hasItems) {
+      this.error = 'Please add at least one item to the invoice.';
       return;
     }
 
-    if (this.invoiceForm.valid) {
-      this.loading = true;
-      this.error = null;
+    // Proceed with saving if we have items (don't check form validity for item fields)
+    this.loading = true;
+    this.error = null;
 
       const storeId = await this.supabase.getCurrentStoreId();
       
@@ -549,9 +568,6 @@ export class InvoiceCreateComponent implements OnInit {
       };
 
       this.saveInvoiceToDatabase(invoiceData);
-    } else {
-      this.markFormGroupTouched();
-    }
   }
 
   private async saveInvoiceToDatabase(invoiceData: Invoice) {
@@ -598,6 +614,7 @@ export class InvoiceCreateComponent implements OnInit {
       alert('Invoice saved successfully!');
       this.generateInvoiceNumber();
       this.showPreview = false;
+      this.clearForm();
     } catch (error) {
       this.loading = false;
       this.error = 'Failed to save invoice: ' + (error as Error).message;
@@ -763,17 +780,44 @@ export class InvoiceCreateComponent implements OnInit {
   }
 
   submitInvoice() {
-    // Check if there are any items
-    if (this.items.length === 0) {
-      this.error = 'Please add at least one item to the invoice.';
-      return;
-    }
-
+    // Filter out any incomplete items before saving
+    this.filterIncompleteItems();
+    
     // Calculate totals and ensure balanceDue is set
     this.calculateTotals();
 
-    // Save the invoice
+    // Save the invoice (validation happens inside saveInvoice)
     this.saveInvoice();
+  }
+
+  // Filter out incomplete items from the items array
+  filterIncompleteItems() {
+    const originalCount = this.items.length;
+    
+    const validItems = this.items.controls.filter(item => {
+      const itemName = item.get('itemName')?.value;
+      const quantity = item.get('quantity')?.value;
+      const rate = item.get('rate')?.value;
+      
+      // Check if item has all required fields
+      return itemName && quantity && rate && 
+             itemName.trim() !== '' && 
+             quantity > 0 && 
+             rate > 0;
+    });
+
+    const removedCount = originalCount - validItems.length;
+    
+    // Replace items array with only valid items
+    this.items.clear();
+    validItems.forEach(item => {
+      this.items.push(item);
+    });
+
+    // Show message if items were removed
+    if (removedCount > 0) {
+      console.log(`Removed ${removedCount} incomplete item(s) before saving.`);
+    }
   }
 
   // Preview and Actions

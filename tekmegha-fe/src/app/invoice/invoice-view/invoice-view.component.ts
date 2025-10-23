@@ -166,6 +166,67 @@ export class InvoiceViewComponent implements OnInit {
     window.print();
   }
 
+  async screenShotInvoice() {
+    if (!this.invoice) return;
+
+    try {
+      // Show loading message
+      const loadingMsg = document.createElement('div');
+      loadingMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #007AFF; color: white; padding: 16px 24px; border-radius: 8px; z-index: 10000; box-shadow: 0 4px 20px rgba(0,0,0,0.3);';
+      loadingMsg.textContent = 'Capturing screenshot...';
+      document.body.appendChild(loadingMsg);
+
+      // Dynamic import of html2canvas to reduce bundle size
+      const html2canvas = (await import('html2canvas')).default;
+      
+      const invoiceContent = document.querySelector('.invoice-document') as HTMLElement;
+      
+      if (!invoiceContent) {
+        throw new Error('Invoice content not found');
+      }
+
+      const canvas = await html2canvas(invoiceContent, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+        logging: false,
+        useCORS: true
+      });
+
+      // Convert canvas to blob
+      canvas.toBlob((blob) => {
+        if (!blob || !this.invoice) {
+          throw new Error('Failed to create blob or invoice is null');
+        }
+
+        // Create download link
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Invoice-${this.invoice.invoiceNumber}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        // Remove loading message
+        document.body.removeChild(loadingMsg);
+
+        // Show success message
+        const successMsg = document.createElement('div');
+        successMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #34c759; color: white; padding: 16px 24px; border-radius: 8px; z-index: 10000; box-shadow: 0 4px 20px rgba(0,0,0,0.3);';
+        successMsg.textContent = 'Screenshot saved!';
+        document.body.appendChild(successMsg);
+
+        setTimeout(() => {
+          document.body.removeChild(successMsg);
+        }, 2000);
+      }, 'image/png');
+    } catch (error) {
+      console.error('Error capturing screenshot:', error);
+      alert('Failed to capture screenshot. Please try again.');
+    }
+  }
+
   // Format date
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString('en-IN', {

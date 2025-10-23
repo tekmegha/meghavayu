@@ -5,30 +5,6 @@
       <span class="material-icons">arrow_back</span>
     </button>
     <h1>New Bill</h1>
-    <div class="header-actions">
-      <button style="display: none;"
-        type="button" 
-        class="btn-clear" 
-        (click)="clearForm()"
-      >
-        New Bill
-      </button>
-      <button style="display: none;"
-        type="button" 
-        class="btn-save-draft" 
-        (click)="saveDraft()"
-      >
-        Save Draft
-      </button>
-      <button 
-        type="button" 
-        class="btn-submit" 
-        (click)="submitInvoice()"
-        [disabled]="loading"
-      >
-        {{ loading ? 'Submitting...' : 'Save' }}
-      </button>
-    </div>
   </div>
 
   <!-- Main Form -->
@@ -47,68 +23,41 @@
       </button>
     </div>
 
-    <!-- Item Description -->
+    <!-- Add Item Row -->
     <div class="form-section">
-      <label class="form-label">Item Description</label>
-      <textarea 
-        formControlName="itemDescription" 
-        class="form-textarea"
-        placeholder="Enter item description"
-        rows="3"
-      ></textarea>
-    </div>
-
-    <!-- Quantity Controls -->
-    <div class="form-section">
-      <label class="form-label">Quantity & Price</label>
-      <div class="quantity-controls">
-        <button type="button" class="qty-btn" (click)="decreaseQuantity()">
-          <span class="material-icons">remove</span>
-        </button>
+      <label class="form-label">Add Item</label>
+      <div class="add-item-row">
+        <input 
+          type="text" 
+          formControlName="itemDescription" 
+          class="item-name-input"
+          placeholder="Item name"
+        >
         <input 
           type="number" 
           formControlName="quantity" 
           class="qty-input"
           min="1"
           value="1"
+          placeholder="Qty"
         >
-        <button type="button" class="qty-btn" (click)="increaseQuantity()">
-          <span class="material-icons">add</span>
-        </button>
+        <span class="multiply-symbol">×</span>
         <input 
           type="number" 
           formControlName="rate" 
-          class="qty-input"
+          class="price-input"
           min="0"
           step="0.01"
-          placeholder="Rate"
+          placeholder="Price"
         >
-         
+        <span class="equals-symbol">=</span>
+        <div class="total-display">
+          <span class="currency">₹</span>
+          <span class="total-value">{{ getItemPrice() | number:'1.2-2' }}</span>
+        </div>
       </div>
     </div>
 
-    <!-- Price -->
-    <div class="form-section">
-      <label class="form-label">Price</label>
-      <div class="price-display">
-        <span class="currency">₹</span>
-        <span class="price-value">{{ getItemPrice() | number:'1.2-2' }}</span>
-        <span class="total-label">Total: ₹{{ getTotalAmount() | number:'1.2-2' }}</span>
-      </div>
-    </div>
-
-    <!-- Add Item Button -->
-    <div class="form-section">
-      <button 
-        type="button" 
-        class="btn-add-item" 
-        (click)="addCurrentItem()"
-        [disabled]="!invoiceForm.get('itemDescription')?.value || !invoiceForm.get('rate')?.value"
-      >
-        <span class="material-icons">add</span>
-        Add Item to Invoice
-      </button>
-    </div>
   </form>
  <!-- Added Items Table -->
  <div class="added-items-section" *ngIf="items.length > 0">
@@ -181,6 +130,28 @@
   <div class="error-message" *ngIf="error">
     <span class="material-icons">error</span>
     {{ error }}
+  </div>
+
+  <!-- Sticky Bottom Bar -->
+  <div class="sticky-bottom-bar">
+    <button 
+      type="button" 
+      class="btn-add-item" 
+      (click)="addCurrentItem()"
+      [disabled]="!invoiceForm.get('itemDescription')?.value || !invoiceForm.get('rate')?.value"
+    >
+      <span class="material-icons">add</span>
+      Add Item
+    </button>
+    <button 
+      type="button" 
+      class="btn-submit-bottom" 
+      (click)="submitInvoice()"
+      [disabled]="loading || items.length === 0"
+    >
+      <span class="material-icons">save</span>
+      {{ loading ? 'Saving...' : 'Save Invoice' }}
+    </button>
   </div>
 </div>
 

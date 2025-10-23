@@ -47,6 +47,11 @@ export class ProductTileComponent implements OnInit {
     }
   }
 
+  onCartCounterClick() {
+    // When cart counter is clicked, increment quantity
+    this.onIncrement();
+  }
+
   onImageError(event: Event) {
     const imgElement = event.target as HTMLImageElement;
     const defaultImage = this.getBrandSpecificDefaultImage();
