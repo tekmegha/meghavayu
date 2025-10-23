@@ -8,6 +8,8 @@ export interface StoreSession {
   storeCode: string;
   storeType: string;
   isActive: boolean;
+  // Include theme configuration for logos
+  theme_config?: any;
   // Add complete store data including navbar config
   navbar_config?: any;
   enable_navbar_home?: boolean;
@@ -20,6 +22,8 @@ export interface StoreSession {
   enable_cart?: boolean;
   enable_inventory?: boolean;
   enable_invoices?: boolean;
+  // Add logo error flag for fallback handling
+  logoError?: boolean;
 }
 
 @Injectable({
@@ -105,7 +109,8 @@ export class StoreSessionService {
         storeName: data.store_name,
         storeCode: data.store_code,
         storeType: data.store_type,
-        isActive: data.is_active
+        isActive: data.is_active,
+        theme_config: data.theme_config
       };
 
       this.setSelectedStore(storeSession);
@@ -148,7 +153,8 @@ export class StoreSessionService {
         storeName: data.store_name,
         storeCode: data.store_code,
         storeType: data.store_type,
-        isActive: data.is_active
+        isActive: data.is_active,
+        theme_config: data.theme_config
       };
 
       this.setSelectedStore(storeSession);
@@ -217,6 +223,8 @@ export class StoreSessionService {
         storeCode: store.store_code,
         storeType: store.store_type,
         isActive: store.is_active,
+        // Include theme configuration for logos
+        theme_config: store.theme_config,
         // Include complete store data for navbar configuration
         navbar_config: store.navbar_config,
         enable_navbar_home: store.enable_navbar_home,

@@ -1,7 +1,7 @@
 <div class="store-selector" *ngIf="showSelector">
   <div class="store-selector-header">
-    <h3>Select Your Store</h3>
-    <p>Choose a store to browse products and place orders</p>
+    <h3>TekMegha</h3>
+    <p>Connecting and Transforming You into the Digital World</p>
     
     <div class="search-container">
       <div class="search-input-wrapper">
@@ -9,7 +9,7 @@
         <input 
           type="text" 
           class="search-input" 
-          placeholder="Search stores..." 
+          placeholder="Search your need..." 
           [(ngModel)]="searchQuery"
           (input)="onSearchChange()"
         >
@@ -52,20 +52,21 @@
           </svg>
           <div class="cloud-content">
             <img 
-              *ngIf="getStoreLogo(store)" 
+              *ngIf="getStoreLogo(store) && !store.logoError" 
               [src]="getStoreLogo(store)" 
               [alt]="store.storeName + ' logo'"
               class="cloud-logo"
+              (error)="onLogoError(store)"
             >
             <div 
-              *ngIf="!getStoreLogo(store)" 
+              *ngIf="!getStoreLogo(store) || store.logoError" 
               class="cloud-icon"
               [style.background]="getIconBackground(store.storeCode)"
             >
-              <span class="material-icons">{{ getStoreIcon(store.storeCode) }}</span>
+              <span class="material-icons">{{ getStoreTypeIcon(store.storeType) }}</span>
             </div>
             <div class="store-name">{{ store.storeName }}</div>
-            <div class="cloud-status" *ngIf="store.isActive">
+            <div style="display: none;" class="cloud-status" *ngIf="store.isActive">
               <span class="status-badge active">Open</span>
             </div>
             <button style="display: none;" class="cloud-btn" (click)="selectStore(store)">
@@ -74,7 +75,7 @@
           </div>
         </div>
         
-        <p class="cloud-category">{{ getStoreDescription(store.storeCode) }}</p>
+        <p class="cloud-category">{{ getStoreDescription(store) }}</p>
       </div>
     </div>
   </div>
