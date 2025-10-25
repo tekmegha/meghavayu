@@ -202,12 +202,7 @@ export class NavbarConfigService {
       
       // Add menu toggle
       if (navbarConfig.topNavbar.items['menu']?.enabled) {
-        topNavbarItems.push({
-          icon: navbarConfig.topNavbar.items['menu'].icon,
-          label: navbarConfig.topNavbar.items['menu'].label,
-          action: navbarConfig.topNavbar.items['menu'].action as 'toggleMenu' | 'openSearch' | 'openLogin' | 'openCart',
-          position: 'left'
-        });
+         
       }
 
       // Add search

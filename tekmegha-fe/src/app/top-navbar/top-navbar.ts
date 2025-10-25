@@ -68,7 +68,7 @@ export class TopNavbar implements OnInit, OnDestroy {
 
   getDisplayTitle(): string {
     if (this.selectedStore) {
-      return `${this.appTitle} App: ${this.selectedStore.storeName}`;
+      return `${this.appTitle} : ${this.selectedStore.storeName}`;
     }
     return this.appTitle;
   }
