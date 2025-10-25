@@ -161,32 +161,14 @@
         <div class="invoice-details">
           <div class="buyer-info">
             <h4>{{ invoice.buyerName }}</h4>
-            <p *ngIf="invoice.buyerContact">{{ invoice.buyerContact }}</p>
-            <p *ngIf="invoice.buyerAddress">{{ invoice.buyerAddress }}</p>
           </div>
           
-          <div class="invoice-amounts">
-            <div class="amount-row">
-              <span class="label">Subtotal:</span>
-              <span class="amount">{{ formatCurrency(invoice.subtotal) }}</span>
-            </div>
-            <div class="amount-row" *ngIf="invoice.discount > 0">
-              <span class="label">Discount:</span>
-              <span class="amount">{{ formatCurrency(invoice.discount) }}</span>
-            </div>
-            <div class="amount-row" *ngIf="invoice.sgst > 0">
-              <span class="label">SGST:</span>
-              <span class="amount">{{ formatCurrency(invoice.sgst) }}</span>
-            </div>
-            <div class="amount-row" *ngIf="invoice.cgst > 0">
-              <span class="label">CGST:</span>
-              <span class="amount">{{ formatCurrency(invoice.cgst) }}</span>
-            </div>
-            <div class="amount-row total">
+          <div class="invoice-summary">
+            <div class="total-amount">
               <span class="label">Total:</span>
               <span class="amount">{{ formatCurrency(invoice.total) }}</span>
             </div>
-            <div class="amount-row" *ngIf="invoice.balanceDue > 0">
+            <div class="payment-status" *ngIf="invoice.balanceDue > 0">
               <span class="label">Balance Due:</span>
               <span class="amount">{{ formatCurrency(invoice.balanceDue) }}</span>
             </div>

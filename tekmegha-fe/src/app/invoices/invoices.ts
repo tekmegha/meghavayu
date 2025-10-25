@@ -156,7 +156,33 @@ export class InvoicesComponent implements OnInit {
 
       console.log('Invoices loaded:', data);
       console.log('Total count:', count);
-      this.invoices = data || [];
+      
+      // Map database field names to interface field names
+      this.invoices = (data || []).map((invoice: any) => ({
+        id: invoice.id,
+        invoiceNumber: invoice.invoice_number,
+        date: invoice.date,
+        storeId: invoice.store_id,
+        storeName: invoice.store_name,
+        storeAddress: invoice.store_address,
+        storeContact: invoice.store_contact,
+        storeGstin: invoice.store_gstin,
+        buyerName: invoice.buyer_name,
+        buyerAddress: invoice.buyer_address,
+        buyerContact: invoice.buyer_contact,
+        buyerGstin: invoice.buyer_gstin,
+        items: invoice.invoice_items || [],
+        subtotal: invoice.subtotal,
+        discount: invoice.discount,
+        sgst: invoice.sgst,
+        cgst: invoice.cgst,
+        total: invoice.total,
+        balanceDue: invoice.balance_due,
+        paymentMode: invoice.payment_mode,
+        createdAt: invoice.created_at,
+        updatedAt: invoice.updated_at
+      }));
+      
       this.totalItems = count || 0;
       this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
       console.log('Invoices after processing:', this.invoices.length, 'invoices');

@@ -393,9 +393,9 @@
   }
   
   .invoice-details {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
     
     .buyer-info {
@@ -413,29 +413,44 @@
       }
     }
     
-    .invoice-amounts {
-      .amount-row {
+    .invoice-summary {
+      text-align: right;
+      
+      .total-amount {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 4px;
-        
-        &.total {
-          font-weight: 600;
-          color: #1e293b;
-          border-top: 1px solid #e5e7eb;
-          padding-top: 8px;
-          margin-top: 8px;
-        }
+        font-weight: 600;
+        color: #1e293b;
         
         .label {
           color: #6b7280;
           font-size: 0.875rem;
+          margin-right: 8px;
+        }
+        
+        .amount {
+          font-weight: 600;
+          color: #1e293b;
+          font-size: 1.1rem;
+        }
+      }
+      
+      .payment-status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        .label {
+          color: #dc2626;
+          font-size: 0.875rem;
+          margin-right: 8px;
         }
         
         .amount {
           font-weight: 500;
-          color: #1e293b;
+          color: #dc2626;
         }
       }
     }

@@ -248,9 +248,9 @@ export class InvoiceCreateComponent implements OnInit {
     // Only prefill if form is empty
     if (!hasBuyerName && !hasItemDescription && !hasRate) {
       this.invoiceForm.patchValue({
-        buyerName: 'John Doe',
-        itemDescription: 'Premium Coffee Beans - Arabica Blend',
-        quantity: 2,
+        buyerName: '',
+        itemDescription: '',
+        quantity: 1,
         rate: 150.00,
         buyerAddress: '123 Main Street, City Center, Mumbai - 400001',
         buyerContact: '+91 98765 43210'
@@ -615,6 +615,9 @@ export class InvoiceCreateComponent implements OnInit {
       this.generateInvoiceNumber();
       this.showPreview = false;
       this.clearForm();
+      
+      // Navigate to invoices list
+      this.router.navigate(['/invoices']);
     } catch (error) {
       this.loading = false;
       this.error = 'Failed to save invoice: ' + (error as Error).message;

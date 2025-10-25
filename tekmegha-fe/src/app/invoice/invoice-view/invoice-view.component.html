@@ -19,6 +19,7 @@
         <span class="btn-text">Screenshot</span>
       </button>
     </div>
+    
   </div>
 
   <!-- Invoice Content -->
@@ -28,10 +29,17 @@
       <!-- Invoice Header -->
       <div class="invoice-doc-header">
         <div class="company-info">
-          <h2>{{ invoice.storeName }}</h2>
-          <p>{{ invoice.storeAddress }}</p>
-          <p>Contact: {{ invoice.storeContact }}</p>
-          <p *ngIf="invoice.storeGstin">GSTIN: {{ invoice.storeGstin }}</p>
+          <div class="company-details">
+            <div class="company-header">
+              <h2> <img [src]="getStoreLogo()" [alt]="'Store Logo'" class="store-logo" (error)="onLogoError()"> {{ invoice.storeName }}</h2>
+            </div>
+            <div class="company-info-details">
+              <p>{{ invoice.storeAddress }}</p>
+              <p>Contact: {{ invoice.storeContact }}</p>
+              <p *ngIf="invoice.storeGstin">GSTIN: {{ invoice.storeGstin }}</p>
+            </div>
+          </div>
+           
         </div>
         <div class="invoice-meta">
           <h3>INVOICE</h3>

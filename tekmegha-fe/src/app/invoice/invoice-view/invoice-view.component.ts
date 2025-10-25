@@ -243,4 +243,16 @@ export class InvoiceViewComponent implements OnInit {
       currency: 'INR'
     }).format(amount);
   }
+
+  getStoreLogo(): string {
+    if (this.invoice && this.invoice.storeId) {
+      return `assets/images/invoices/${this.invoice.storeId}.png`;
+    }
+    return '';
+  }
+
+  onLogoError() {
+    // Hide logo on error - could add fallback logic here
+    console.log('Store logo failed to load');
+  }
 }
